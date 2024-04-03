@@ -1,0 +1,42 @@
+.centered-container {
+  display: flex;
+  justify-content: center;
+}
+
+.button-row {
+  display: flex;
+  align-items: center;
+}
+
+.large-gray-button {
+  background-color: #ccc;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.large-green-button {
+  background-color: #77dd84;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+
+.arrow-container {
+  margin: 0 10px;
+}
+
+.arrow {
+  width: 24px;
+  height: 24px;
+  fill: #333;
+}
+
+.arrow:hover {
+  fill: #666;
+}
