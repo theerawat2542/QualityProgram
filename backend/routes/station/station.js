@@ -6,6 +6,12 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   let connection78, connectionMES;
   const { barcode } = req.query;
+
+  if (barcode === '') {
+    res.status(400).json({message:"Please input Barcode"})
+    return 
+  }
+  
   try {
     connection78 = await connect78Database();
     const query78 = `

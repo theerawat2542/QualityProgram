@@ -10,10 +10,10 @@ router.get('/', async (req, res) => {
     connection = await connect78Database()
     mes_connection = await connectMes9771Database()
     const query1 = `SELECT * FROM cooling_test WHERE barcode = '${barcode}'`;
-    console.log(query1)
+    // console.log(query1)
     const [results, fields] = await connection.query(query1);
     const barcode_list = results.map(({barcode}) => `'${barcode}'`)
-    const query2 = `SELECT WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`
+    const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`
     const [mes_results, mes_fields] = await mes_connection.query(query2)
     const joinedData = joinData_cooling(results, mes_results)
     res.json(joinedData)

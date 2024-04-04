@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
       mes_connection = await connectMes9771Database()
       const query1 = `SELECT material_barcode, compressor_barcode, scan_time FROM compressor WHERE scan_time >= '${startDate}' AND scan_time <= DATE_ADD('${endDate}', INTERVAL 1 DAY)`;
       const [results, fields] = await connection.query(query1);
-      console.log(results)
+      // console.log(results)
       const barcode_list = results.map(({compressor_barcode}) => `'${compressor_barcode}'`)
       const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`
       const [mes_results, mes_fields] = await mes_connection.query(query2)

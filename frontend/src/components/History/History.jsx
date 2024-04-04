@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 // import ReactLoading from "react-loading";
 import { Table } from "antd";
 import { format } from 'date-fns';
+import { API_URL } from '../../lib/config';
 
 function History() {
   const [data, setData] = useState([]);
@@ -18,7 +19,7 @@ function History() {
 
   const fetchData = () => {
     axios
-      .get("http://localhost:3000/History")
+      .get(`${API_URL}/History`)
       .then((res) => {
         setData(res.data);
         setRecords(res.data.slice(0));
@@ -35,22 +36,26 @@ function History() {
       title: "Material Barcode",
       dataIndex: "material_barcode",
       key: "material_barcode",
+      ellipsis: true
     },
     {
       title: "Compressor Barcode",
       dataIndex: "compressor_barcode",
       key: "compressor_barcode",
+      ellipsis: true
     },
     {
       title: "Date/Time",
       dataIndex: "scan_time",
       key: "scan_time",
-      render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss')
+      render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss'),
+      ellipsis: true
     },
     {
       title: "Scan By",
       dataIndex: "user_id",
       key: "user_id",
+      ellipsis: true
     }
   ];
 
