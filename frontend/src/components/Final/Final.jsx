@@ -302,7 +302,18 @@ function Final() {
                     <td>
                       {d.ScanTime}
                     </td>
-                    <td>{d.QcState}</td>
+                    <td>
+                      <label
+                        style={{
+                          backgroundColor:
+                            d.QcState === "QC-OK" ? "#32FF42" : "#FC7D79",
+                          borderRadius: 5,
+                          padding: "2px 4px 2px 4px",
+                        }}
+                      >
+                        {d.QcState}
+                      </label>
+                    </td>
                   </tr>
                 ))}
               </tbody>

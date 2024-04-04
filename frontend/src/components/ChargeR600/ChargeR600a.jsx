@@ -314,7 +314,18 @@ function Charge() {
                     <td>{d.program}</td>
                     <td>{d.r600_setpoint}</td>
                     <td>{d.r600_actum}</td>
-                    <td>{d.status}</td>
+                    <td>
+                      <label
+                        style={{
+                          backgroundColor:
+                            d.status === "OK" ? "#32FF42" : "#FC7D79",
+                          borderRadius: 5,
+                          padding: "2px 4px 2px 4px",
+                        }}
+                      >
+                        {d.status}
+                      </label>
+                    </td>
                     <td>{d.alarm}</td>
                   </tr>
                 ))}

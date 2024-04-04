@@ -309,7 +309,7 @@ function Cooling() {
                       <label
                         style={{
                           backgroundColor:
-                            d.TestResult === "OK" ? "green" : "red",
+                            d.TestResult === "OK" ? "#32FF42" : "#FC7D79",
                           borderRadius: 5,
                           padding: "2px 4px 2px 4px",
                         }}
