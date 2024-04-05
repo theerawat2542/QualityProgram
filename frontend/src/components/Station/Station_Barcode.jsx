@@ -53,7 +53,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
 
   const OilButtonClick = () => {
     if (data && data.station78Data && data.station78Data.length > 0) {
-      setShowOilBarcode(true); 
+      setShowOilBarcode(true);
       setShowCompBarcode(false);
       setShowCoolingBarcode(false);
       setShowFinalBarcode(false);
@@ -70,7 +70,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
   const CoolingButtonClick = () => {
     if (data && data.station78Data && data.station78Data.length > 0) {
       setShowCoolingBarcode(true);
-      setShowCompBarcode(false); 
+      setShowCompBarcode(false);
       setShowOilBarcode(false);
       setShowFinalBarcode(false);
     }
@@ -79,19 +79,18 @@ const ButtonRowWithArrows = ({ barcode }) => {
     if (data && data.stationMESData && data.stationMESData.length > 0) {
       setShowFinalBarcode(true);
       setShowCoolingBarcode(false);
-      setShowCompBarcode(false); 
+      setShowCompBarcode(false);
       setShowOilBarcode(false);
     }
   };
   useEffect(() => {
     if (!barcode.trim()) {
-      setShowOilBarcode(false); 
+      setShowOilBarcode(false);
       setShowCompBarcode(false);
       setShowCoolingBarcode(false);
       setShowFinalBarcode(false);
     }
   }, [barcode]);
-
 
   return (
     <div>
@@ -101,20 +100,33 @@ const ButtonRowWithArrows = ({ barcode }) => {
           data.station78Data &&
           data.station78Data.length > 0 &&
           data.station78Data[0].OilChargerStatus !== "0" ? (
-            <button
-              className="large-green-button"
-              title={`Oil Charger Time: ${formatDateTime(
-                data.station78Data[0].OilChargerTime
-              )}`}
-              onClick={OilButtonClick}
-            >
-              Charging R600
-            </button>
+            data.station78Data[0].OilChargerStatus === "NG" ? (
+              <button
+                className="large-yellow-button"
+                title={`Oil Charger Time: ${formatDateTime(
+                  data.station78Data[0].OilChargerTime
+                )}`}
+                onClick={OilButtonClick}
+              >
+                Charging R600
+              </button>
+            ) : (
+              <button
+                className="large-green-button"
+                title={`Oil Charger Time: ${formatDateTime(
+                  data.station78Data[0].OilChargerTime
+                )}`}
+                onClick={OilButtonClick}
+              >
+                Charging R600
+              </button>
+            )
           ) : (
             <button className="large-gray-button" disabled>
               Charging R600
             </button>
           )}
+
           <ArrowRight />
           {data &&
           data.station78Data &&
@@ -139,20 +151,33 @@ const ButtonRowWithArrows = ({ barcode }) => {
           data.station78Data &&
           data.station78Data.length > 0 &&
           data.station78Data[0].CoolingStatus !== "0" ? (
-            <button
-              className="large-green-button"
-              title={`Cooling Start Time: ${formatDateTime(
-                data.station78Data[0].CoolingStartTime
-              )}`}
-              onClick={CoolingButtonClick}
-            >
-              Cooling Test
-            </button>
+            data.station78Data[0].CoolingStatus === "NG" ? (
+              <button
+                className="large-yellow-button"
+                title={`Cooling Start Time: ${formatDateTime(
+                  data.station78Data[0].CoolingStartTime
+                )}`}
+                onClick={CoolingButtonClick}
+              >
+                Cooling Test
+              </button>
+            ) : (
+              <button
+                className="large-green-button"
+                title={`Cooling Start Time: ${formatDateTime(
+                  data.station78Data[0].CoolingStartTime
+                )}`}
+                onClick={CoolingButtonClick}
+              >
+                Cooling Test
+              </button>
+            )
           ) : (
             <button className="large-gray-button" disabled>
               Cooling Test
             </button>
           )}
+
           <ArrowRight />
           {/* {data &&
           data.station78Data &&
@@ -167,31 +192,44 @@ const ButtonRowWithArrows = ({ barcode }) => {
               Safety Test
             </button>
           ) : ( */}
-            <button className="large-gray-button" disabled>
-              Safety Test
-            </button>
+          <button className="large-gray-button" disabled>
+            Safety Test
+          </button>
           {/* )} */}
           <ArrowRight />
           {data &&
           data.stationMESData &&
           data.stationMESData.length > 0 &&
-          data.stationMESData[0].ScanTime !== "0" ? (
-            <button
-              className="large-green-button"
-              title={`Scan Time: ${formatDateTime(
-                data.stationMESData[0].ScanTime
-              )}`}
-              onClick={FinalButtonClick}
-            >
-              Final scan
-            </button>
+          data.stationMESData[0].QcState !== "0" ? (
+            data.stationMESData[0].QcState === "QC-NG" ? (
+              <button
+                className="large-yellow-button"
+                title={`Scan Time: ${formatDateTime(
+                  data.stationMESData[0].ScanTime
+                )}`}
+                onClick={FinalButtonClick}
+              >
+                Final scan
+              </button>
+            ) : (
+              <button
+                className="large-green-button"
+                title={`Scan Time: ${formatDateTime(
+                  data.stationMESData[0].ScanTime
+                )}`}
+                onClick={FinalButtonClick}
+              >
+                Final scan
+              </button>
+            )
           ) : (
             <button className="large-gray-button" disabled>
               Final scan
             </button>
           )}
         </div>
-      </div><br />
+      </div>
+      <br />
       {error && <p>Error: {error}</p>}
       {showOilBarcode && <OilBarcode barcode={barcode} />}
       {showCompBarcode && <CompBarcode barcode={barcode} />}
