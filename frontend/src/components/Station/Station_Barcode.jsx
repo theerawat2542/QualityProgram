@@ -154,7 +154,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
             </button>
           )}
           <ArrowRight />
-          {data &&
+          {/* {data &&
           data.station78Data &&
           data.station78Data.length > 0 &&
           data.station78Data[0].ScanCompressorStatus !== "0" ? (
@@ -166,11 +166,11 @@ const ButtonRowWithArrows = ({ barcode }) => {
             >
               Safety Test
             </button>
-          ) : (
+          ) : ( */}
             <button className="large-gray-button" disabled>
               Safety Test
             </button>
-          )}
+          {/* )} */}
           <ArrowRight />
           {data &&
           data.stationMESData &&

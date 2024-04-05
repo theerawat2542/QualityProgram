@@ -72,6 +72,7 @@ const CoolingBarcode = ({ barcode }) => {
     <div style={{ width: '100%', overflowX: 'auto' }}>
       <br />
       <div className="App container">
+      <center><label><h3>Cooling Test</h3></label><br /></center>
         <div className="bg-white shadow border">
           <div className="table-responsive" style={{ maxHeight: "500px", overflowY: "scroll" }}>
             <Table
