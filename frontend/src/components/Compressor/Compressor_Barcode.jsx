@@ -7,7 +7,7 @@ import { API_URL } from '../../lib/config';
 const CompBarcode = ({ barcode }) => {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -16,10 +16,10 @@ const CompBarcode = ({ barcode }) => {
         const response = await axios.get(`${API_URL}/barcode_compressor?barcode=${barcode}`);
         setData(response.data);
         setRecords(response.data.slice(0));
-        setLoading(false);
+        // setLoading(false);
       } catch (error) {
         setError(error.message);
-        setLoading(false);
+        // setLoading(false);
       }
     };
 

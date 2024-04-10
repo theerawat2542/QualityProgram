@@ -32,7 +32,7 @@ const Station = () => {
             className="form-input1"
           />
         </form>
-      </div><br /><br />
+      </div><br />
       <ButtonStatus barcode={barcode} />
     </div>
   );

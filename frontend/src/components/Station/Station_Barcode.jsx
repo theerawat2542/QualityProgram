@@ -29,6 +29,66 @@ const formatDateTime = (dateTimeString) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
+const CurrentStation = ({
+  oilChargerStatus,
+  scanCompressorStatus,
+  coolingStatus,
+  qcState,
+}) => {
+  if (oilChargerStatus === "OK") {
+    if (scanCompressorStatus !== "0") {
+      if (coolingStatus === "OK") {
+        if (qcState === "QC-OK") {
+          return (
+            <h4>
+              Current Station: <b>Complete</b>
+            </h4>
+          );
+        } else if (qcState === "QC-NG" || qcState === "") {
+          return (
+            <h4>
+              Current Station: <b>Final Scan</b>
+            </h4>
+          );
+        }
+        return (
+          <h4>
+            Current Station: <b>Final Scan</b>
+          </h4>
+        );
+      } else if (
+        coolingStatus === "NG" ||
+        coolingStatus === "0" ||
+        coolingStatus === ""
+      ) {
+        return (
+          <h4>
+            Current Station: <b>Cooling Test</b>
+          </h4>
+        );
+      }
+    } else {
+      return (
+        <h4>
+          Current Station: <b>Scan Compressor</b>
+        </h4>
+      );
+    }
+  } else if (
+    oilChargerStatus === "NG" ||
+    oilChargerStatus === "0" ||
+    oilChargerStatus === ""
+  ) {
+    return (
+      <h4>
+        Current Station: <b>Charging R600</b>
+      </h4>
+    );
+  }
+
+  return null;
+};
+
 const ButtonRowWithArrows = ({ barcode }) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -84,7 +144,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
     }
   };
   useEffect(() => {
-    if (!barcode.trim()) {
+    if (!barcode.trim() || barcode.length !== 20) {
       setShowOilBarcode(false);
       setShowCompBarcode(false);
       setShowCoolingBarcode(false);
@@ -94,6 +154,15 @@ const ButtonRowWithArrows = ({ barcode }) => {
 
   return (
     <div>
+      <div className="centered-container">
+        <CurrentStation
+          oilChargerStatus={data?.station78Data?.[0]?.OilChargerStatus}
+          scanCompressorStatus={data?.station78Data?.[0]?.ScanCompressorStatus}
+          coolingStatus={data?.station78Data?.[0]?.CoolingStatus}
+          qcState={data?.stationMESData?.[0]?.QcState}
+        />
+      </div>
+      <br />
       <div className="centered-container">
         <div className="button-row">
           {data &&
@@ -191,12 +260,12 @@ const ButtonRowWithArrows = ({ barcode }) => {
             >
               Safety Test
             </button>
-          ) : ( */}
+          ) : (
           <button className="large-gray-button" disabled>
             Safety Test
           </button>
-          {/* )} */}
-          <ArrowRight />
+          )}
+          <ArrowRight /> */}
           {data &&
           data.stationMESData &&
           data.stationMESData.length > 0 &&
@@ -228,8 +297,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
             </button>
           )}
         </div>
-      </div>
-      <br />
+      </div> 
       {error && <p>Error: {error}</p>}
       {showOilBarcode && <OilBarcode barcode={barcode} />}
       {showCompBarcode && <CompBarcode barcode={barcode} />}

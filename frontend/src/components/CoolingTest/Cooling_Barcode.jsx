@@ -7,7 +7,7 @@ import { API_URL } from '../../lib/config';
 const CoolingBarcode = ({ barcode }) => {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -16,10 +16,10 @@ const CoolingBarcode = ({ barcode }) => {
         const response = await axios.get(`${API_URL}/barcode_coolingtest?barcode=${barcode}`);
         setData(response.data);
         setRecords(response.data.slice(0));
-        setLoading(false);
+        // setLoading(false);
       } catch (error) {
         setError(error.message);
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -58,6 +58,12 @@ const CoolingBarcode = ({ barcode }) => {
       title: "Model",
       dataIndex: "model",
       key: "model",
+      ellipsis: true
+    },
+    {
+      title: "Status",
+      dataIndex: "TestResult",
+      key: "TestResult",
       ellipsis: true
     },
     {
