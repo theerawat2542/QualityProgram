@@ -153,6 +153,12 @@ function Compressor() {
   const handleClear = () => {
     setTempStartDate("");
     setTempEndDate("");
+    setData([]);
+    setLineFilter("");
+    setModelFilter("");
+    setOrderNoFilter("");
+    setMatBarcodeFilter("");
+    setCompBarcodeFilter("");
   };
 
   if (loading) {

@@ -140,6 +140,11 @@ function Cooling() {
   const handleClear = () => {
     setTempStartDate("");
     setTempEndDate("");
+    setData([]);
+    setLineFilter("");
+    setModelFilter("");
+    setOrderNoFilter("");
+    setBarcodeFilter("");
   };
 
   if (loading) {
