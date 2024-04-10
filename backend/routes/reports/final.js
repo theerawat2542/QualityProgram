@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
       LEFT JOIN pm_work_cells_t y ON x.Work_Cell_Code = y.Work_Cell_Code
       LEFT JOIN base_user_extend z ON x.ScanUserCode = z.UserCode
       LEFT JOIN bns_pm_operation b ON x.WorkUser_BarCode = b.WorkUser_BarCode
-      WHERE x.Create_Date >= '${startDate}' AND x.Create_Date <= '${endDate}' AND x.Work_Cell_Code IN ('RB0019')
+      WHERE x.Create_Date >= '${startDate}' AND x.Create_Date <= DATE_ADD('${endDate}', INTERVAL 1 DAY) AND x.Work_Cell_Code IN ('RB0019')
       ORDER BY x.Create_Date DESC;
     `;
     const [result, field] = await mes_connection.query(query);
