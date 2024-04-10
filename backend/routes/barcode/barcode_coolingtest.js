@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   try {
     connection = await connect78Database()
     mes_connection = await connectMes9771Database()
-    const query1 = `SELECT * FROM cooling_test WHERE barcode = '${barcode}'`;
+    const query1 = `SELECT * FROM cooling_test WHERE barcode = '${barcode}' order by StartTime`;
     // console.log(query1)
     const [results, fields] = await connection.query(query1);
     const barcode_list = results.map(({barcode}) => `'${barcode}'`)
