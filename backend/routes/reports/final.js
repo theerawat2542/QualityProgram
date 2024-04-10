@@ -16,22 +16,9 @@ router.get("/", async (req, res) => {
         ELSE x.Quality_State
       END AS "QcState",
       x.Order_Code AS "Order",
-      x.Prod_Code AS "MatCode",
       b.WorkUser_RightMostItemName as "Model",
       x.WorkUser_BarCode AS "Barcode",
-      x.Work_Cell_Code AS "StationCode",
-      y.Work_Cell_Desc AS "StationName",
-      x.Production_Line_Code AS "PdCode",
-      x.ScanUserCode AS "ScanBy",
-      z.UserName  AS "ScanByName",
-      x.Team_Code AS "TeamCode",
-      x.Shift_Code AS "ShiftCode",
-      x.Create_Date AS "CreateDate",
-      x.ARRIVE_TIME AS "ArriveTime",
-      x.LEAVE_TIME AS "LeaveTime",
-      x.ENTERPRISE_ID AS "IPAddess",
-      x.ENTERPRISE_CODE AS "MacAddess",
-      x.ClientVersion AS "MesVersion"
+      x.Production_Line_Code AS "PdCode"
       FROM bns_pm_prodprocess x
       LEFT JOIN pm_work_cells_t y ON x.Work_Cell_Code = y.Work_Cell_Code
       LEFT JOIN base_user_extend z ON x.ScanUserCode = z.UserCode

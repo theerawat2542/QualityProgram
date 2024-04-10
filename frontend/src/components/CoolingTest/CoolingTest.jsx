@@ -26,23 +26,28 @@ function Cooling() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [alertMessage, setAlertMessage] = useState(null);
-  
+
   const handleSearch = () => {
     if (tempStartDate && tempEndDate) {
       setLoading(true);
       setStartDate(tempStartDate);
       setEndDate(tempEndDate);
+      setCurrentPage(1);
       axios
         .get(
           `${API_URL}/coolingtest?startDate=${tempStartDate}&endDate=${tempEndDate}`
         )
         .then((res) => {
-          setData(res.data.map(record => ({
-            ...record,
-            StartTime: format(new Date(record.StartTime), "yyyy-MM-dd HH:mm:ss")
-          })));
+          setData(
+            res.data.map((record) => ({
+              ...record,
+              StartTime: format(
+                new Date(record.StartTime),
+                "yyyy-MM-dd HH:mm:ss"
+              ),
+            }))
+          );
           setTotalPages(row === -1 ? 1 : Math.ceil(res.data.length / row));
-          setCurrentPage(1);
           setLoading(false); // Set loading to false after data is fetched
           filterRecords(); // Call filterRecords after data is fetched
         })
@@ -219,11 +224,7 @@ function Cooling() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink
-            data={data}
-            headers={headers}
-            filename={"coolingtest.csv"}
-          >
+          <CSVLink data={data} headers={headers} filename={"coolingtest.csv"}>
             <div
               style={{
                 textAlign: "right",
@@ -247,7 +248,10 @@ function Cooling() {
                       className="form-control input-sm"
                       placeholder="Search Line"
                       value={lineFilter}
-                      onChange={(e) => setLineFilter(e.target.value)}
+                      onChange={(e) => {
+                        setLineFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -259,7 +263,10 @@ function Cooling() {
                       className="form-control input-sm"
                       placeholder="Search Model"
                       value={modelFilter}
-                      onChange={(e) => setModelFilter(e.target.value)}
+                      onChange={(e) => {
+                        setModelFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -271,7 +278,10 @@ function Cooling() {
                       className="form-control input-sm"
                       placeholder="Search Order No."
                       value={orderNoFilter}
-                      onChange={(e) => setOrderNoFilter(e.target.value)}
+                      onChange={(e) => {
+                        setOrderNoFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -283,9 +293,13 @@ function Cooling() {
                       className="form-control input-sm"
                       placeholder="Search Barcode"
                       value={barcodeFilter}
-                      onChange={(e) => setBarcodeFilter(e.target.value)}
+                      onChange={(e) => {
+                        setBarcodeFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
+
                   <th>Date/Time</th>
                   <th>
                     <center>Status</center>
@@ -302,9 +316,7 @@ function Cooling() {
                     <td>{d.model}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
                     <td>{d.barcode}</td>
-                    <td>
-                    {d.StartTime}
-                    </td>
+                    <td>{d.StartTime}</td>
                     <td>
                       <label
                         style={{

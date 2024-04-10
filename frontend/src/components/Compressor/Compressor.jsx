@@ -33,17 +33,22 @@ function Compressor() {
       setLoading(true);
       setStartDate(tempStartDate);
       setEndDate(tempEndDate);
+      setCurrentPage(1);
       axios
         .get(
           `${API_URL}/compressor?startDate=${tempStartDate}&endDate=${tempEndDate}`
         )
         .then((res) => {
-            setData(res.data.map(record => ({
-                ...record,
-                scan_time: format(new Date(record.scan_time), "yyyy-MM-dd HH:mm:ss")
-              })));;
+          setData(
+            res.data.map((record) => ({
+              ...record,
+              scan_time: format(
+                new Date(record.scan_time),
+                "yyyy-MM-dd HH:mm:ss"
+              ),
+            }))
+          );
           setTotalPages(row === -1 ? 1 : Math.ceil(res.data.length / row));
-          setCurrentPage(1);
           setLoading(false); // Set loading to false after data is fetched
           filterRecords(); // Call filterRecords after data is fetched
         })
@@ -233,11 +238,7 @@ function Compressor() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink
-            data={data}
-            headers={headers}
-            filename={"compressor.csv"}
-          >
+          <CSVLink data={data} headers={headers} filename={"compressor.csv"}>
             <div
               style={{
                 textAlign: "right",
@@ -261,7 +262,10 @@ function Compressor() {
                       className="form-control input-sm"
                       placeholder="Search Line"
                       value={lineFilter}
-                      onChange={(e) => setLineFilter(e.target.value)}
+                      onChange={(e) => {
+                        setLineFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -273,7 +277,10 @@ function Compressor() {
                       className="form-control input-sm"
                       placeholder="Search Model"
                       value={modelFilter}
-                      onChange={(e) => setModelFilter(e.target.value)}
+                      onChange={(e) => {
+                        setModelFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -285,7 +292,10 @@ function Compressor() {
                       className="form-control input-sm"
                       placeholder="Search Order No."
                       value={orderNoFilter}
-                      onChange={(e) => setOrderNoFilter(e.target.value)}
+                      onChange={(e) => {
+                        setOrderNoFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -297,7 +307,10 @@ function Compressor() {
                       className="form-control input-sm"
                       placeholder="Search Mat. Barcode"
                       value={matbarcodeFilter}
-                      onChange={(e) => setMatBarcodeFilter(e.target.value)}
+                      onChange={(e) => {
+                        setMatBarcodeFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -309,7 +322,10 @@ function Compressor() {
                       className="form-control input-sm"
                       placeholder="Search Comp. Barcode"
                       value={compbarcodeFilter}
-                      onChange={(e) => setCompBarcodeFilter(e.target.value)}
+                      onChange={(e) => {
+                        setCompBarcodeFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>Date/Time</th>
@@ -405,14 +421,14 @@ function Compressor() {
             )}
           </center>
         </div>
-      {alertMessage && (
-        <Alert
-          description={alertMessage.description}
-          message={alertMessage.message}
-          type={alertMessage.type}
-          closable
-        />
-      )}
+        {alertMessage && (
+          <Alert
+            description={alertMessage.description}
+            message={alertMessage.message}
+            type={alertMessage.type}
+            closable
+          />
+        )}
       </div>
     </div>
   );

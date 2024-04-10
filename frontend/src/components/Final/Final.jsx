@@ -26,24 +26,29 @@ function Final() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [alertMessage, setAlertMessage] = useState(null);
-  
+
   const handleSearch = () => {
     if (tempStartDate && tempEndDate) {
       setLoading(true);
       setStartDate(tempStartDate);
       setEndDate(tempEndDate);
+      setCurrentPage(1);
       axios
         .get(
           `${API_URL}/final?startDate=${tempStartDate}&endDate=${tempEndDate}`
         )
         .then((res) => {
-          setData(res.data.map(record => ({
-            ...record,
-            ScanTime: format(new Date(record.ScanTime), "yyyy-MM-dd HH:mm:ss")
-          })));
+          setData(
+            res.data.map((record) => ({
+              ...record,
+              ScanTime: format(
+                new Date(record.ScanTime),
+                "yyyy-MM-dd HH:mm:ss"
+              ),
+            }))
+          );
           // console.log(res.data)
           setTotalPages(row === -1 ? 1 : Math.ceil(res.data.length / row));
-          setCurrentPage(1);
           setLoading(false); // Set loading to false after data is fetched
           filterRecords(); // Call filterRecords after data is fetched
         })
@@ -95,14 +100,14 @@ function Final() {
         );
       }
       if (modelFilter !== "") {
-        matchesModel = record.Model
-          .toLowerCase()
-          .includes(modelFilter.toLowerCase());
+        matchesModel = record.Model.toLowerCase().includes(
+          modelFilter.toLowerCase()
+        );
       }
       if (barcodeFilter !== "") {
-        matchesBarcode = record.Barcode
-          .toLowerCase()
-          .includes(barcodeFilter.toLowerCase());
+        matchesBarcode = record.Barcode.toLowerCase().includes(
+          barcodeFilter.toLowerCase()
+        );
       }
       if (orderNoFilter !== "") {
         matchesOrderNo = record.Order.toLowerCase().includes(
@@ -124,7 +129,7 @@ function Final() {
 
     setRecords(filteredRecords.slice(startIndex, endIndex));
   };
-  
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -219,11 +224,7 @@ function Final() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink
-            data={data}
-            headers={headers}
-            filename={"final.csv"}
-          >
+          <CSVLink data={data} headers={headers} filename={"final.csv"}>
             <div
               style={{
                 textAlign: "right",
@@ -247,7 +248,10 @@ function Final() {
                       className="form-control input-sm"
                       placeholder="Search Line"
                       value={lineFilter}
-                      onChange={(e) => setLineFilter(e.target.value)}
+                      onChange={(e) => {
+                        setLineFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -259,7 +263,10 @@ function Final() {
                       className="form-control input-sm"
                       placeholder="Search Model"
                       value={modelFilter}
-                      onChange={(e) => setModelFilter(e.target.value)}
+                      onChange={(e) => {
+                        setModelFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -271,7 +278,10 @@ function Final() {
                       className="form-control input-sm"
                       placeholder="Search Order No."
                       value={orderNoFilter}
-                      onChange={(e) => setOrderNoFilter(e.target.value)}
+                      onChange={(e) => {
+                        setOrderNoFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -283,9 +293,13 @@ function Final() {
                       className="form-control input-sm"
                       placeholder="Search Barcode"
                       value={barcodeFilter}
-                      onChange={(e) => setBarcodeFilter(e.target.value)}
+                      onChange={(e) => {
+                        setBarcodeFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
+
                   <th>Date/Time</th>
                   <th>
                     <center>Status</center>
@@ -299,9 +313,7 @@ function Final() {
                     <td>{d.Model}</td>
                     <td>{d.Order}</td>
                     <td>{d.Barcode}</td>
-                    <td>
-                      {d.ScanTime}
-                    </td>
+                    <td>{d.ScanTime}</td>
                     <td>
                       <label
                         style={{

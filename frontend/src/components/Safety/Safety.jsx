@@ -32,18 +32,23 @@ function Charge() {
       setLoading(true);
       setStartDate(tempStartDate);
       setEndDate(tempEndDate);
+      setCurrentPage(1); // Reset currentPage to 1 when searching/filtering
 
       axios
         .get(
           `${API_URL}/oilcharger?startDate=${tempStartDate}&endDate=${tempEndDate}`
         )
         .then((res) => {
-          setData(res.data.map(record => ({
-            ...record,
-            datetime: format(new Date(record.datetime), "yyyy-MM-dd HH:mm:ss")
-          })));
+          setData(
+            res.data.map((record) => ({
+              ...record,
+              datetime: format(
+                new Date(record.datetime),
+                "yyyy-MM-dd HH:mm:ss"
+              ),
+            }))
+          );
           setTotalPages(row === -1 ? 1 : Math.ceil(res.data.length / row));
-          setCurrentPage(1);
           setLoading(false); // Set loading to false after data is fetched
           filterRecords(); // Call filterRecords after data is fetched
         })
@@ -227,11 +232,7 @@ function Charge() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink
-            data={data}
-            headers={headers}
-            filename={"oilcharger.csv"}
-          >
+          <CSVLink data={data} headers={headers} filename={"oilcharger.csv"}>
             <div
               style={{
                 textAlign: "right",
@@ -255,7 +256,10 @@ function Charge() {
                       className="form-control input-sm"
                       placeholder="Search Line"
                       value={lineFilter}
-                      onChange={(e) => setLineFilter(e.target.value)}
+                      onChange={(e) => {
+                        setLineFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -267,7 +271,10 @@ function Charge() {
                       className="form-control input-sm"
                       placeholder="Search Model"
                       value={modelFilter}
-                      onChange={(e) => setModelFilter(e.target.value)}
+                      onChange={(e) => {
+                        setModelFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -279,7 +286,10 @@ function Charge() {
                       className="form-control input-sm"
                       placeholder="Search Order No."
                       value={orderNoFilter}
-                      onChange={(e) => setOrderNoFilter(e.target.value)}
+                      onChange={(e) => {
+                        setOrderNoFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
                   <th>
@@ -291,9 +301,13 @@ function Charge() {
                       className="form-control input-sm"
                       placeholder="Search Barcode"
                       value={barcodeFilter}
-                      onChange={(e) => setBarcodeFilter(e.target.value)}
+                      onChange={(e) => {
+                        setBarcodeFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}
                     />
                   </th>
+
                   <th>Date/Time</th>
                   <th>Program</th>
                   <th>R600/Setpoint</th>
@@ -313,7 +327,18 @@ function Charge() {
                     <td>{d.program}</td>
                     <td>{d.r600_setpoint}</td>
                     <td>{d.r600_actum}</td>
-                    <td>{d.status}</td>
+                    <td>
+                      <label
+                        style={{
+                          backgroundColor:
+                            d.status === "OK" ? "#32FF42" : "#FC7D79",
+                          borderRadius: 5,
+                          padding: "2px 4px 2px 4px",
+                        }}
+                      >
+                        {d.status}
+                      </label>
+                    </td>
                     <td>{d.alarm}</td>
                   </tr>
                 ))}
