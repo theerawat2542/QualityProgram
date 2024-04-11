@@ -14,6 +14,12 @@ function FormScan() {
   const userIdInputRef = useRef(null); // Reference for user ID input field
 
   const handleSubmit = async () => {
+    if (!userId) {
+      alert("Please input UserID.");
+      userIdInputRef.current.focus();
+      return;
+    }
+    
     if (!materialBarcode) {
       alert("Please input Material Barcode.");
       materialInputRef.current.focus(); // Set focus back to Material Barcode input field
