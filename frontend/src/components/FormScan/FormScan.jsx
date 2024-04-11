@@ -39,7 +39,7 @@ function FormScan() {
         scanTime: scanTime,
         userId: userId, // Include user ID in the data
       };
-      await axios.post("http://localhost:3000/Saved", data);
+      await axios.post(`${API_URL}/Saved`, data);
       console.log("Data sent successfully!");
       // Clear input fields
       setMaterialBarcode("");
