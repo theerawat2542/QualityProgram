@@ -5,6 +5,7 @@ import OilBarcode from "../ChargeR600/Oil_Barcode";
 import CompBarcode from "../Compressor/Compressor_Barcode";
 import CoolingBarcode from "../CoolingTest/Cooling_Barcode";
 import FinalBarcode from "../Final/Final_Barcode";
+import axios from 'axios';
 
 const ArrowRight = () => {
   return (
@@ -97,19 +98,23 @@ const ButtonRowWithArrows = ({ barcode }) => {
   const [showCoolingBarcode, setShowCoolingBarcode] = useState(false);
   const [showFinalBarcode, setShowFinalBarcode] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${API_URL}/station?barcode=${barcode}`); // Set default value '0' if barcode is null
-        const jsonData = await response.json();
-        setData(jsonData);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/station`, {
+        params: {
+          barcode: barcode || '0', // Set default value '0' if barcode is null
+        }
+      });
+      setData(response.data);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
-    fetchData();
-  }, [barcode]);
+  fetchData();
+}, [barcode]);
+
 
   const OilButtonClick = () => {
     if (data && data.station78Data && data.station78Data.length > 0) {
