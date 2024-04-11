@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
     try {
       connection = await connect78Database()
       mes_connection = await connectMes9771Database()
-      const query1 = `SELECT model, barcode, StartTime, TestResult, Remark FROM cooling_test WHERE StartTime >= '${startDate}' AND StartTime <= DATE_ADD('${endDate}', INTERVAL 1 DAY)`;
+      const query1 = `SELECT model, barcode, StartTime, TestResult, Remark FROM cooling_test WHERE StartTime >= '${startDate}' AND StartTime <= DATE_ADD('${endDate}', INTERVAL 1 DAY) order by StartTime desc`;
       const [results, fields] = await connection.query(query1);
       const barcode_list = results.map(({barcode}) => `'${barcode}'`)
       const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`

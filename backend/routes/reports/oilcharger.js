@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
   try {
     connection = await connect78Database();
     mes_connection = await connectMes9771Database();
-    const query1 = `SELECT model, barcode, datetime, program, r600_setpoint, r600_actum, status, alarm FROM oilcharger WHERE datetime >= '${startDate}' AND datetime <= DATE_ADD('${endDate}', INTERVAL 1 DAY) and barcode <> ''`;
+    const query1 = `SELECT model, barcode, datetime, program, r600_setpoint, r600_actum, status, alarm FROM oilcharger WHERE datetime >= '${startDate}' AND datetime <= DATE_ADD('${endDate}', INTERVAL 1 DAY) and barcode <> '' order by datetime desc`;
     const [results, fields] = await connection.query(query1);
     const barcode_list = results.map(({ barcode }) => `'${barcode}'`);
     const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`;

@@ -3,6 +3,7 @@ import axios from "axios";
 import "./FormScan.css"; // Import CSS file for styling
 import History from "../History/History";
 import Navbar from "../Navbar/Navbar";
+import { API_URL } from '../../lib/config';
 
 function FormScan() {
   const [materialBarcode, setMaterialBarcode] = useState("");
