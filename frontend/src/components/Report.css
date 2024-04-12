@@ -72,4 +72,8 @@
   .ok {
     color: green;
   }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
   

@@ -148,7 +148,13 @@ function Cooling() {
         );
       }
 
-      return matchesLine && matchesModel && matchesBarcode && matchesOrderNo && matchesStatus;
+      return (
+        matchesLine &&
+        matchesModel &&
+        matchesBarcode &&
+        matchesOrderNo &&
+        matchesStatus
+      );
     });
 
     // Apply pagination or show all records if row is set to -1 (All)
@@ -305,8 +311,15 @@ function Cooling() {
               <u>{okCount}</u>
             </div>
           </div>
-          <div className="table-responsive">
-            <table className="table table-striped table-hover">
+
+          <div
+            className="table-responsive"
+            style={{ overflowX: "auto", maxWidth: "100%" }}
+          >
+            <table
+              className="table table-striped table-hover"
+              style={{ minWidth: "2200px" }}
+            >
               <thead className="thead-dark">
                 <tr>
                   <th>
@@ -369,18 +382,32 @@ function Cooling() {
                       }}
                     />
                   </th>
-                  <th><center>Date/Time</center></th>
-                  <th onChange={(e) => {
-                        setStatusFilter(e.target.value);
-                        setCurrentPage(1); // Reset currentPage to 1
-                      }}>
+                  <th>
+                    <center>Date/Time</center>
+                  </th>
+                  <th
+                    onChange={(e) => {
+                      setStatusFilter(e.target.value);
+                      setCurrentPage(1); // Reset currentPage to 1
+                    }}
+                  >
                     <center>Status</center>
                   </th>
-                  <th><center>WorkStation No.</center></th>
-                  <th><center>Line No.</center></th>
-                  <th><center>Post No.</center></th>
-                  <th><center>Test No.</center></th>
-                  <th><center>Tested Time</center></th>
+                  <th>
+                    <center>WorkStation No.</center>
+                  </th>
+                  <th>
+                    <center>Line No.</center>
+                  </th>
+                  <th>
+                    <center>Post No.</center>
+                  </th>
+                  <th>
+                    <center>Test No.</center>
+                  </th>
+                  <th>
+                    <center>Tested Time</center>
+                  </th>
                   <th>
                     <center>Remark</center>
                   </th>
@@ -406,17 +433,28 @@ function Cooling() {
                         {d.TestResult}
                       </label>
                     </td>
-                    <td>{d.WorkStationNo}</td>
-                    <td>{d.LineNo}</td>
-                    <td>{d.PostNo}</td>
-                    <td>{d.TestNo}</td>
-                    <td>{d.TestedTime}</td>
+                    <td>
+                      <center>{d.WorkStationNo}</center>
+                    </td>
+                    <td>
+                      <center>{d.LineNo}</center>
+                    </td>
+                    <td>
+                      <center>{d.PostNo}</center>
+                    </td>
+                    <td>
+                      <center>{d.TestNo}</center>
+                    </td>
+                    <td>
+                      <center>{d.TestedTime}</center>
+                    </td>
                     <td>{d.Remark}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
           <center>
             {row !== -1 && (
               <div className="pagination-container">
