@@ -18,6 +18,7 @@ function Cooling() {
   const [barcodeFilter, setBarcodeFilter] = useState("");
   const [orderNoFilter, setOrderNoFilter] = useState("");
   const [lineFilter, setLineFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [startdate, setStartDate] = useState("");
   const [enddate, setEndDate] = useState("");
   const [tempStartDate, setTempStartDate] = useState("");
@@ -26,9 +27,15 @@ function Cooling() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [alertMessage, setAlertMessage] = useState(null);
+  const [ngCount, setNgCount] = useState(0);
+  const [okCount, setOkCount] = useState(0);
 
-  const startDate = isValid(parse(tempStartDate, "yyyy-MM-dd", new Date())) ? tempStartDate : "";
-  const endDate = isValid(parse(tempEndDate, "yyyy-MM-dd", new Date())) ? tempEndDate : "";
+  const startDate = isValid(parse(tempStartDate, "yyyy-MM-dd", new Date()))
+    ? tempStartDate
+    : "";
+  const endDate = isValid(parse(tempEndDate, "yyyy-MM-dd", new Date()))
+    ? tempEndDate
+    : "";
 
   const handleSearch = () => {
     if (tempStartDate && tempEndDate) {
@@ -41,6 +48,17 @@ function Cooling() {
           `${API_URL}/coolingtest?startDate=${tempStartDate}&endDate=${tempEndDate}`
         )
         .then((res) => {
+          let ng = 0;
+          let ok = 0;
+          res.data.forEach((record) => {
+            if (record.TestResult === "NG") {
+              ng++;
+            } else if (record.TestResult === "OK") {
+              ok++;
+            }
+          });
+          setNgCount(ng);
+          setOkCount(ok);
           setData(
             res.data.map((record) => ({
               ...record,
@@ -84,10 +102,19 @@ function Cooling() {
     modelFilter,
     barcodeFilter,
     orderNoFilter,
+    statusFilter,
     currentPage,
     row,
     data,
   ]);
+
+  const filterByStatus = (status) => {
+    if (status === "NG") {
+      setStatusFilter("NG");
+    } else if (status === "OK") {
+      setStatusFilter("OK");
+    }
+  };
 
   const filterRecords = () => {
     let filteredRecords = data.filter((record) => {
@@ -95,7 +122,11 @@ function Cooling() {
       let matchesModel = true;
       let matchesBarcode = true;
       let matchesOrderNo = true;
+      let matchesStatus = true;
 
+      if (statusFilter !== "") {
+        matchesStatus = record.TestResult === statusFilter;
+      }
       if (lineFilter !== "") {
         matchesLine = record.WorkUser_LineName.toLowerCase().includes(
           lineFilter.toLowerCase()
@@ -117,7 +148,7 @@ function Cooling() {
         );
       }
 
-      return matchesLine && matchesModel && matchesBarcode && matchesOrderNo;
+      return matchesLine && matchesModel && matchesBarcode && matchesOrderNo && matchesStatus;
     });
 
     // Apply pagination or show all records if row is set to -1 (All)
@@ -148,6 +179,9 @@ function Cooling() {
     setModelFilter("");
     setOrderNoFilter("");
     setBarcodeFilter("");
+    setStatusFilter("");
+    setNgCount(0);
+    setOkCount(0);
   };
 
   if (loading) {
@@ -171,6 +205,11 @@ function Cooling() {
     { label: "Barcode", key: "barcode" },
     { label: "Date/Time", key: "StartTime" },
     { label: "Status", key: "TestResult" },
+    { label: "WorkStation No.", key: "WorkStationNo" },
+    { label: "Line No.", key: "LineNo" },
+    { label: "Post No.", key: "PostNo" },
+    { label: "Test No.", key: "TestNo" },
+    { label: "Tested Time", key: "TestedTime" },
     { label: "Remark", key: "Remark" },
   ];
 
@@ -232,7 +271,14 @@ function Cooling() {
           </div>
         </div>
         <div className="bg-white shadow border">
-        <CSVLink data={data} headers={headers} filename={`coolingtest_${startDate.replace(/-/g, '')}_${endDate.replace(/-/g, '')}.csv`}>
+          <CSVLink
+            data={data}
+            headers={headers}
+            filename={`coolingtest_${startDate.replace(
+              /-/g,
+              ""
+            )}_${endDate.replace(/-/g, "")}.csv`}
+          >
             <div
               style={{
                 textAlign: "right",
@@ -243,6 +289,22 @@ function Cooling() {
               <FaFileExcel style={{ marginRight: "5px" }} /> Download
             </div>
           </CSVLink>
+          <div className="summary-card">
+            <div
+              className="summary-item ng"
+              onClick={() => filterByStatus("NG")}
+            >
+              <b>Status NG: </b>
+              <u>{ngCount}</u>
+            </div>
+            <div
+              className="summary-item ok"
+              onClick={() => filterByStatus("OK")}
+            >
+              <b>Status OK: </b>
+              <u>{okCount}</u>
+            </div>
+          </div>
           <div className="table-responsive">
             <table className="table table-striped table-hover">
               <thead className="thead-dark">
@@ -307,11 +369,18 @@ function Cooling() {
                       }}
                     />
                   </th>
-
-                  <th>Date/Time</th>
-                  <th>
+                  <th><center>Date/Time</center></th>
+                  <th onChange={(e) => {
+                        setStatusFilter(e.target.value);
+                        setCurrentPage(1); // Reset currentPage to 1
+                      }}>
                     <center>Status</center>
                   </th>
+                  <th><center>WorkStation No.</center></th>
+                  <th><center>Line No.</center></th>
+                  <th><center>Post No.</center></th>
+                  <th><center>Test No.</center></th>
+                  <th><center>Tested Time</center></th>
                   <th>
                     <center>Remark</center>
                   </th>
@@ -337,6 +406,11 @@ function Cooling() {
                         {d.TestResult}
                       </label>
                     </td>
+                    <td>{d.WorkStationNo}</td>
+                    <td>{d.LineNo}</td>
+                    <td>{d.PostNo}</td>
+                    <td>{d.TestNo}</td>
+                    <td>{d.TestedTime}</td>
                     <td>{d.Remark}</td>
                   </tr>
                 ))}

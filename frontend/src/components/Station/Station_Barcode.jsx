@@ -149,7 +149,7 @@ useEffect(() => {
     }
   };
   useEffect(() => {
-    if (!barcode.trim() || barcode.length !== 20) {
+    if (!barcode || !barcode.trim() || barcode.trim().length >= 20) {
       setShowOilBarcode(false);
       setShowCompBarcode(false);
       setShowCoolingBarcode(false);
