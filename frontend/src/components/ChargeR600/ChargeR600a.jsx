@@ -4,7 +4,7 @@ import { CSVLink } from "react-csv";
 import ReactLoading from "react-loading";
 import { FaFileExcel } from "react-icons/fa";
 import Navbar from "../Navbar/Navbar";
-import { format, addDays, parseISO } from "date-fns";
+import { format, parse, isValid } from "date-fns";
 import "../Report.css";
 import { API_URL } from "../../lib/config";
 import { Alert } from "antd";
@@ -26,6 +26,10 @@ function Charge() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [alertMessage, setAlertMessage] = useState(null);
+
+  const startDate = isValid(parse(tempStartDate, "yyyy-MM-dd", new Date())) ? tempStartDate : "";
+  const endDate = isValid(parse(tempEndDate, "yyyy-MM-dd", new Date())) ? tempEndDate : "";
+
 
   const handleSearch = () => {
     if (tempStartDate && tempEndDate) {
@@ -232,7 +236,7 @@ function Charge() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink data={data} headers={headers} filename={`oilcharger_${tempStartDate}_${tempEndDate}.csv`}>
+          <CSVLink data={data} headers={headers} filename={`oilcharger_${startDate.replace(/-/g, '')}_${endDate.replace(/-/g, '')}.csv`}>
             <div
               style={{
                 textAlign: "right",
