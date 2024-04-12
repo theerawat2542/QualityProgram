@@ -232,7 +232,7 @@ function Charge() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink data={data} headers={headers} filename={"oilcharger.csv"}>
+        <CSVLink data={data} headers={headers} filename={`safety_${tempStartDate}_${tempEndDate}.csv`}>
             <div
               style={{
                 textAlign: "right",

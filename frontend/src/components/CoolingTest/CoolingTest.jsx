@@ -229,7 +229,7 @@ function Cooling() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink data={data} headers={headers} filename={"coolingtest.csv"}>
+        <CSVLink data={data} headers={headers} filename={`coolingtest_${tempStartDate}_${tempEndDate}.csv`}>
             <div
               style={{
                 textAlign: "right",

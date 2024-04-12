@@ -244,7 +244,7 @@ function Compressor() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink data={data} headers={headers} filename={"compressor.csv"}>
+        <CSVLink data={data} headers={headers} filename={`compressor_${tempStartDate}_${tempEndDate}.csv`}>
             <div
               style={{
                 textAlign: "right",
