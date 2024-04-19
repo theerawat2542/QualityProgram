@@ -79,9 +79,39 @@ app.post("/Saved", (req, res) => {
   });
 });
 // ------------------------------------------------------------------------
+app.post("/SavedFinal", (req, res) => {
+  const { barcode, scantime, station_scan } = req.body;
+  const sql =
+    "INSERT INTO custom_final_scan (barcode, scantime, station_scan) VALUES (?, ?, ?)";
+  const values = [barcode, scantime, station_scan];
+  db1Pool.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error saving data to database:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    console.log("Data saved to compressor table:", result);
+    res.status(200).send("Data saved successfully");
+  });
+});
+// ------------------------------------------------------------------------
 app.get("/History", (req, res) => {
   db1Pool.query(
     "SELECT material_barcode, compressor_barcode, scan_time, user_id FROM compressor WHERE DATE(scan_time) = CURDATE() ORDER BY ID DESC;",
+    (error, results) => {
+      if (error) {
+        console.error("Error executing SQL query:", error);
+        res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+// ------------------------------------------------------------------------
+app.get("/HistoryFinal", (req, res) => {
+  db1Pool.query(
+    "SELECT barcode, scantime, station_scan FROM custom_final_scan WHERE DATE(scantime) = CURDATE() ORDER BY ID DESC;",
     (error, results) => {
       if (error) {
         console.error("Error executing SQL query:", error);

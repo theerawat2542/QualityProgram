@@ -55,6 +55,10 @@ function FormScan() {
 
   const handleMaterialBarcodeKeyPress = (e) => {
     if (e.key === "Enter") {
+      if (materialBarcode.length !== 20) {
+        alert("Barcode wrong!");
+        return; // Prevent submission
+      }
       // Move focus to the compressor barcode field
       compressorInputRef.current.focus();
     }
@@ -62,6 +66,10 @@ function FormScan() {
 
   const handleCompressorBarcodeKeyPress = (e) => {
     if (e.key === "Enter") {
+      if (compressorBarcode.length !== 20) {
+        alert("Barcode wrong!");
+        return; // Prevent submission
+      }
       // Automatically submit the form
       handleSubmit();
     }
@@ -87,8 +95,9 @@ function FormScan() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar />   
       <div className="user-id-box">
+      <b>Work ID: </b>
         <input
           ref={userIdInputRef}
           type="text"

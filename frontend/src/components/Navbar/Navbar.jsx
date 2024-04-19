@@ -11,7 +11,8 @@ function Navbar() {
       </div>
       <ul className="navbar-links">
         <li><a href="/"><b>Scan Compressor </b></a><label style={{ color: 'white', fontSize: '20px' }}> |</label></li>
-        <li><a href="/station"><b>Barcode Station </b></a><label style={{ color: 'white', fontSize: '20px' }}> |</label></li>
+        <li><a href="/scan-final"><b>Scan Final </b></a><label style={{ color: 'white', fontSize: '20px' }}> |</label></li>
+        <li><a href="/station"><b>Station Scan </b></a><label style={{ color: 'white', fontSize: '20px' }}> |</label></li>
         <li className="reports-dropdown">
           <a><b>Reports </b></a><label style={{ color: 'white', fontSize: '20px' }}> ↴</label>
           <div className="reports-dropdown-content">

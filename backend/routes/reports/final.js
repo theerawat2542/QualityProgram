@@ -1,43 +1,54 @@
 const express = require("express");
-const { connectMes9771Database } = require("../../helper/db-util");
+const { connect78Database, connectMes9771Database } = require("../../helper/db-util");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  let mes_connection;
-  const { startDate, endDate } = req.query;
-  try {
-    mes_connection = await connectMes9771Database();
-    const query = `
-      SELECT
-      x.Create_Date AS "ScanTime",
-      CASE
-        WHEN x.Quality_State = 1 THEN 'QC-OK'
-        WHEN x.Quality_State = 0 THEN 'QC-NG'
-        ELSE x.Quality_State
-      END AS "QcState",
-      x.Order_Code AS "Order",
-      b.WorkUser_RightMostItemName as "Model",
-      x.WorkUser_BarCode AS "Barcode",
-      x.Production_Line_Code AS "PdCode"
-      FROM bns_pm_prodprocess x
-      LEFT JOIN pm_work_cells_t y ON x.Work_Cell_Code = y.Work_Cell_Code
-      LEFT JOIN base_user_extend z ON x.ScanUserCode = z.UserCode
-      LEFT JOIN bns_pm_operation b ON x.WorkUser_BarCode = b.WorkUser_BarCode
-      WHERE x.Create_Date >= '${startDate}' AND x.Create_Date <= DATE_ADD('${endDate}', INTERVAL 1 DAY) AND x.Work_Cell_Code IN ('RB0019')
-      ORDER BY x.Create_Date DESC;
-    `;
-    const [result, field] = await mes_connection.query(query);
-    // console.log(result)
-    // console.log(field)
-    res.json(result);
-  } catch (error) {
-    console.error("Error executing query:", error);
-    res.status(500).json({ message: error });
-  } finally {
-    if (mes_connection) {
-      mes_connection.destroy();
+    let connection;
+    let mes_connection
+    const { startDate, endDate } = req.query;
+    try {
+      connection = await connect78Database()
+      mes_connection = await connectMes9771Database()
+      const query1 = `SELECT barcode, scantime, station_scan FROM custom_final_scan WHERE scantime >= '${startDate}' AND scantime <= DATE_ADD('${endDate}', INTERVAL 1 DAY) order by scantime desc`;
+      const [results, fields] = await connection.query(query1);
+      // console.log(results)
+      const barcode_list = results.map(({barcode}) => `'${barcode}'`)
+      const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`
+      const [mes_results, mes_fields] = await mes_connection.query(query2)
+      const query3 = "SELECT model, barcode FROM oilcharger";
+      const [results2, fields2] = await connection.query(query3)
+      // console.log(results2)
+      const joinedData = joinData_final(results, mes_results, results2)
+      res.json(joinedData)
+    } catch (error) {
+      res.status(500).json({message: error})
+    } finally {
+      connection.destroy()
     }
+  })
+
+  function joinData_final(data1, data2, data3) {
+    const joinedData = [];
+    const map1 = new Map(data1.map((entry) => [entry.barcode, entry]));
+    const map3 = new Map(data3.map((entry) => [entry.barcode, entry]));
+    data2.forEach((entry2) => {
+      const matchingEntry1 = map1.get(entry2.WorkUser_BarCode);
+      const matchingEntry3 = map3.get(entry2.WorkUser_BarCode);
+      if (matchingEntry1 && matchingEntry3) {
+        const joinedEntry = {
+          ...entry2,
+          ...matchingEntry1,
+          ...matchingEntry3,
+        };
+        joinedData.push(joinedEntry);
+      }
+    });
+    
+    // Sort joined data by scantime
+    joinedData.sort((a, b) => new Date(b.scantime) - new Date(a.scantime));
+    
+    return joinedData;
   }
-});
+
 
 module.exports = router;

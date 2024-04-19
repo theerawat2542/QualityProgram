@@ -34,18 +34,20 @@ const CurrentStation = ({
   oilChargerStatus,
   scanCompressorStatus,
   coolingStatus,
-  qcState,
+  scanFinalStatus,
+  // setStation
 }) => {
   if (oilChargerStatus === "OK") {
     if (scanCompressorStatus !== "0") {
       if (coolingStatus === "OK") {
-        if (qcState === "QC-OK") {
+        if (scanFinalStatus !== "0") {
           return (
+            // setStation("Complete")
             <h4>
               Current Station: <b>Complete</b>
             </h4>
           );
-        } else if (qcState === "QC-NG" || qcState === "") {
+        } else if (scanFinalStatus === "0") {
           return (
             <h4>
               Current Station: <b>Final Scan</b>
@@ -97,6 +99,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
   const [showCompBarcode, setShowCompBarcode] = useState(false);
   const [showCoolingBarcode, setShowCoolingBarcode] = useState(false);
   const [showFinalBarcode, setShowFinalBarcode] = useState(false);
+  // const [station, setStation] = useState("No station")
 
 useEffect(() => {
   const fetchData = async () => {
@@ -141,7 +144,7 @@ useEffect(() => {
     }
   };
   const FinalButtonClick = () => {
-    if (data && data.stationMESData && data.stationMESData.length > 0) {
+    if (data && data.station78Data && data.station78Data.length > 0) {
       setShowFinalBarcode(true);
       setShowCoolingBarcode(false);
       setShowCompBarcode(false);
@@ -154,6 +157,7 @@ useEffect(() => {
       setShowCompBarcode(false);
       setShowCoolingBarcode(false);
       setShowFinalBarcode(false);
+      // setStation("No Station")
     }
   }, [barcode]);
 
@@ -164,8 +168,10 @@ useEffect(() => {
           oilChargerStatus={data?.station78Data?.[0]?.OilChargerStatus}
           scanCompressorStatus={data?.station78Data?.[0]?.ScanCompressorStatus}
           coolingStatus={data?.station78Data?.[0]?.CoolingStatus}
-          qcState={data?.stationMESData?.[0]?.QcState}
+          scanFinalStatus={data?.station78Data?.[0]?.ScanFinalStatus}
+          // setStation={setStation}
         />
+        {/* <h4>Current Station: <b>{station}</b></h4> */}
       </div>
       <br />
       <div className="centered-container">
@@ -182,7 +188,7 @@ useEffect(() => {
                 )}`}
                 onClick={OilButtonClick}
               >
-                Charging R600
+                (1) Charging R600
               </button>
             ) : (
               <button
@@ -192,12 +198,12 @@ useEffect(() => {
                 )}`}
                 onClick={OilButtonClick}
               >
-                Charging R600
+                (1) Charging R600
               </button>
             )
           ) : (
             <button className="large-gray-button" disabled>
-              Charging R600
+              (1) Charging R600
             </button>
           )}
 
@@ -213,11 +219,11 @@ useEffect(() => {
               )}`}
               onClick={CompButtonClick}
             >
-              Scan Compressor
+              (2) Scan Compressor
             </button>
           ) : (
             <button className="large-gray-button" disabled>
-              Scan Compressor
+              (2) Scan Compressor
             </button>
           )}
           <ArrowRight />
@@ -233,7 +239,7 @@ useEffect(() => {
                 )}`}
                 onClick={CoolingButtonClick}
               >
-                Cooling Test
+                (3) Cooling Test
               </button>
             ) : (
               <button
@@ -243,12 +249,12 @@ useEffect(() => {
                 )}`}
                 onClick={CoolingButtonClick}
               >
-                Cooling Test
+                (3) Cooling Test
               </button>
             )
           ) : (
             <button className="large-gray-button" disabled>
-              Cooling Test
+              (3) Cooling Test
             </button>
           )}
 
@@ -272,33 +278,21 @@ useEffect(() => {
           )}
           <ArrowRight /> */}
           {data &&
-          data.stationMESData &&
-          data.stationMESData.length > 0 &&
-          data.stationMESData[0].QcState !== "0" ? (
-            data.stationMESData[0].QcState === "QC-NG" ? (
-              <button
-                className="large-yellow-button"
-                title={`Scan Time: ${formatDateTime(
-                  data.stationMESData[0].ScanTime
-                )}`}
-                onClick={FinalButtonClick}
-              >
-                Final scan
-              </button>
-            ) : (
-              <button
-                className="large-green-button"
-                title={`Scan Time: ${formatDateTime(
-                  data.stationMESData[0].ScanTime
-                )}`}
-                onClick={FinalButtonClick}
-              >
-                Final scan
-              </button>
-            )
+          data.station78Data &&
+          data.station78Data.length > 0 &&
+          data.station78Data[0].ScanFinalStatus !== "0" ? (
+            <button
+              className="large-green-button"
+              title={`Scan Final Time: ${formatDateTime(
+                data.station78Data[0].ScanFinalTime
+              )}`}
+              onClick={FinalButtonClick}
+            >
+              (4) Final
+            </button>
           ) : (
             <button className="large-gray-button" disabled>
-              Final scan
+              (4) Final
             </button>
           )}
         </div>

@@ -31,39 +31,33 @@ const FinalBarcode = ({ barcode }) => {
   const columns = [
     {
         title: "Barcode",
-        dataIndex: "Barcode",
-        key: "Barcode",
+        dataIndex: "barcode",
+        key: "barcode",
         ellipsis: true
     },
     {
         title: "Production Line",
-        dataIndex: "PdCode",
-        key: "PdCode",
+        dataIndex: "WorkUser_LineName",
+        key: "WorkUser_LineName",
         ellipsis: true
     },
     {
       title: "Date/Time",
-      dataIndex: "ScanTime",
-      key: "ScanTime",
+      dataIndex: "scantime",
+      key: "scantime",
       render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss'),
       ellipsis: true
     },
     {
         title: "Model",
-        dataIndex: "Model",
-        key: "Model",
+        dataIndex: "model",
+        key: "model",
         ellipsis: true
     },
     {
         title: "Order No.",
-        dataIndex: "Order",
-        key: "Order",
-        ellipsis: true
-    },
-    {
-        title: "Status",
-        dataIndex: "QcState",
-        key: "QcState",
+        dataIndex: "WorkUser_MOrderCode",
+        key: "WorkUser_MOrderCode",
         ellipsis: true
     }
   ];

@@ -44,8 +44,8 @@ function Final() {
           setData(
             res.data.map((record) => ({
               ...record,
-              ScanTime: format(
-                new Date(record.ScanTime),
+              scantime: format(
+                new Date(record.scantime),
                 "yyyy-MM-dd HH:mm:ss"
               ),
             }))
@@ -98,22 +98,22 @@ function Final() {
       let matchesOrderNo = true;
 
       if (lineFilter !== "") {
-        matchesLine = record.PdCode.toLowerCase().includes(
+        matchesLine = record.WorkUser_LineName.toLowerCase().includes(
           lineFilter.toLowerCase()
         );
       }
       if (modelFilter !== "") {
-        matchesModel = record.Model.toLowerCase().includes(
+        matchesModel = record.model.toLowerCase().includes(
           modelFilter.toLowerCase()
         );
       }
       if (barcodeFilter !== "") {
-        matchesBarcode = record.Barcode.toLowerCase().includes(
+        matchesBarcode = record.barcode.toLowerCase().includes(
           barcodeFilter.toLowerCase()
         );
       }
       if (orderNoFilter !== "") {
-        matchesOrderNo = record.Order.toLowerCase().includes(
+        matchesOrderNo = record.WorkUser_MOrderCode.toLowerCase().includes(
           orderNoFilter.toLowerCase()
         );
       }
@@ -165,13 +165,42 @@ function Final() {
     return <div className="loading-container">Error: {error}</div>;
   }
 
+  function highlightLetters(str) {
+    const highlightedLetters = [];
+    for (let i = 0; i < str.length; i++) {
+      if ((i === 12 || i === 28 || i === 46) && str[i] === 'O') {
+        highlightedLetters.push(
+          <span key={i} style={{ backgroundColor: '#32FF42', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i]}</b></span>
+        );
+        highlightedLetters.push(
+          <span key={i + 1} style={{ backgroundColor: '#32FF42', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i + 1]}</b></span>
+        );
+        i++;
+      } else if ((i === 12 || i === 28 || i === 46) && str[i] === 'N') {
+        highlightedLetters.push(
+          <span key={i} style={{ backgroundColor: '#FC7D79', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i]}</b></span>
+        );
+        highlightedLetters.push(
+          <span key={i + 1} style={{ backgroundColor: '#FC7D79', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i + 1]}</b></span>
+        );
+        i++;
+      } else {
+        highlightedLetters.push(
+          <span key={i}>{str[i]}</span>
+        );
+      }
+    }
+    return highlightedLetters;
+  }
+  
+
   const headers = [
-    { label: "Production Line", key: "PdCode" },
-    { label: "Model", key: "Model" },
-    { label: "Order No.", key: "Order" },
-    { label: "Barcode", key: "Barcode" },
-    { label: "Date/Time", key: "ScanTime" },
-    { label: "Status", key: "QcState" },
+    { label: "Production Line", key: "WorkUser_LineName" },
+    { label: "Model", key: "model" },
+    { label: "Order No.", key: "WorkUser_MOrderCode" },
+    { label: "Barcode", key: "barcode" },
+    { label: "Date/Time", key: "scantime" },
+    { label: "Station Scan", key: "station_scan" },
   ];
 
   return (
@@ -243,8 +272,14 @@ function Final() {
               <FaFileExcel style={{ marginRight: "5px" }} /> Download
             </div>
           </CSVLink>
-          <div className="table-responsive">
-            <table className="table table-striped table-hover">
+          <div
+            className="table-responsive"
+            style={{ overflowX: "auto", maxWidth: "100%" }}
+          >
+            <table
+              className="table table-striped table-hover"
+              style={{ minWidth: "1350px" }}
+            >
               <thead className="thead-dark">
                 <tr>
                   <th>
@@ -310,29 +345,20 @@ function Final() {
 
                   <th>Date/Time</th>
                   <th>
-                    <center>Status</center>
+                    <center>Station Scan</center>
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {records.map((d, i) => (
                   <tr key={i}>
-                    <td>{d.PdCode}</td>
-                    <td>{d.Model}</td>
-                    <td>{d.Order}</td>
-                    <td>{d.Barcode}</td>
-                    <td>{d.ScanTime}</td>
+                    <td>{d.WorkUser_LineName}</td>
+                    <td>{d.model}</td>
+                    <td>{d.WorkUser_MOrderCode}</td>
+                    <td>{d.barcode}</td>
+                    <td>{d.scantime}</td>
                     <td>
-                      <label
-                        style={{
-                          backgroundColor:
-                            d.QcState === "QC-OK" ? "#32FF42" : "#FC7D79",
-                          borderRadius: 5,
-                          padding: "2px 4px 2px 4px",
-                        }}
-                      >
-                        {d.QcState}
-                      </label>
+                    {highlightLetters(d.station_scan)}
                     </td>
                   </tr>
                 ))}

@@ -5,7 +5,7 @@ import { Table } from "antd";
 import { format } from 'date-fns';
 import { API_URL } from '../../lib/config';
 
-function History() {
+function HistoryFinal() {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ function History() {
 
   const fetchData = () => {
     axios
-      .get(`${API_URL}/History`)
+      .get(`${API_URL}/HistoryFinal`)
       .then((res) => {
         setData(res.data);
         setRecords(res.data.slice(0));
@@ -33,28 +33,22 @@ function History() {
 
   const columns = [
     {
-      title: "Material Barcode",
-      dataIndex: "material_barcode",
-      key: "material_barcode",
-      ellipsis: true
-    },
-    {
-      title: "Compressor Barcode",
-      dataIndex: "compressor_barcode",
-      key: "compressor_barcode",
+      title: "Barcode",
+      dataIndex: "barcode",
+      key: "barcode",
       ellipsis: true
     },
     {
       title: "Date/Time",
-      dataIndex: "scan_time",
-      key: "scan_time",
+      dataIndex: "scantime",
+      key: "scantime",
       render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss'),
       ellipsis: true
     },
     {
-      title: "Scan By",
-      dataIndex: "user_id",
-      key: "user_id",
+      title: "Station Scan",
+      dataIndex: "station_scan",
+      key: "station_scan",
       ellipsis: true
     }
   ];
@@ -77,4 +71,4 @@ function History() {
   );
 }
 
-export default History;
+export default HistoryFinal;

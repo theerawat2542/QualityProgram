@@ -7,6 +7,7 @@ import Compressor from './components/Compressor/Compressor'
 import FormScan from './components/FormScan/FormScan'
 import Final from './components/Final/Final'
 import Station from './components/Station/Station'
+import FormScanFinal from './components/FormScan/FormScanFinal'
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,11 @@ const router = createBrowserRouter([
     element: <FormScan />
   },
   {
-    path: 'charge-r600a-report',
+    path: '/scan-final',
+    element: <FormScanFinal />
+  },
+  {
+    path: '/charge-r600a-report',
     element: <Charge />
   },
   {
