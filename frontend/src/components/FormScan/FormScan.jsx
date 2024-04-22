@@ -76,6 +76,17 @@ function FormScan() {
         alert("Barcode wrong!");
         return; // Prevent submission
       }
+
+      if (!selectedOption) {
+        alert("Please select Production Line.");
+        return;
+      }
+
+      if (compressorBarcode.charAt(12) !== selectedOption) {
+        alert("Barcode does not correspond to the selected Production Line.");
+        compressorInputRef.current.focus(); // Set focus back to Compressor Barcode input field
+        return; // Exit the function early
+      }
       // Automatically submit the form
       handleSubmit();
     }
@@ -87,6 +98,7 @@ function FormScan() {
       materialInputRef.current.focus();
     }
   };
+
 
   // Function to format scan time as 'YYYY-MM-DD HH:mm:ss'
   function formatScanTime(date) {
