@@ -61,6 +61,10 @@ function FormScan() {
 
   const handleMaterialBarcodeKeyPress = (e) => {
     if (e.key === "Enter") {
+      if (materialBarcode.length === 0) {
+        alert("Please input Material Barcode!");
+        return; // Prevent submission
+      }else 
       if (materialBarcode.length !== 20) {
         alert("Barcode wrong!");
         return; // Prevent submission
@@ -72,6 +76,10 @@ function FormScan() {
 
   const handleCompressorBarcodeKeyPress = (e) => {
     if (e.key === "Enter") {
+      if (compressorBarcode.length === 0) {
+        alert("Please input Compressor Barcode!");
+        return; // Prevent submission
+      }else 
       if (compressorBarcode.length !== 20) {
         alert("Barcode wrong!");
         return; // Prevent submission
@@ -84,6 +92,7 @@ function FormScan() {
 
       if (compressorBarcode.charAt(12) !== selectedOption) {
         alert("Barcode does not correspond to the selected Production Line.");
+        setCompressorBarcode("")
         compressorInputRef.current.focus(); // Set focus back to Compressor Barcode input field
         return; // Exit the function early
       }
