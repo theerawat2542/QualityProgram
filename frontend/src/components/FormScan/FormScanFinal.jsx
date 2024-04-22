@@ -7,11 +7,11 @@ import HistoryFinal from "../History/็HistoryFinal";
 
 function FormScanFinal() {
   const [barcode, setBarcode] = useState("");
-  // const [station, setStation] = useState("");
   const [scantime] = useState(formatScanTime(new Date())); // Scan time cannot be edited
   const [status_oil, setStatusOil] = useState("--");
   const [status_comp, setStatusComp] = useState("--");
   const [status_cool, setStatusCool] = useState("--");
+  const [loading, setLoading] = useState(false); // Loading state
   const barcodeInputRef = useRef(null); // Reference for material barcode input field
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -21,27 +21,21 @@ function FormScanFinal() {
 
   const fetchDataFromStation = async (barcodeValue) => {
     try {
+      setLoading(true); // Set loading to true when fetching data
       const response = await axios.get(`${API_URL}/station`, {
         params: { barcode: barcodeValue },
       });
       const stationData = response.data.station78Data[0];
       // Extract data and set status variables
       setStatusOil(stationData.OilChargerStatus === "OK" ? "OK" : "NG");
-      // console.log("Status Oil:", stationData.OilChargerStatus === "OK" ? "OK" : "NG");
       setStatusComp(stationData.ScanCompressorStatus !== "0" ? "OK" : "NG");
-      // console.log("Status Compressor:", stationData.ScanCompressorStatus !== "0" ? "OK" : "NG");
       setStatusCool(stationData.CoolingStatus === "OK" ? "OK" : "NG");
-      // console.log("Status Cooling:", stationData.CoolingStatus === "OK" ? "OK" : "NG");
     } catch (error) {
       console.error("Error fetching data from station:", error);
+    } finally {
+      setLoading(false); // Set loading back to false when data fetching is complete
     }
   };
-
-  useEffect(() => {
-    if (barcode) {
-      fetchDataFromStation(barcode);
-    }
-  }, [barcode]); // Run the effect whenever barcode changes
 
   const handleSubmit = async () => {
     if (!selectedOption) {
@@ -82,10 +76,14 @@ function FormScanFinal() {
 
   const handleBarcodeKeyPress = (e) => {
     if (e.key === "Enter") {
-      if (barcode.length !== 20) {
-        alert("Please input Barcode.");
+      if (barcode.length === 0) {
+        alert("Please input Barcode!");
+        return; // Prevent submission
+      } else if (barcode.length < 20) {
+        alert("Invalid Barcode!");
         return; // Prevent submission
       }
+      
       // Automatically submit the form
       handleSubmit();
       barcodeInputRef.current.focus();
@@ -93,11 +91,7 @@ function FormScanFinal() {
   };
 
   useEffect(() => {
-    if (barcode.length !== 20) {
-      setStatusOil("--");
-      setStatusComp("--");
-      setStatusCool("--");
-    } else {
+    if (barcode) {
       fetchDataFromStation(barcode);
     }
   }, [barcode]); // Run the effect whenever barcode changes
@@ -141,29 +135,19 @@ function FormScanFinal() {
             autoFocus // Automatically focus on this field when the component mounts
             onKeyPress={handleBarcodeKeyPress} // Listen for Enter key press
           />
-          {/* <input
-            type="hidden"
-            value={scantime}
-            disabled // Disable editing
-          /> */}
-          {/* <input
-            type="hidden"
-            value={`OilCharger: ${status_oil}, Compressor: ${status_comp}, Cooling Test: ${status_cool}`}
-            disabled // Disable editing
-          /> */}
 
           <br />
           <br />
           {/* Display status */}
-          <div>
-            <b>Status OilCharger :</b> {status_oil}
+          {/* <div>
+            <b>Status OilCharger :</b> {loading ? "--" : status_oil}
           </div>
           <div>
-            <b>Status Compressor :</b> {status_comp}
+            <b>Status Compressor :</b> {loading ? "--" : status_comp}
           </div>
           <div>
-            <b>Status Cooling Test :</b> {status_cool}
-          </div>
+            <b>Status Cooling Test :</b> {loading ? "--" : status_cool}
+          </div> */}
           {/* <button className="btn btn-success" onClick={handleSubmit}>
             Submit
           </button> */}
