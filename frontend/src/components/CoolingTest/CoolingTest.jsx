@@ -318,7 +318,7 @@ function Cooling() {
           >
             <table
               className="table table-striped table-hover"
-              style={{ minWidth: "2200px" }}
+              style={{ minWidth: "2000px" }}
             >
               <thead className="thead-dark">
                 <tr>
@@ -419,9 +419,9 @@ function Cooling() {
                     <td>{d.WorkUser_LineName}</td>
                     <td>{d.model}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
-                    <td>{d.barcode}</td>
-                    <td>{d.StartTime}</td>
-                    <td>
+                    <td><center>{d.barcode}</center></td>
+                    <td><center>{d.StartTime}</center></td>
+                    <td><center>
                       <label
                         style={{
                           backgroundColor:
@@ -431,7 +431,7 @@ function Cooling() {
                         }}
                       >
                         {d.TestResult}
-                      </label>
+                      </label></center>
                     </td>
                     <td>
                       <center>{d.WorkStationNo}</center>

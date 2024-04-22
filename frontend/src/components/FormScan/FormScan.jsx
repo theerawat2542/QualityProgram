@@ -13,8 +13,14 @@ function FormScan() {
   const materialInputRef = useRef(null); // Reference for material barcode input field
   const compressorInputRef = useRef(null);
   const userIdInputRef = useRef(null); // Reference for user ID input field
+  const [selectedOption, setSelectedOption] = useState("");
 
   const handleSubmit = async () => {
+    if (!selectedOption) {
+      alert("Please select Production Line.");
+      return;
+    }
+
     if (!userId) {
       alert("Please input UserID.");
       userIdInputRef.current.focus();
@@ -95,7 +101,18 @@ function FormScan() {
 
   return (
     <div>
-      <Navbar />   
+      <Navbar />
+      <div className="select-box">
+      <b>Production Line: </b>
+        <select
+          value={selectedOption}
+          onChange={(e) => setSelectedOption(e.target.value)}
+        >
+          <option value="">--</option>
+          <option value="A">RA</option>
+          <option value="B">RB</option>
+        </select>
+      </div>   
       <div className="user-id-box">
       <b>Work ID: </b>
         <input

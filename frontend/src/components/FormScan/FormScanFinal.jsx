@@ -13,6 +13,7 @@ function FormScanFinal() {
   const [status_comp, setStatusComp] = useState("--");
   const [status_cool, setStatusCool] = useState("--");
   const barcodeInputRef = useRef(null); // Reference for material barcode input field
+  const [selectedOption, setSelectedOption] = useState("");
 
   useEffect(() => {
     fetchDataFromStation();
@@ -43,9 +44,21 @@ function FormScanFinal() {
   }, [barcode]); // Run the effect whenever barcode changes
 
   const handleSubmit = async () => {
+    if (!selectedOption) {
+      alert("Please select Production Line.");
+      return;
+    }
+
     if (!barcode) {
       alert("Please input Barcode.");
       barcodeInputRef.current.focus(); // Set focus back to Compressor Barcode input field
+      return; // Exit the function early
+    }
+
+    if (barcode.charAt(12) !== selectedOption) {
+      alert("Barcode does not correspond to the selected Production Line.");
+      setBarcode(""); // Clear incorrect barcode
+      barcodeInputRef.current.focus(); // Set focus back to Barcode input field
       return; // Exit the function early
     }
 
@@ -53,7 +66,7 @@ function FormScanFinal() {
       const data = {
         barcode: barcode,
         scantime: scantime,
-        station_scan: `OilCharger: ${status_oil}, Compressor: ${status_comp}, Cooling Test: ${status_cool}`
+        station_scan: `OilCharger: ${status_oil}, Compressor: ${status_comp}, Cooling Test: ${status_cool}`,
       };
       await axios.post(`${API_URL}/SavedFinal`, data);
       console.log("Data sent successfully!");
@@ -103,6 +116,17 @@ function FormScanFinal() {
   return (
     <div>
       <Navbar />
+      <div className="select-box">
+        <b>Production Line: </b>
+        <select
+          value={selectedOption}
+          onChange={(e) => setSelectedOption(e.target.value)}
+        >
+          <option value="">--</option>
+          <option value="A">RA</option>
+          <option value="B">RB</option>
+        </select>
+      </div>
       <div className="form-container">
         <div className="form-wrapper">
           <h3>
@@ -132,18 +156,17 @@ function FormScanFinal() {
           <br />
           {/* Display status */}
           <div>
-            <b>Status OilCharger:</b> {status_oil}
+            <b>Status OilCharger :</b> {status_oil}
           </div>
           <div>
-            <b>Status Compressor:</b> {status_comp}
+            <b>Status Compressor :</b> {status_comp}
           </div>
           <div>
-            <b>Status Cooling Test:</b> {status_cool}
+            <b>Status Cooling Test :</b> {status_cool}
           </div>
           {/* <button className="btn btn-success" onClick={handleSubmit}>
             Submit
           </button> */}
-          {/* {message && <div className="message">{message}</div>} */}
         </div>
       </div>
       <br />

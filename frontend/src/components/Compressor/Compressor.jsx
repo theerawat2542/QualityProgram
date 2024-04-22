@@ -337,7 +337,7 @@ function Compressor() {
                       }}
                     />
                   </th>
-                  <th>Date/Time</th>
+                  <th><center>Date/Time</center></th>
                 </tr>
               </thead>
               <tbody>
@@ -348,8 +348,9 @@ function Compressor() {
                     <td>{d.WorkUser_MOrderCode}</td>
                     <td>{d.material_barcode}</td>
                     <td>{d.compressor_barcode}</td>
-                    <td>
+                    <td><center>
                       {format(new Date(d.scan_time), "yyyy-MM-dd HH:mm:ss")}
+                    </center>
                     </td>
                   </tr>
                 ))}

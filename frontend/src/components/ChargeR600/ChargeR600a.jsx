@@ -327,11 +327,11 @@ function Charge() {
                     <td>{d.model}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
                     <td>{d.barcode}</td>
-                    <td>{d.datetime}</td> {/* No need to format again */}
-                    <td>{d.program}</td>
-                    <td>{d.r600_setpoint}</td>
-                    <td>{d.r600_actum}</td>
-                    <td>
+                    <td><center>{d.datetime}</center></td> {/* No need to format again */}
+                    <td><center>{d.program}</center></td>
+                    <td><center>{d.r600_setpoint}</center></td>
+                    <td><center>{d.r600_actum}</center></td>
+                    <td><center>
                       <label
                         style={{
                           backgroundColor:
@@ -341,9 +341,9 @@ function Charge() {
                         }}
                       >
                         {d.status}
-                      </label>
+                      </label></center>
                     </td>
-                    <td>{d.alarm}</td>
+                    <td><center>{d.alarm}</center></td>
                   </tr>
                 ))}
               </tbody>

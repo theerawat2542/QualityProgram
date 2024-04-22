@@ -49,5 +49,25 @@
     font-size: 14px;
   }
   
-  
+  /* SelectBox.css */
+
+.select-box {
+  position: absolute;
+  top: 70px;
+  left: 25px;
+}
+
+.select-box select {
+  padding: 6px 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+/* Optional: Style the options */
+.select-box select option {
+  font-size: 15px;
+}
+
   
