@@ -165,33 +165,33 @@ function Final() {
     return <div className="loading-container">Error: {error}</div>;
   }
 
-  function highlightLetters(str) {
-    const highlightedLetters = [];
-    for (let i = 0; i < str.length; i++) {
-      if ((i === 12 || i === 28 || i === 46) && str[i] === 'O') {
-        highlightedLetters.push(
-          <span key={i} style={{ backgroundColor: '#32FF42', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i]}</b></span>
-        );
-        highlightedLetters.push(
-          <span key={i + 1} style={{ backgroundColor: '#32FF42', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i + 1]}</b></span>
-        );
-        i++;
-      } else if ((i === 12 || i === 28 || i === 46) && str[i] === 'N') {
-        highlightedLetters.push(
-          <span key={i} style={{ backgroundColor: '#FC7D79', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i]}</b></span>
-        );
-        highlightedLetters.push(
-          <span key={i + 1} style={{ backgroundColor: '#FC7D79', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i + 1]}</b></span>
-        );
-        i++;
-      } else {
-        highlightedLetters.push(
-          <span key={i}>{str[i]}</span>
-        );
-      }
-    }
-    return highlightedLetters;
-  }
+  // function highlightLetters(str) {
+  //   const highlightedLetters = [];
+  //   for (let i = 0; i < str.length; i++) {
+  //     if ((i === 12 || i === 28 || i === 46) && str[i] === 'O') {
+  //       highlightedLetters.push(
+  //         <span key={i} style={{ backgroundColor: '#32FF42', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i]}</b></span>
+  //       );
+  //       highlightedLetters.push(
+  //         <span key={i + 1} style={{ backgroundColor: '#32FF42', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i + 1]}</b></span>
+  //       );
+  //       i++;
+  //     } else if ((i === 12 || i === 28 || i === 46) && str[i] === 'N') {
+  //       highlightedLetters.push(
+  //         <span key={i} style={{ backgroundColor: '#FC7D79', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i]}</b></span>
+  //       );
+  //       highlightedLetters.push(
+  //         <span key={i + 1} style={{ backgroundColor: '#FC7D79', color: 'black', padding: "2px 0px 2px 2px" }}><b>{str[i + 1]}</b></span>
+  //       );
+  //       i++;
+  //     } else {
+  //       highlightedLetters.push(
+  //         <span key={i}>{str[i]}</span>
+  //       );
+  //     }
+  //   }
+  //   return highlightedLetters;
+  // }
   
 
   const headers = [
@@ -278,7 +278,7 @@ function Final() {
           >
             <table
               className="table table-striped table-hover"
-              style={{ minWidth: "1350px" }}
+              style={{ minWidth: "1300px" }}
             >
               <thead className="thead-dark">
                 <tr>
@@ -358,7 +358,8 @@ function Final() {
                     <td>{d.barcode}</td>
                     <td>{d.scantime}</td>
                     <td>
-                    {highlightLetters(d.station_scan)}
+                    {d.station_scan}
+                    {/* {highlightLetters(d.station_scan)} */}
                     </td>
                   </tr>
                 ))}

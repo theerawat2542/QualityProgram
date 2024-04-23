@@ -90,10 +90,10 @@ function FormScan() {
         return;
       }
 
-      if (compressorBarcode.charAt(12) !== selectedOption) {
+      if (materialBarcode.charAt(12) !== selectedOption) {
         alert("Barcode does not correspond to the selected Production Line.");
-        setCompressorBarcode("")
-        compressorInputRef.current.focus(); // Set focus back to Compressor Barcode input field
+        setMaterialBarcode("")
+        materialInputRef.current.focus(); // Set focus back to Compressor Barcode input field
         return; // Exit the function early
       }
       // Automatically submit the form

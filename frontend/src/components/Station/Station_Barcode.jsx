@@ -5,7 +5,7 @@ import OilBarcode from "../ChargeR600/Oil_Barcode";
 import CompBarcode from "../Compressor/Compressor_Barcode";
 import CoolingBarcode from "../CoolingTest/Cooling_Barcode";
 import FinalBarcode from "../Final/Final_Barcode";
-import axios from 'axios';
+import axios from "axios";
 
 const ArrowRight = () => {
   return (
@@ -35,8 +35,13 @@ const CurrentStation = ({
   scanCompressorStatus,
   coolingStatus,
   scanFinalStatus,
+  barcode,
   // setStation
 }) => {
+  if (barcode === "") {
+    return null;
+  }
+
   if (oilChargerStatus === "OK") {
     if (scanCompressorStatus !== "0") {
       if (coolingStatus === "OK") {
@@ -101,23 +106,22 @@ const ButtonRowWithArrows = ({ barcode }) => {
   const [showFinalBarcode, setShowFinalBarcode] = useState(false);
   // const [station, setStation] = useState("No station")
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/station`, {
-        params: {
-          barcode: barcode || '0', // Set default value '0' if barcode is null
-        }
-      });
-      setData(response.data);
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/station`, {
+          params: {
+            barcode: barcode || "0", // Set default value '0' if barcode is null
+          },
+        });
+        setData(response.data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
 
-  fetchData();
-}, [barcode]);
-
+    fetchData();
+  }, [barcode]);
 
   const OilButtonClick = () => {
     if (data && data.station78Data && data.station78Data.length > 0) {
@@ -169,6 +173,7 @@ useEffect(() => {
           scanCompressorStatus={data?.station78Data?.[0]?.ScanCompressorStatus}
           coolingStatus={data?.station78Data?.[0]?.CoolingStatus}
           scanFinalStatus={data?.station78Data?.[0]?.ScanFinalStatus}
+          barcode={data?.station78Data?.[0]?.barcode}
           // setStation={setStation}
         />
         {/* <h4>Current Station: <b>{station}</b></h4> */}
@@ -179,6 +184,7 @@ useEffect(() => {
           {data &&
           data.station78Data &&
           data.station78Data.length > 0 &&
+          data.station78Data[0].barcode && // Check if barcode exists and has a length greater than 0
           data.station78Data[0].OilChargerStatus !== "0" ? (
             data.station78Data[0].OilChargerStatus === "NG" ? (
               <button
@@ -211,7 +217,14 @@ useEffect(() => {
           {data &&
           data.station78Data &&
           data.station78Data.length > 0 &&
-          data.station78Data[0].ScanCompressorStatus !== "0" ? (
+          data.station78Data[0].barcode.length === 0 ? (
+            <button className="large-gray-button" disabled>
+              (2) Scan Compressor
+            </button>
+          ) : data &&
+            data.station78Data &&
+            data.station78Data.length > 0 &&
+            data.station78Data[0].ScanCompressorStatus !== "0" ? (
             <button
               className="large-green-button"
               title={`Scan Compressor Time: ${formatDateTime(
@@ -226,10 +239,13 @@ useEffect(() => {
               (2) Scan Compressor
             </button>
           )}
+
           <ArrowRight />
           {data &&
           data.station78Data &&
           data.station78Data.length > 0 &&
+          data.station78Data[0].barcode &&
+          data.station78Data[0].barcode.length > 0 &&
           data.station78Data[0].CoolingStatus !== "0" ? (
             data.station78Data[0].CoolingStatus === "NG" ? (
               <button
@@ -280,7 +296,15 @@ useEffect(() => {
           {data &&
           data.station78Data &&
           data.station78Data.length > 0 &&
-          data.station78Data[0].ScanFinalStatus !== "0" ? (
+          data.station78Data[0].barcode &&
+          data.station78Data[0].barcode.length === 0 ? (
+            <button className="large-gray-button" disabled>
+              (4) Final
+            </button>
+          ) : data &&
+            data.station78Data &&
+            data.station78Data.length > 0 &&
+            data.station78Data[0].ScanFinalStatus !== "0" ? (
             <button
               className="large-green-button"
               title={`Scan Final Time: ${formatDateTime(
@@ -296,12 +320,20 @@ useEffect(() => {
             </button>
           )}
         </div>
-      </div> 
+      </div>
       {error && <p>Error: {error}</p>}
-      {showOilBarcode && <OilBarcode barcode={barcode} />}
-      {showCompBarcode && <CompBarcode barcode={barcode} />}
-      {showCoolingBarcode && <CoolingBarcode barcode={barcode} />}
-      {showFinalBarcode && <FinalBarcode barcode={barcode} />}
+      {barcode.length === 20 && showOilBarcode && (
+        <OilBarcode barcode={barcode} />
+      )}
+      {barcode.length === 20 && showCompBarcode && (
+        <CompBarcode barcode={barcode} />
+      )}
+      {barcode.length === 20 && showCoolingBarcode && (
+        <CoolingBarcode barcode={barcode} />
+      )}
+      {barcode.length === 20 && showFinalBarcode && (
+        <FinalBarcode barcode={barcode} />
+      )}
     </div>
   );
 };

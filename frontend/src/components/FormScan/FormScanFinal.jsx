@@ -27,9 +27,9 @@ function FormScanFinal() {
       });
       const stationData = response.data.station78Data[0];
       // Extract data and set status variables
-      setStatusOil(stationData.OilChargerStatus === "OK" ? "OK" : "NG");
-      setStatusComp(stationData.ScanCompressorStatus !== "0" ? "OK" : "NG");
-      setStatusCool(stationData.CoolingStatus === "OK" ? "OK" : "NG");
+      setStatusOil(stationData.OilChargerStatus === "OK" ? "ChargeR600" : "");
+      setStatusComp(stationData.ScanCompressorStatus !== "0" ? "Compressor" : "");
+      setStatusCool(stationData.CoolingStatus === "OK" ? "CoolingTest" : "");
     } catch (error) {
       console.error("Error fetching data from station:", error);
     } finally {
@@ -60,7 +60,7 @@ function FormScanFinal() {
       const data = {
         barcode: barcode,
         scantime: scantime,
-        station_scan: `OilCharger: ${status_oil}, Compressor: ${status_comp}, Cooling Test: ${status_cool}`,
+        station_scan: `${status_oil}${status_comp ? ', ' + status_comp : ''}${status_cool ? ', ' + status_cool : ''}`
       };
       await axios.post(`${API_URL}/SavedFinal`, data);
       console.log("Data sent successfully!");
