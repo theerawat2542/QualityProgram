@@ -6,11 +6,12 @@ const oilChargerRoute = require("./routes/reports/oilcharger");
 const coolingTestRoute = require("./routes/reports/coolingtest");
 const compressorRoute = require("./routes/reports/compressor");
 const finalRoute = require("./routes/reports/final");
+const safetyRoute = require("./routes/reports/safety");
 const oilchargerBarcode = require("./routes/barcode/barcode_oilcharger");
 const compressorBarcode = require("./routes/barcode/barcode_compressor");
 const coolingtestBarcode = require("./routes/barcode/barcode_coolingtest");
 const finalBarcode = require("./routes/barcode/barcode_final");
-// const safetyBarcode = require("./routes/barcode_safety");
+const safetyBarcode = require("./routes/barcode/barcode_safety");
 const stationBarcode = require("./routes/station/station");
 // require('dotenv').config()
 // ------------------------------------------------------------------------
@@ -128,13 +129,14 @@ app.use('/oilcharger', oilChargerRoute);
 app.use('/coolingtest', coolingTestRoute);
 app.use('/compressor', compressorRoute);
 app.use('/final', finalRoute);
+app.use('/safety', safetyRoute);
 // ------------------------------------------------------------------------
 //Barcode-API
 app.use('/barcode_oilcharger', oilchargerBarcode);
 app.use('/barcode_compressor', compressorBarcode);
 app.use('/barcode_coolingtest', coolingtestBarcode);
 app.use('/barcode_final', finalBarcode);
-// app.use('/barcode_safety', safetyBarcode);
+app.use('/barcode_safety', safetyBarcode);
 // ------------------------------------------------------------------------
 //Station-API
 app.use('/station', stationBarcode);

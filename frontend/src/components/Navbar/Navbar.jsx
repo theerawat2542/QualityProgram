@@ -19,7 +19,7 @@ function Navbar() {
             <a href="/charge-r600a-report">Charge R600a</a>
             <a href="/scan-compressor-report">Scan Compressor</a>
             <a href="/cooling-test-report">Cooling Test</a>
-            {/* <a href="/safety-test-report">Safety Test</a> */}
+            <a href="/safety-test-report">Safety Test</a>
             <a href="/final-appearance-inspection-report">Final Appearance Inspection</a>
           </div>
         </li>

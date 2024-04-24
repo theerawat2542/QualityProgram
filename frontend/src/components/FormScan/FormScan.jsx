@@ -67,6 +67,7 @@ function FormScan() {
       }else 
       if (materialBarcode.length !== 20) {
         alert("Invalid Barcode!");
+        setMaterialBarcode("");
         return; // Prevent submission
       }
       // Move focus to the compressor barcode field
@@ -78,10 +79,6 @@ function FormScan() {
     if (e.key === "Enter") {
       if (compressorBarcode.length === 0) {
         alert("Please input Compressor Barcode!");
-        return; // Prevent submission
-      }else 
-      if (compressorBarcode.length !== 20) {
-        alert("Invalid Barcode!");
         return; // Prevent submission
       }
 

@@ -27,9 +27,12 @@ function Charge() {
   const [totalPages, setTotalPages] = useState(0);
   const [alertMessage, setAlertMessage] = useState(null);
 
-  const startDate = isValid(parse(tempStartDate, "yyyy-MM-dd", new Date())) ? tempStartDate : "";
-  const endDate = isValid(parse(tempEndDate, "yyyy-MM-dd", new Date())) ? tempEndDate : "";
-
+  const startDate = isValid(parse(tempStartDate, "yyyy-MM-dd", new Date()))
+    ? tempStartDate
+    : "";
+  const endDate = isValid(parse(tempEndDate, "yyyy-MM-dd", new Date()))
+    ? tempEndDate
+    : "";
 
   const handleSearch = () => {
     if (tempStartDate && tempEndDate) {
@@ -236,17 +239,26 @@ function Charge() {
           </div>
         </div>
         <div className="bg-white shadow border">
-          <CSVLink data={data} headers={headers} filename={`oilcharger_${startDate.replace(/-/g, '')}_${endDate.replace(/-/g, '')}.csv`}>
-            <div
+          <div style={{ textAlign: "right" }}>
+            <CSVLink
+              data={data}
+              headers={headers}
+              filename={`oilcharger_${startDate.replace(
+                /-/g,
+                ""
+              )}_${endDate.replace(/-/g, "")}.csv`}
               style={{
-                textAlign: "right",
-                marginBottom: "10px",
                 color: "green",
+                display: "inline-block",
+                textDecoration: "none", // Remove underline from the link
               }}
             >
-              <FaFileExcel style={{ marginRight: "5px" }} /> Download
-            </div>
-          </CSVLink>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <FaFileExcel style={{ marginRight: "5px" }} />
+                Download
+              </div>
+            </CSVLink>
+          </div>
           <div className="table-responsive">
             <table className="table table-striped table-hover">
               <thead className="thead-dark">
@@ -327,23 +339,36 @@ function Charge() {
                     <td>{d.model}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
                     <td>{d.barcode}</td>
-                    <td><center>{d.datetime}</center></td> {/* No need to format again */}
-                    <td><center>{d.program}</center></td>
-                    <td><center>{d.r600_setpoint}</center></td>
-                    <td><center>{d.r600_actum}</center></td>
-                    <td><center>
-                      <label
-                        style={{
-                          backgroundColor:
-                            d.status === "OK" ? "#32FF42" : "#FC7D79",
-                          borderRadius: 5,
-                          padding: "2px 4px 2px 4px",
-                        }}
-                      >
-                        {d.status}
-                      </label></center>
+                    <td>
+                      <center>{d.datetime}</center>
+                    </td>{" "}
+                    {/* No need to format again */}
+                    <td>
+                      <center>{d.program}</center>
                     </td>
-                    <td><center>{d.alarm}</center></td>
+                    <td>
+                      <center>{d.r600_setpoint}</center>
+                    </td>
+                    <td>
+                      <center>{d.r600_actum}</center>
+                    </td>
+                    <td>
+                      <center>
+                        <label
+                          style={{
+                            backgroundColor:
+                              d.status === "OK" ? "#32FF42" : "#FC7D79",
+                            borderRadius: 5,
+                            padding: "2px 4px 2px 4px",
+                          }}
+                        >
+                          {d.status}
+                        </label>
+                      </center>
+                    </td>
+                    <td>
+                      <center>{d.alarm}</center>
+                    </td>
                   </tr>
                 ))}
               </tbody>

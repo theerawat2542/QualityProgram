@@ -9,7 +9,7 @@ import "../Report.css";
 import { API_URL } from "../../lib/config";
 import { Alert } from "antd";
 
-function Charge() {
+function Safety() {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -39,14 +39,14 @@ function Charge() {
 
       axios
         .get(
-          `${API_URL}/oilcharger?startDate=${tempStartDate}&endDate=${tempEndDate}`
+          `${API_URL}/safety?startDate=${tempStartDate}&endDate=${tempEndDate}`
         )
         .then((res) => {
           setData(
             res.data.map((record) => ({
               ...record,
-              datetime: format(
-                new Date(record.datetime),
+              Time: format(
+                new Date(record.Time),
                 "yyyy-MM-dd HH:mm:ss"
               ),
             }))
@@ -103,12 +103,12 @@ function Charge() {
         );
       }
       if (modelFilter !== "") {
-        matchesModel = record.model
+        matchesModel = record["Program/Model"]
           .toLowerCase()
           .includes(modelFilter.toLowerCase());
       }
       if (barcodeFilter !== "") {
-        matchesBarcode = record.barcode
+        matchesBarcode = record.Judgement
           .toLowerCase()
           .includes(barcodeFilter.toLowerCase());
       }
@@ -166,22 +166,75 @@ function Charge() {
 
   const headers = [
     { label: "Production Line", key: "WorkUser_LineName" },
-    { label: "Model", key: "model" },
+    { label: "Model", key: "Program/Model" },
     { label: "Order No.", key: "WorkUser_MOrderCode" },
-    { label: "Barcode", key: "barcode" },
-    { label: "Date/Time", key: "datetime" },
-    { label: "Program", key: "program" },
-    { label: "R600/Setpoint", key: "r600_setpoint" },
-    { label: "R600/Actum", key: "r600_actum" },
-    { label: "Status", key: "status" },
-    { label: "Alarm", key: "alarm" },
+    { label: "Barcode", key: "Judgement" },
+    { label: "Date/Time", key: "Time" },
+    { label: "Serial", key: "Serial" },
+    { label: "s1_HL", key: "s1_HL" },
+    { label: "Step1", key: "Step1" },
+    { label: "Ss1_Judgetatus", key: "s1_Judge" },
+    { label: "s1_LL", key: "s1_LL" },
+    { label: "s1_Read1", key: "s1_Read1" },
+    { label: "s1_Output", key: "s1_Output" },
+    { label: "s1_Read2", key: "s1_Read2" },
+    { label: "s2_HL", key: "s2_HL" },
+    { label: "Step2", key: "Step2" },
+    { label: "s2_Judge", key: "s2_Judge" },
+    { label: "s2_LL", key: "s2_LL" },
+    { label: "s2_Read1", key: "s2_Read1" },
+    { label: "s2_Output", key: "s2_Output" },
+    { label: "s2_Read2", key: "s2_Read2" },
+    { label: "s3_HL", key: "s3_HL" },
+    { label: "Step3", key: "Step3" },
+    { label: "s3_Judge", key: "s3_Judge" },
+    { label: "s3_LL", key: "s3_LL" },
+    { label: "s3_Read1", key: "s3_Read1" },
+    { label: "s3_Output", key: "s3_Output" },
+    { label: "s3_Read2", key: "s3_Read2" },
+    { label: "s4_HL", key: "s4_HL" },
+    { label: "Step4", key: "Step4" },
+    { label: "s4_Judge", key: "s4_Judge" },
+    { label: "s4_LL", key: "s4_LL" },
+    { label: "s4_Read1", key: "s4_Read1" },
+    { label: "s4_Output", key: "s4_Output" },
+    { label: "s4_Read2", key: "s4_Read2" },
+    { label: "s5_HL", key: "s5_HL" },
+    { label: "Step5", key: "Step5" },
+    { label: "s5_Judge", key: "s5_Judge" },
+    { label: "s5_LL", key: "s5_LL" },
+    { label: "s5_Read1", key: "s5_Read1" },
+    { label: "s5_Output", key: "s5_Output" },
+    { label: "s5_Read2", key: "s5_Read2" },
+    { label: "s6_HL", key: "s6_HL" },
+    { label: "Step6", key: "Step6" },
+    { label: "s6_Judge", key: "s6_Judge" },
+    { label: "s6_LL", key: "s6_LL" },
+    { label: "s6_Read1", key: "s6_Read1" },
+    { label: "s6_Output", key: "s6_Output" },
+    { label: "s6_Read2", key: "s6_Read2" },
+    { label: "s7_HL", key: "s7_HL" },
+    { label: "Step7", key: "Step7" },
+    { label: "s7_Judge", key: "s7_Judge" },
+    { label: "s7_LL", key: "s7_LL" },
+    { label: "s7_Read1", key: "s7_Read1" },
+    { label: "s7_Output", key: "s7_Output" },
+    { label: "s7_Read2", key: "s7_Read2" },
+    { label: "s8_HL", key: "s8_HL" },
+    { label: "Step8", key: "Step8" },
+    { label: "s8_Judge", key: "s8_Judge" },
+    { label: "s8_LL", key: "s8_LL" },
+    { label: "s8_Read1", key: "s8_Read1" },
+    { label: "s8_Output", key: "s8_Output" },
+    { label: "s8_Read2", key: "s8_Read2" },
+    { label: "Operator", key: "Operator" }
   ];
 
   return (
     <div>
       <Navbar />
       <h2 className="text-center">
-        <b>Charge R600a</b>
+        <b>Safety Test</b>
       </h2>
       <br />
       <div className="App container">
@@ -235,19 +288,34 @@ function Charge() {
           </div>
         </div>
         <div className="bg-white shadow border">
-        <CSVLink data={data} headers={headers} filename={`safety_${startDate.replace(/-/g, '')}_${endDate.replace(/-/g, '')}.csv`}>
-            <div
+        <div style={{ textAlign: "right" }}>
+            <CSVLink
+              data={data}
+              headers={headers}
+              filename={`safety_${startDate.replace(
+                /-/g,
+                ""
+              )}_${endDate.replace(/-/g, "")}.csv`}
               style={{
-                textAlign: "right",
-                marginBottom: "10px",
                 color: "green",
+                display: "inline-block",
+                textDecoration: "none", // Remove underline from the link
               }}
             >
-              <FaFileExcel style={{ marginRight: "5px" }} /> Download
-            </div>
-          </CSVLink>
-          <div className="table-responsive">
-            <table className="table table-striped table-hover">
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <FaFileExcel style={{ marginRight: "5px" }} />
+                Download
+              </div>
+            </CSVLink>
+          </div>
+          <div
+            className="table-responsive"
+            style={{ overflowX: "auto", maxWidth: "100%" }}
+          >
+            <table
+              className="table table-striped table-hover"
+              style={{ minWidth: "5000px" }}
+            >
               <thead className="thead-dark">
                 <tr>
                   <th>
@@ -312,37 +380,134 @@ function Charge() {
                   </th>
 
                   <th>Date/Time</th>
-                  <th>Program</th>
-                  <th>R600/Setpoint</th>
-                  <th>R600/Actum</th>
-                  <th>Status</th>
-                  <th>Alarm</th>
+                  <th>Serial</th>
+                  <th>s1_HL</th>
+                  <th>Step1</th>
+                  <th>s1_Judge</th>
+                  <th>s1_LL</th>
+                  <th>s1_Read1</th>
+                  <th>s1_Output</th>
+                  <th>s1_Read2</th>
+                  <th>s2_HL</th>
+                  <th>Step2</th>
+                  <th>s2_Judge</th>
+                  <th>s2_LL</th>
+                  <th>s2_Read1</th>
+                  <th>s2_Output</th>
+                  <th>s2_Read2</th>
+                  <th>s3_HL</th>
+                  <th>Step3</th>
+                  <th>s3_Judge</th>
+                  <th>s3_LL</th>
+                  <th>s3_Read1</th>
+                  <th>s3_Output</th>
+                  <th>s3_Read2</th>
+                  <th>s4_HL</th>
+                  <th>Step4</th>
+                  <th>s4_Judge</th>
+                  <th>s4_LL</th>
+                  <th>s4_Read1</th>
+                  <th>s4_Output</th>
+                  <th>s4_Read2</th>
+                  <th>s5_HL</th>
+                  <th>Step5</th>
+                  <th>s5_Judge</th>
+                  <th>s5_LL</th>
+                  <th>s5_Read1</th>
+                  <th>s5_Output</th>
+                  <th>s5_Read2</th>
+                  <th>s6_HL</th>
+                  <th>Step6</th>
+                  <th>s6_Judge</th>
+                  <th>s6_LL</th>
+                  <th>s6_Read1</th>
+                  <th>s6_Output</th>
+                  <th>s6_Read2</th>
+                  <th>s7_HL</th>
+                  <th>Step7</th>
+                  <th>s7_Judge</th>
+                  <th>s7_LL</th>
+                  <th>s7_Read1</th>
+                  <th>s7_Output</th>
+                  <th>s7_Read2</th>
+                  <th>s8_HL</th>
+                  <th>Step8</th>
+                  <th>s8_Judge</th>
+                  <th>s8_LL</th>
+                  <th>s8_Read1</th>
+                  <th>s8_Output</th>
+                  <th>s8_Read2</th>
+                  <th>Operator</th>
+                  <th></th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {records.map((d, i) => (
                   <tr key={i}>
                     <td>{d.WorkUser_LineName}</td>
-                    <td>{d.model}</td>
+                    <td>{d["Program/Model"]}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
-                    <td>{d.barcode}</td>
-                    <td>{d.datetime}</td> {/* No need to format again */}
-                    <td>{d.program}</td>
-                    <td>{d.r600_setpoint}</td>
-                    <td>{d.r600_actum}</td>
-                    <td>
-                      <label
-                        style={{
-                          backgroundColor:
-                            d.status === "OK" ? "#32FF42" : "#FC7D79",
-                          borderRadius: 5,
-                          padding: "2px 4px 2px 4px",
-                        }}
-                      >
-                        {d.status}
-                      </label>
-                    </td>
-                    <td>{d.alarm}</td>
+                    <td>{d.Judgement}</td>
+                    <td>{d.Time}</td> {/* No need to format again */}
+                    <td>{d.Serial}</td>
+                    <td>{d.s1_HL}</td>
+                    <td>{d.Step1}</td>
+                    <td>{d.s1_Judge}</td>
+                    <td>{d.s1_LL}</td>
+                    <td>{d.s1_Read1}</td>
+                    <td>{d.s1_Output}</td>
+                    <td>{d.s1_Read2}</td>
+                    <td>{d.s2_HL}</td>
+                    <td>{d.Step2}</td>
+                    <td>{d.s2_Judge}</td>
+                    <td>{d.s2_LL}</td>
+                    <td>{d.s2_Read1}</td>
+                    <td>{d.s2_Output}</td>
+                    <td>{d.s2_Read2}</td>
+                    <td>{d.s3_HL}</td>
+                    <td>{d.Step3}</td>
+                    <td>{d.s3_Judge}</td>
+                    <td>{d.s3_LL}</td>
+                    <td>{d.s3_Read1}</td>
+                    <td>{d.s3_Output}</td>
+                    <td>{d.s3_Read2}</td>
+                    <td>{d.s4_HL}</td>
+                    <td>{d.Step4}</td>
+                    <td>{d.s4_Judge}</td>
+                    <td>{d.s4_LL}</td>
+                    <td>{d.s4_Read1}</td>
+                    <td>{d.s4_Output}</td>
+                    <td>{d.s4_Read2}</td>
+                    <td>{d.s5_HL}</td>
+                    <td>{d.Step5}</td>
+                    <td>{d.s5_Judge}</td>
+                    <td>{d.s5_LL}</td>
+                    <td>{d.s5_Read1}</td>
+                    <td>{d.s5_Output}</td>
+                    <td>{d.s5_Read2}</td>
+                    <td>{d.s6_HL}</td>
+                    <td>{d.Step6}</td>
+                    <td>{d.s6_Judge}</td>
+                    <td>{d.s6_LL}</td>
+                    <td>{d.s6_Read1}</td>
+                    <td>{d.s6_Output}</td>
+                    <td>{d.s6_Read2}</td>
+                    <td>{d.s7_HL}</td>
+                    <td>{d.Step7}</td>
+                    <td>{d.s7_Judge}</td>
+                    <td>{d.s7_LL}</td>
+                    <td>{d.s7_Read1}</td>
+                    <td>{d.s7_Output}</td>
+                    <td>{d.s7_Read2}</td>
+                    <td>{d.s8_HL}</td>
+                    <td>{d.Step8}</td>
+                    <td>{d.s8_Judge}</td>
+                    <td>{d.s8_LL}</td>
+                    <td>{d.s8_Read1}</td>
+                    <td>{d.s8_Output}</td>
+                    <td>{d.s8_Read2}</td>
+                    <td>{d.Operator}</td>
                   </tr>
                 ))}
               </tbody>
@@ -435,4 +600,4 @@ function Charge() {
   );
 }
 
-export default Charge;
+export default Safety;

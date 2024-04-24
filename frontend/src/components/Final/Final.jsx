@@ -261,17 +261,26 @@ function Final() {
           </div>
         </div>
         <div className="bg-white shadow border">
-        <CSVLink data={data} headers={headers} filename={`final_${startDate.replace(/-/g, '')}_${endDate.replace(/-/g, '')}.csv`}>
-            <div
+        <div style={{ textAlign: "right" }}>
+            <CSVLink
+              data={data}
+              headers={headers}
+              filename={`final_${startDate.replace(
+                /-/g,
+                ""
+              )}_${endDate.replace(/-/g, "")}.csv`}
               style={{
-                textAlign: "right",
-                marginBottom: "10px",
                 color: "green",
+                display: "inline-block",
+                textDecoration: "none", // Remove underline from the link
               }}
             >
-              <FaFileExcel style={{ marginRight: "5px" }} /> Download
-            </div>
-          </CSVLink>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <FaFileExcel style={{ marginRight: "5px" }} />
+                Download
+              </div>
+            </CSVLink>
+          </div>
           <div
             className="table-responsive"
             style={{ overflowX: "auto", maxWidth: "100%" }}

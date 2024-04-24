@@ -8,6 +8,7 @@ import FormScan from './components/FormScan/FormScan'
 import Final from './components/Final/Final'
 import Station from './components/Station/Station'
 import FormScanFinal from './components/FormScan/FormScanFinal'
+import Safety from './components/Safety/Safety'
 
 const router = createBrowserRouter([
   {
@@ -34,10 +35,10 @@ const router = createBrowserRouter([
     path: '/final-appearance-inspection-report',
     element: <Final />
   },
-  // {
-  //   path: '/safety-test-report',
-  //   element: <Safety />
-  // },
+  {
+    path: '/safety-test-report',
+    element: <Safety />
+  },
   {
     path: '/station',
     element: <Station />
