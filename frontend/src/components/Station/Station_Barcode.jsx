@@ -5,6 +5,7 @@ import OilBarcode from "../ChargeR600/Oil_Barcode";
 import CompBarcode from "../Compressor/Compressor_Barcode";
 import CoolingBarcode from "../CoolingTest/Cooling_Barcode";
 import FinalBarcode from "../Final/Final_Barcode";
+import SafetyBarcode from "../Safety/Safety_Barcode";
 import axios from "axios";
 
 const ArrowRight = () => {
@@ -35,6 +36,7 @@ const CurrentStation = ({
   scanCompressorStatus,
   coolingStatus,
   scanFinalStatus,
+  safetyStatus,
   barcode,
   // setStation
 }) => {
@@ -45,30 +47,28 @@ const CurrentStation = ({
   if (oilChargerStatus === "OK") {
     if (scanCompressorStatus !== "0") {
       if (coolingStatus === "OK") {
-        if (scanFinalStatus !== "0") {
+        if (safetyStatus !== "0") {
+          if (scanFinalStatus !== "0") {
+            return (
+              <h4>
+                Current Station: <b>Complete</b>
+              </h4>
+            );
+          } else {
+            return (
+              <h4>
+                Current Station: <b>Final Scan</b>
+              </h4>
+            );
+          }
+        } else {
           return (
-            // setStation("Complete")
             <h4>
-              Current Station: <b>Complete</b>
-            </h4>
-          );
-        } else if (scanFinalStatus === "0") {
-          return (
-            <h4>
-              Current Station: <b>Final Scan</b>
+              Current Station: <b>Safety Test</b>
             </h4>
           );
         }
-        return (
-          <h4>
-            Current Station: <b>Final Scan</b>
-          </h4>
-        );
-      } else if (
-        coolingStatus === "NG" ||
-        coolingStatus === "0" ||
-        coolingStatus === ""
-      ) {
+      } else if (["NG", "0", ""].includes(coolingStatus)) {
         return (
           <h4>
             Current Station: <b>Cooling Test</b>
@@ -82,11 +82,7 @@ const CurrentStation = ({
         </h4>
       );
     }
-  } else if (
-    oilChargerStatus === "NG" ||
-    oilChargerStatus === "0" ||
-    oilChargerStatus === ""
-  ) {
+  } else if (["NG", "0", ""].includes(oilChargerStatus)) {
     return (
       <h4>
         Current Station: <b>Charging R600</b>
@@ -97,6 +93,7 @@ const CurrentStation = ({
   return null;
 };
 
+
 const ButtonRowWithArrows = ({ barcode }) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -104,6 +101,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
   const [showCompBarcode, setShowCompBarcode] = useState(false);
   const [showCoolingBarcode, setShowCoolingBarcode] = useState(false);
   const [showFinalBarcode, setShowFinalBarcode] = useState(false);
+  const [showSafetyBarcode, setShowSafetyBarcode] = useState(false);
   // const [station, setStation] = useState("No station")
 
   useEffect(() => {
@@ -129,6 +127,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
       setShowCompBarcode(false);
       setShowCoolingBarcode(false);
       setShowFinalBarcode(false);
+      setShowSafetyBarcode(false);
     }
   };
   const CompButtonClick = () => {
@@ -137,6 +136,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
       setShowOilBarcode(false);
       setShowCoolingBarcode(false);
       setShowFinalBarcode(false);
+      setShowSafetyBarcode(false);
     }
   };
   const CoolingButtonClick = () => {
@@ -145,6 +145,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
       setShowCompBarcode(false);
       setShowOilBarcode(false);
       setShowFinalBarcode(false);
+      setShowSafetyBarcode(false);
     }
   };
   const FinalButtonClick = () => {
@@ -153,6 +154,16 @@ const ButtonRowWithArrows = ({ barcode }) => {
       setShowCoolingBarcode(false);
       setShowCompBarcode(false);
       setShowOilBarcode(false);
+      setShowSafetyBarcode(false);
+    }
+  };
+  const SafetyButtonClick = () => {
+    if (data && data.station78Data && data.station78Data.length > 0) {
+      setShowSafetyBarcode(true)
+      setShowOilBarcode(false);
+      setShowCompBarcode(false);
+      setShowCoolingBarcode(false);
+      setShowFinalBarcode(false);
     }
   };
   useEffect(() => {
@@ -161,6 +172,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
       setShowCompBarcode(false);
       setShowCoolingBarcode(false);
       setShowFinalBarcode(false);
+      setShowSafetyBarcode(false);
       // setStation("No Station")
     }
   }, [barcode]);
@@ -173,6 +185,7 @@ const ButtonRowWithArrows = ({ barcode }) => {
           scanCompressorStatus={data?.station78Data?.[0]?.ScanCompressorStatus}
           coolingStatus={data?.station78Data?.[0]?.CoolingStatus}
           scanFinalStatus={data?.station78Data?.[0]?.ScanFinalStatus}
+          safetyStatus={data?.station78Data?.[0]?.SafetyStatus}
           barcode={data?.station78Data?.[0]?.barcode}
           // setStation={setStation}
         />
@@ -275,31 +288,40 @@ const ButtonRowWithArrows = ({ barcode }) => {
           )}
 
           <ArrowRight />
-          {/* {data &&
-          data.station78Data &&
-          data.station78Data.length > 0 &&
-          data.station78Data[0].ScanCompressorStatus !== "0" ? (
-            <button
-              className="large-green-button"
-              title={`Oil Charger Time: ${formatDateTime(
-                data.station78Data[0].OilChargerTime
-              )}`}
-            >
-              Safety Test
-            </button>
-          ) : (
-          <button className="large-gray-button" disabled>
-            Safety Test
-          </button>
-          )}
-          <ArrowRight /> */}
           {data &&
           data.station78Data &&
           data.station78Data.length > 0 &&
           data.station78Data[0].barcode &&
           data.station78Data[0].barcode.length === 0 ? (
             <button className="large-gray-button" disabled>
-              (4) Final
+              (4) Safety Test
+            </button>
+          ) : data &&
+            data.station78Data &&
+            data.station78Data.length > 0 &&
+            data.station78Data[0].SafetyStatus !== "0" ? (
+            <button
+              className="large-green-button"
+              title={`Safety Test Time: ${formatDateTime(
+                data.station78Data[0].SafetyTime
+              )}`}
+              onClick={SafetyButtonClick}
+            >
+              (4) Safety Test
+            </button>
+          ) : (
+            <button className="large-gray-button" disabled>
+              (4) Safety Test
+            </button>
+          )}
+          <ArrowRight />
+          {data &&
+          data.station78Data &&
+          data.station78Data.length > 0 &&
+          data.station78Data[0].barcode &&
+          data.station78Data[0].barcode.length === 0 ? (
+            <button className="large-gray-button" disabled>
+              (5) Final
             </button>
           ) : data &&
             data.station78Data &&
@@ -312,11 +334,11 @@ const ButtonRowWithArrows = ({ barcode }) => {
               )}`}
               onClick={FinalButtonClick}
             >
-              (4) Final
+              (5) Final
             </button>
           ) : (
             <button className="large-gray-button" disabled>
-              (4) Final
+              (5) Final
             </button>
           )}
         </div>
@@ -333,6 +355,9 @@ const ButtonRowWithArrows = ({ barcode }) => {
       )}
       {barcode.length === 20 && showFinalBarcode && (
         <FinalBarcode barcode={barcode} />
+      )}
+      {barcode.length === 20 && showSafetyBarcode && (
+        <SafetyBarcode barcode={barcode} />
       )}
     </div>
   );
