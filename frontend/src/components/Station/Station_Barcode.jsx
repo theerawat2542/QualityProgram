@@ -92,7 +92,7 @@ const CurrentStation = ({
 
   return null;
 };
-
+ 
 
 const ButtonRowWithArrows = ({ barcode }) => {
   const [data, setData] = useState(null);
