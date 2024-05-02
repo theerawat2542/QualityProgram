@@ -105,7 +105,7 @@ function Compressor() {
         );
       }
       if (modelFilter !== "") {
-        matchesModel = record.model
+        matchesModel = record.WorkUser_RightMostItemName
           .toLowerCase()
           .includes(modelFilter.toLowerCase());
       }
@@ -180,7 +180,7 @@ function Compressor() {
 
   const headers = [
     { label: "Production Line", key: "WorkUser_LineName" },
-    { label: "Model", key: "model" },
+    { label: "Model", key: "WorkUser_RightMostItemName" },
     { label: "Order No.", key: "WorkUser_MOrderCode" },
     { label: "Barcode", key: "material_barcode" },
     { label: "Compressor Barcode", key: "compressor_barcode" },
@@ -271,6 +271,7 @@ function Compressor() {
             <table className="table table-striped table-hover">
               <thead className="thead-dark">
                 <tr>
+                <th><center>No.</center></th>
                   <th>
                     <center>
                       <label>Production Line</label>
@@ -352,13 +353,14 @@ function Compressor() {
               <tbody>
                 {records.map((d, i) => (
                   <tr key={i}>
+                    <td>{i+1}</td>
                     <td>{d.WorkUser_LineName}</td>
-                    <td>{d.model}</td>
+                    <td>{d.WorkUser_RightMostItemName}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
                     <td>{d.material_barcode}</td>
                     <td>{d.compressor_barcode}</td>
                     <td><center>
-                      {format(new Date(d.scan_time), "yyyy-MM-dd HH:mm:ss")}
+                    {d.scan_time}
                     </center>
                     </td>
                   </tr>

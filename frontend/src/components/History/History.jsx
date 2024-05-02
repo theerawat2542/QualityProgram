@@ -1,11 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-// import ReactLoading from "react-loading";
 import { Table } from "antd";
 import { format } from 'date-fns';
 import { API_URL } from '../../lib/config';
 
-function History() {
+function History({ selectedOption }) {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,14 +14,16 @@ function History() {
     fetchData();
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedOption]); // Include selectedOption in the dependency array
 
   const fetchData = () => {
     axios
       .get(`${API_URL}/History`)
       .then((res) => {
-        setData(res.data);
-        setRecords(res.data.slice(0));
+        // Filter the data based on the selected option
+        const filteredData = res.data.filter(item => item.material_barcode.charAt(12) === selectedOption);
+        setData(filteredData);
+        setRecords(filteredData.slice(0));
         setLoading(false);
       })
       .catch((err) => {

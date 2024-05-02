@@ -14,6 +14,7 @@ function FormScan() {
   const compressorInputRef = useRef(null);
   const userIdInputRef = useRef(null); // Reference for user ID input field
   const [selectedOption, setSelectedOption] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleSubmit = async () => {
     if (!selectedOption) {
@@ -40,19 +41,26 @@ function FormScan() {
     }
 
     try {
+      const newScantime = formatScanTime(new Date());
       const data = {
         materialBarcode: materialBarcode,
         compressorBarcode: compressorBarcode,
-        scanTime: scanTime,
+        scanTime: newScantime,
         userId: userId, // Include user ID in the data
       };
       await axios.post(`${API_URL}/Saved`, data);
       console.log("Data sent successfully!");
+      // Show success message
+      setSuccessMessage('OK');
       // Clear input fields
       setMaterialBarcode("");
       setCompressorBarcode("");
       // Return focus to the Material Barcode input box
-      materialInputRef.current.focus();
+      compressorInputRef.current.focus();
+      // Remove success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 1000);
     } catch (error) {
       console.error("Error sending data:", error);
       alert("Error sending data.");
@@ -64,14 +72,24 @@ function FormScan() {
       if (materialBarcode.length === 0) {
         alert("Please input Material Barcode!");
         return; // Prevent submission
-      }else 
-      if (materialBarcode.length !== 20) {
+      } else if (materialBarcode.length !== 20) {
         alert("Invalid Barcode!");
         setMaterialBarcode("");
         return; // Prevent submission
       }
-      // Move focus to the compressor barcode field
-      compressorInputRef.current.focus();
+
+      if (!selectedOption) {
+        alert("Please select Production Line.");
+        return;
+      }
+
+      if (materialBarcode.charAt(12) !== selectedOption) {
+        alert("Barcode does not correspond to the selected Production Line.");
+        setMaterialBarcode("")
+        materialInputRef.current.focus(); // Set focus back to Compressor Barcode input field
+        return; // Exit the function early
+      }
+      handleSubmit();
     }
   };
 
@@ -87,24 +105,16 @@ function FormScan() {
         return;
       }
 
-      if (materialBarcode.charAt(12) !== selectedOption) {
-        alert("Barcode does not correspond to the selected Production Line.");
-        setMaterialBarcode("")
-        materialInputRef.current.focus(); // Set focus back to Compressor Barcode input field
-        return; // Exit the function early
-      }
-      // Automatically submit the form
-      handleSubmit();
+      materialInputRef.current.focus();
     }
   };
 
   const handleUserIdKeyPress = (e) => {
     if (e.key === "Enter") {
       // Move focus to the Material Barcode field
-      materialInputRef.current.focus();
+      compressorInputRef.current.focus();
     }
   };
-
 
   // Function to format scan time as 'YYYY-MM-DD HH:mm:ss'
   function formatScanTime(date) {
@@ -121,7 +131,7 @@ function FormScan() {
     <div>
       <Navbar />
       <div className="select-box">
-      <b>Production Line: </b>
+        <b>Production Line: </b>
         <select
           value={selectedOption}
           onChange={(e) => setSelectedOption(e.target.value)}
@@ -130,9 +140,9 @@ function FormScan() {
           <option value="A">RA</option>
           <option value="B">RB</option>
         </select>
-      </div>   
+      </div>
       <div className="user-id-box">
-      <b>Work ID: </b>
+        <b>Work ID: </b>
         <input
           ref={userIdInputRef}
           type="text"
@@ -141,23 +151,15 @@ function FormScan() {
           value={userId}
           onChange={(e) => setUserId(e.target.value)} // Handle changes in the user ID input field
           onKeyPress={handleUserIdKeyPress} // Listen for Enter key press
-        />
+        /><br /><br />
+        {successMessage && (
+          <div className="success-message">
+            <h1><b>{successMessage}</b></h1>
+          </div>
+        )}
       </div>
       <div className="form-container">
         <div className="form-wrapper">
-          <h3>
-            <b>Material Barcode</b>
-          </h3>
-          <input
-            ref={materialInputRef} // Assign reference to the material barcode input field
-            type="text"
-            value={materialBarcode}
-            onChange={(e) => setMaterialBarcode(e.target.value)}
-            className="large-textbox" // Apply custom CSS class for large text box
-            autoFocus // Automatically focus on this field when the component mounts
-            onKeyPress={handleMaterialBarcodeKeyPress} // Listen for Enter key press
-            disabled={() => (userId === null ? true : false)}
-          />
           <h3>
             <b>Compressor Barcode</b>
           </h3>
@@ -167,23 +169,32 @@ function FormScan() {
             value={compressorBarcode}
             onChange={(e) => setCompressorBarcode(e.target.value)}
             className="large-textbox" // Apply custom CSS class for large text box
+            autoFocus
             onKeyPress={handleCompressorBarcodeKeyPress} // Listen for Enter key press
+            disabled={() => (userId === null ? true : false)}
           />
+          <h3>
+            <b>Material Barcode</b>
+          </h3>
           <input
+            ref={materialInputRef} // Assign reference to the material barcode input field
+            type="text"
+            value={materialBarcode}
+            onChange={(e) => setMaterialBarcode(e.target.value)}
+            className="large-textbox" // Apply custom CSS class for large text box
+            onKeyPress={handleMaterialBarcodeKeyPress} // Listen for Enter key press
+            disabled={() => (userId === null ? true : false)}
+          />
+          {/* <input
             type="hidden"
             value={scanTime}
             disabled // Disable editing
-          />
+          /> */}
           <br />
           <br />
-          {/* <button className="btn btn-success" onClick={handleSubmit}>
-            Submit
-          </button> */}
-          {/* {message && <div className="message">{message}</div>} */}
         </div>
       </div>
-      <br />
-      <History />
+      <History selectedOption={selectedOption} />
     </div>
   );
 }

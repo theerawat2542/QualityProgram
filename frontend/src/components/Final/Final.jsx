@@ -103,7 +103,7 @@ function Final() {
         );
       }
       if (modelFilter !== "") {
-        matchesModel = record.model.toLowerCase().includes(
+        matchesModel = record.WorkUser_RightMostItemName.toLowerCase().includes(
           modelFilter.toLowerCase()
         );
       }
@@ -196,7 +196,7 @@ function Final() {
 
   const headers = [
     { label: "Production Line", key: "WorkUser_LineName" },
-    { label: "Model", key: "model" },
+    { label: "Model", key: "WorkUser_RightMostItemName" },
     { label: "Order No.", key: "WorkUser_MOrderCode" },
     { label: "Barcode", key: "barcode" },
     { label: "Date/Time", key: "scantime" },
@@ -291,6 +291,7 @@ function Final() {
             >
               <thead className="thead-dark">
                 <tr>
+                <th><center>No.</center></th>
                   <th>
                     <center>
                       <label>Production Line</label>
@@ -361,8 +362,9 @@ function Final() {
               <tbody>
                 {records.map((d, i) => (
                   <tr key={i}>
+                    <td>{i+1}</td>
                     <td>{d.WorkUser_LineName}</td>
-                    <td>{d.model}</td>
+                    <td>{d.WorkUser_RightMostItemName}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
                     <td>{d.barcode}</td>
                     <td>{d.scantime}</td>

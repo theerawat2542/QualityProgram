@@ -263,6 +263,7 @@ function Charge() {
             <table className="table table-striped table-hover">
               <thead className="thead-dark">
                 <tr>
+                <th><center>No.</center></th>
                   <th>
                     <center>
                       <label>Production Line</label>
@@ -335,6 +336,7 @@ function Charge() {
               <tbody>
                 {records.map((d, i) => (
                   <tr key={i}>
+                    <td>{i+1}</td>
                     <td>{d.WorkUser_LineName}</td>
                     <td>{d.model}</td>
                     <td>{d.WorkUser_MOrderCode}</td>

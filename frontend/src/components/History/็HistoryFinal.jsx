@@ -1,11 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-// import ReactLoading from "react-loading";
 import { Table } from "antd";
 import { format } from 'date-fns';
 import { API_URL } from '../../lib/config';
 
-function HistoryFinal() {
+function HistoryFinal({ selectedOption }) {
   const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,14 +14,16 @@ function HistoryFinal() {
     fetchData();
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedOption]); // Trigger fetching data when the selected option changes
 
   const fetchData = () => {
     axios
       .get(`${API_URL}/HistoryFinal`)
       .then((res) => {
-        setData(res.data);
-        setRecords(res.data.slice(0));
+        // Filter data based on the 13th character of the barcode matching the selected option
+        const filteredData = res.data.filter(item => item.barcode.charAt(12) === selectedOption);
+        setData(filteredData);
+        setRecords(filteredData.slice(0));
         setLoading(false);
       })
       .catch((err) => {

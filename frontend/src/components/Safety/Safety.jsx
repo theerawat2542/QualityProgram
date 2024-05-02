@@ -318,6 +318,7 @@ function Safety() {
             >
               <thead className="thead-dark">
                 <tr>
+                <th><center>No.</center></th>
                   <th>
                     <center>
                       <label>Production Line</label>
@@ -443,6 +444,7 @@ function Safety() {
               <tbody>
                 {records.map((d, i) => (
                   <tr key={i}>
+                    <td>{i+1}</td>
                     <td>{d.WorkUser_LineName}</td>
                     <td>{d["Program/Model"]}</td>
                     <td>{d.WorkUser_MOrderCode}</td>

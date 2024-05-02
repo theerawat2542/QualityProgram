@@ -70,4 +70,14 @@
   font-size: 15px;
 }
 
+.success-message {
+  background-color: green; /* Set background color to green */
+  color: white; /* Set text color to white */
+  font-weight: bold; /* Set font weight to bold */
+  text-align: center; /* Center align the text */
+  padding: 10px; /* Add padding to provide spacing */
+  border-radius: 5px; /* Add border radius for rounded corners */
+  margin-top: 10px; /* Add some margin at the top */
+}
+
   

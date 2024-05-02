@@ -56,8 +56,8 @@ const CompBarcode = ({ barcode }) => {
     },
     {
       title: "Model",
-      dataIndex: "model",
-      key: "model",
+      dataIndex: "WorkUser_RightMostItemName",
+      key: "WorkUser_RightMostItemName",
       ellipsis: true
     },
     {

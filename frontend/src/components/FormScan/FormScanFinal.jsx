@@ -11,9 +11,11 @@ function FormScanFinal() {
   const [status_oil, setStatusOil] = useState("--");
   const [status_comp, setStatusComp] = useState("--");
   const [status_cool, setStatusCool] = useState("--");
+  const [status_safe, setStatusSafe] = useState("--");
   const [loading, setLoading] = useState(false); // Loading state
   const barcodeInputRef = useRef(null); // Reference for material barcode input field
   const [selectedOption, setSelectedOption] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     fetchDataFromStation();
@@ -27,9 +29,10 @@ function FormScanFinal() {
       });
       const stationData = response.data.station78Data[0];
       // Extract data and set status variables
-      setStatusOil(stationData.OilChargerStatus === "OK" ? "ChargeR600" : "");
-      setStatusComp(stationData.ScanCompressorStatus !== "0" ? "Compressor" : "");
-      setStatusCool(stationData.CoolingStatus === "OK" ? "CoolingTest" : "");
+      setStatusOil(stationData.oil_status === "OK" ? "ChargeR600" : "");
+      setStatusComp(stationData.comp_status !== "0" ? "Compressor" : "");
+      setStatusCool(stationData.cooling_status === "OK" ? "CoolingTest" : "");
+      setStatusSafe(stationData.safety_status !== "0" ? "SafetyTest" : "");
     } catch (error) {
       console.error("Error fetching data from station:", error);
     } finally {
@@ -57,17 +60,22 @@ function FormScanFinal() {
     }
 
     try {
+      const newScantime = formatScanTime(new Date());
       const data = {
         barcode: barcode,
-        scantime: scantime,
-        station_scan: `${status_oil}${status_comp ? ', ' + status_comp : ''}${status_cool ? ', ' + status_cool : ''}`
+        scantime: newScantime,
+        station_scan: `${status_oil}${status_comp ? ', ' + status_comp : ''}${status_cool ? ', ' + status_cool : ''}${status_safe ? ', ' + status_safe : ''}`
       };
       await axios.post(`${API_URL}/SavedFinal`, data);
       console.log("Data sent successfully!");
+      setSuccessMessage('OK');
       // Clear input fields
       setBarcode("");
       // Return focus to the Material Barcode input box
       barcodeInputRef.current.focus();
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 1000);
     } catch (error) {
       console.error("Error sending data:", error);
       alert("Error sending data.");
@@ -121,6 +129,14 @@ function FormScanFinal() {
           <option value="B">RB</option>
         </select>
       </div>
+      <div className="user-id-box">
+        <br />
+        {successMessage && (
+          <div className="success-message">
+            <h1><b>{successMessage}</b></h1>
+          </div>
+        )}
+      </div>
       <div className="form-container">
         <div className="form-wrapper">
           <h3>
@@ -154,7 +170,8 @@ function FormScanFinal() {
         </div>
       </div>
       <br />
-      <HistoryFinal />
+      {/* Pass selectedOption to HistoryFinal component */}
+      <HistoryFinal selectedOption={selectedOption} />
     </div>
   );
 }
