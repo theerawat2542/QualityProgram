@@ -9,6 +9,7 @@ import Final from './components/Final/Final'
 import Station from './components/Station/Station'
 import FormScanFinal from './components/FormScan/FormScanFinal'
 import Safety from './components/Safety/Safety'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const router = createBrowserRouter([
   {
