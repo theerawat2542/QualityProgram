@@ -1,33 +1,29 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./FormScan.css"; // Import CSS file for styling
-import HistoryFinal from "../History/HistoryFinal";
 import Navbar from "../Navbar/Navbar";
-import { API_URL } from '../../lib/config';
+import { API_URL } from "../../lib/config";
+import HistoryFinal from "../History/HistoryFinal";
 
 function FormScanFinal() {
   const [barcode, setBarcode] = useState("");
-  const [userId, setUserId] = useState(""); // State for user ID
-  const [scanTime] = useState(formatScanTime(new Date())); // Scan time cannot be edited
-  const barcodeInputRef = useRef(null);
-  const userIdInputRef = useRef(null); // Reference for user ID input field
-  const [selectedOption, setSelectedOption] = useState("");
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [scantime] = useState(formatScanTime(new Date())); // Scan time cannot be edited
+  const [userId, setUserId] = useState("");
+  const userIdInputRef = useRef(null);
   const [status_oil, setStatusOil] = useState("--");
   const [status_comp, setStatusComp] = useState("--");
   const [status_cool, setStatusCool] = useState("--");
   const [status_safe, setStatusSafe] = useState("--");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
+  const barcodeInputRef = useRef(null); // Reference for material barcode input field
+  const [selectedOption, setSelectedOption] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
 
-  useEffect(() => {
-    console.log(barcode)
-    if (barcode) {
-      fetchDataFromStation(barcode);
-    }
-  }, [barcode]); 
+  // useEffect(() => {
+  //   fetchDataFromStation();
+  // }, []); // Empty dependency array ensures the effect runs only once, similar to componentDidMount
 
   const fetchDataFromStation = async (barcodeValue) => {
-    // console.log(barcodeValue)
     try {
       setLoading(true); // Set loading to true when fetching data
       const response = await axios.get(`${API_URL}/station`, {
@@ -47,6 +43,10 @@ function FormScanFinal() {
   };
 
   const handleSubmit = async () => {
+    if (!selectedOption) {
+      alert("Please select Production Line.");
+      return;
+    }
 
     if (!userId) {
       alert("Please input UserID.");
@@ -54,6 +54,12 @@ function FormScanFinal() {
       return;
     }
 
+    if (barcode.charAt(12) !== selectedOption) {
+      alert("Barcode does not correspond to the selected Production Line.");
+      setBarcode(""); // Clear incorrect barcode
+      barcodeInputRef.current.focus(); // Set focus back to Barcode input field
+      return; // Exit the function early
+    }
 
     try {
       const newScantime = formatScanTime(new Date());
@@ -79,34 +85,6 @@ function FormScanFinal() {
       alert("Error sending data.");
     }
   };
-  
-
-  const handleBarcodeKeyPress = (e) => {
-    if (e.key === "Enter") {
-      if (barcode.length === 0) {
-        alert("Please input Barcode!");
-        return; // Prevent submission
-      } else if (barcode.length !== 20) {
-        alert("Invalid Barcode!");
-        setBarcode("");
-        return; // Prevent submission
-      }
-
-      if (!selectedOption) {
-        alert("Please select Production Line.");
-        return;
-      }
-
-      if (barcode.charAt(12) !== selectedOption) {
-        alert("Barcode does not correspond to the selected Production Line.");
-        setBarcode("")
-        barcodeInputRef.current.focus(); // Set focus back to Compressor Barcode input field
-        return; // Exit the function early
-      }
-      handleSubmit();
-      barcodeInputRef.current.focus();
-    }
-  };
 
   const handleUserIdKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -114,6 +92,30 @@ function FormScanFinal() {
       barcodeInputRef.current.focus();
     }
   };
+
+
+  const handleBarcodeKeyPress = (e) => {
+    // console.log(e)
+    if (e.key === "Enter") {
+      if (barcode.length === 0) {
+        alert("Please input Barcode!");
+        return; // Prevent submission
+      } else if (barcode.length < 20) {
+        alert("Invalid Barcode!");
+        return; // Prevent submission
+      }
+      
+      // Automatically submit the form
+      handleSubmit();
+      barcodeInputRef.current.focus();
+    }
+  };
+
+  useEffect(() => {
+    if (barcode) {
+      fetchDataFromStation(barcode);
+    }
+  }, [barcode]); // Run the effect whenever barcode changes
 
   // Function to format scan time as 'YYYY-MM-DD HH:mm:ss'
   function formatScanTime(date) {
@@ -125,7 +127,6 @@ function FormScanFinal() {
     const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
-  
 
   return (
     <div>
@@ -142,7 +143,7 @@ function FormScanFinal() {
         </select>
       </div>
       <div className="user-id-box">
-        <b>Work ID: </b>
+      <b>Work ID: </b>
         <input
           ref={userIdInputRef}
           type="text"
@@ -160,7 +161,7 @@ function FormScanFinal() {
       </div>
       <div className="form-container">
         <div className="form-wrapper">
-        <h3>
+          <h3>
             <b>Final Scan</b>
           </h3>
           <input
@@ -171,15 +172,32 @@ function FormScanFinal() {
             className="large-textbox" // Apply custom CSS class for large text box
             autoFocus // Automatically focus on this field when the component mounts
             onKeyPress={handleBarcodeKeyPress} // Listen for Enter key press
-            disabled={userId === null}
+            disabled={() => (userId === null ? true : false)}
           />
+
           <br />
           <br />
+          {/* Display status */}
+          {/* <div>
+            <b>Status OilCharger :</b> {loading ? "--" : status_oil}
+          </div>
+          <div>
+            <b>Status Compressor :</b> {loading ? "--" : status_comp}
+          </div>
+          <div>
+            <b>Status Cooling Test :</b> {loading ? "--" : status_cool}
+          </div> */}
+          {/* <button className="btn btn-success" onClick={handleSubmit}>
+            Submit
+          </button> */}
         </div>
       </div>
+      <br />
+      {/* Pass selectedOption to HistoryFinal component */}
       <HistoryFinal selectedOption={selectedOption} />
     </div>
   );
 }
 
 export default FormScanFinal;
+

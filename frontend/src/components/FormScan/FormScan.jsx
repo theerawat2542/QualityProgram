@@ -171,7 +171,7 @@ function FormScan() {
             className="large-textbox" // Apply custom CSS class for large text box
             autoFocus
             onKeyPress={handleCompressorBarcodeKeyPress} // Listen for Enter key press
-            disabled={() => (userId === null ? true : false)}
+            disabled={userId === null}
           />
           <h3>
             <b>Material Barcode</b>
@@ -183,7 +183,7 @@ function FormScan() {
             onChange={(e) => setMaterialBarcode(e.target.value)}
             className="large-textbox" // Apply custom CSS class for large text box
             onKeyPress={handleMaterialBarcodeKeyPress} // Listen for Enter key press
-            disabled={() => (userId === null ? true : false)}
+            disabled={userId === null}
           />
           {/* <input
             type="hidden"

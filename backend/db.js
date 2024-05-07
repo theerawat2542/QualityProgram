@@ -81,10 +81,10 @@ app.post("/Saved", (req, res) => {
 });
 // ------------------------------------------------------------------------
 app.post("/SavedFinal", (req, res) => {
-  const { barcode, scantime, station_scan } = req.body;
+  const { barcode, scantime, station_scan, userId } = req.body;
   const sql =
-    "INSERT INTO custom_final_scan (barcode, scantime, station_scan) VALUES (?, ?, ?)";
-  const values = [barcode, scantime, station_scan];
+    "INSERT INTO custom_final_scan (barcode, scantime, station_scan, user_id) VALUES (?, ?, ?, ?)";
+  const values = [barcode, scantime, station_scan, userId];
   db1Pool.query(sql, values, (err, result) => {
     if (err) {
       console.error("Error saving data to database:", err);
@@ -112,7 +112,7 @@ app.get("/History", (req, res) => {
 // ------------------------------------------------------------------------
 app.get("/HistoryFinal", (req, res) => {
   db1Pool.query(
-    "SELECT barcode, scantime, station_scan FROM custom_final_scan WHERE DATE(scantime) = CURDATE() ORDER BY ID DESC;",
+    "SELECT barcode, scantime, station_scan, user_id FROM custom_final_scan WHERE DATE(scantime) = CURDATE() ORDER BY ID DESC;",
     (error, results) => {
       if (error) {
         console.error("Error executing SQL query:", error);

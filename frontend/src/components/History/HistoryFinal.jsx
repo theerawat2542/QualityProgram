@@ -51,6 +51,12 @@ function HistoryFinal({ selectedOption }) {
       dataIndex: "station_scan",
       key: "station_scan",
       ellipsis: true
+    },
+    {
+      title: "Scan By",
+      dataIndex: "user_id",
+      key: "user_id",
+      ellipsis: true
     }
   ];
 
