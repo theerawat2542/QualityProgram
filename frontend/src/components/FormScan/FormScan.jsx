@@ -17,16 +17,6 @@ function FormScan() {
   const [successMessage, setSuccessMessage] = useState(null);
 
   const handleSubmit = async () => {
-    if (!selectedOption) {
-      alert("Please select Production Line.");
-      return;
-    }
-
-    if (!userId) {
-      alert("Please input UserID.");
-      userIdInputRef.current.focus();
-      return;
-    }
     
     if (!materialBarcode) {
       alert("Please input Material Barcode.");
@@ -76,11 +66,6 @@ function FormScan() {
         alert("Invalid Barcode!");
         setMaterialBarcode("");
         return; // Prevent submission
-      }
-
-      if (!selectedOption) {
-        alert("Please select Production Line.");
-        return;
       }
 
       if (materialBarcode.charAt(12) !== selectedOption) {
@@ -171,7 +156,7 @@ function FormScan() {
             className="large-textbox" // Apply custom CSS class for large text box
             autoFocus
             onKeyPress={handleCompressorBarcodeKeyPress} // Listen for Enter key press
-            disabled={userId === null}
+            disabled={!userId || !selectedOption}
           />
           <h3>
             <b>Material Barcode</b>
@@ -183,8 +168,12 @@ function FormScan() {
             onChange={(e) => setMaterialBarcode(e.target.value)}
             className="large-textbox" // Apply custom CSS class for large text box
             onKeyPress={handleMaterialBarcodeKeyPress} // Listen for Enter key press
-            disabled={userId === null}
+            disabled={!userId || !selectedOption}
           />
+          {!userId && <div style={{ color: "red" }}>Please Input Work ID.</div>}
+          {!selectedOption && (
+            <div style={{ color: "red" }}>Please Select Production Line.</div>
+          )}
           {/* <input
             type="hidden"
             value={scanTime}

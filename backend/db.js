@@ -82,6 +82,15 @@ app.post("/Saved", (req, res) => {
 // ------------------------------------------------------------------------
 app.post("/SavedFinal", (req, res) => {
   const { barcode, scantime, station_scan, userId } = req.body;
+
+  // Check if the barcode length is exactly 20 characters
+  if (barcode.length !== 20) {
+    // If not, send a response indicating the error
+    res.status(400).send("Barcode length must be 20 characters");
+    return;
+  }
+
+  // If barcode length is valid, proceed with database insertion
   const sql =
     "INSERT INTO custom_final_scan (barcode, scantime, station_scan, user_id) VALUES (?, ?, ?, ?)";
   const values = [barcode, scantime, station_scan, userId];
@@ -95,10 +104,11 @@ app.post("/SavedFinal", (req, res) => {
     res.status(200).send("Data saved successfully");
   });
 });
+
 // ------------------------------------------------------------------------
 app.get("/History", (req, res) => {
   db1Pool.query(
-    "SELECT material_barcode, compressor_barcode, scan_time, user_id FROM compressor WHERE DATE(scan_time) = CURDATE() ORDER BY ID DESC;",
+    "SELECT material_barcode, compressor_barcode, scan_time, user_id FROM compressor WHERE DATE(scan_time) = CURDATE() ORDER BY ID DESC LIMIT 20;",
     (error, results) => {
       if (error) {
         console.error("Error executing SQL query:", error);
@@ -112,7 +122,7 @@ app.get("/History", (req, res) => {
 // ------------------------------------------------------------------------
 app.get("/HistoryFinal", (req, res) => {
   db1Pool.query(
-    "SELECT barcode, scantime, station_scan, user_id FROM custom_final_scan WHERE DATE(scantime) = CURDATE() ORDER BY ID DESC;",
+    "SELECT barcode, scantime, station_scan, user_id FROM custom_final_scan WHERE DATE(scantime) = CURDATE() ORDER BY ID DESC LIMIT 20;",
     (error, results) => {
       if (error) {
         console.error("Error executing SQL query:", error);
