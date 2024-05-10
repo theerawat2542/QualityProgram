@@ -124,7 +124,6 @@ function FormScanFinal() {
 
   const handleUserIdKeyPress = (e) => {
     if (e.key === "Enter") {
-      // Move focus to the Material Barcode field
       barcodeInputRef.current.focus();
     }
   };
@@ -162,8 +161,8 @@ function FormScanFinal() {
           placeholder="User ID"
           className="user-id-input"
           value={userId}
-          onChange={(e) => setUserId(e.target.value)} // Handle changes in the user ID input field
-          onKeyPress={handleUserIdKeyPress} // Listen for Enter key press
+          onChange={(e) => setUserId(e.target.value)} 
+          onKeyPress={handleUserIdKeyPress} 
         />
         <br />
         <br />

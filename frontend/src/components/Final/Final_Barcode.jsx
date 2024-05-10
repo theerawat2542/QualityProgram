@@ -50,8 +50,8 @@ const FinalBarcode = ({ barcode }) => {
     },
     {
         title: "Model",
-        dataIndex: ",WorkUser_RightMostItemName",
-        key: ",WorkUser_RightMostItemName",
+        dataIndex: "WorkUser_RightMostItemName",
+        key: "WorkUser_RightMostItemName",
         ellipsis: true
     },
     {
