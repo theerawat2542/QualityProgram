@@ -108,7 +108,7 @@ function Safety() {
           .includes(modelFilter.toLowerCase());
       }
       if (barcodeFilter !== "") {
-        matchesBarcode = record.Judgement
+        matchesBarcode = record.Serial
           .toLowerCase()
           .includes(barcodeFilter.toLowerCase());
       }
@@ -168,9 +168,9 @@ function Safety() {
     { label: "Production Line", key: "WorkUser_LineName" },
     { label: "Model", key: "Program/Model" },
     { label: "Order No.", key: "WorkUser_MOrderCode" },
-    { label: "Barcode", key: "Judgement" },
+    { label: "Barcode", key: "Serial" },
     { label: "Date/Time", key: "Time" },
-    { label: "Serial", key: "Serial" },
+    { label: "Judgement", key: "Judgement" },
     { label: "s1_HL", key: "s1_HL" },
     { label: "Step1", key: "Step1" },
     { label: "Ss1_Judgetatus", key: "s1_Judge" },
@@ -380,7 +380,7 @@ function Safety() {
                     />
                   </th>
                   <th><center>Date/Time</center></th>
-                  <th><center>Serial</center></th>
+                  <th><center>Judgement</center></th>
                   <th><center>s1_HL</center></th>
                   <th><center>Step1</center></th>
                   <th><center>s1_Judge</center></th>
@@ -448,9 +448,9 @@ function Safety() {
                     <td>{d.WorkUser_LineName}</td>
                     <td>{d["Program/Model"]}</td>
                     <td>{d.WorkUser_MOrderCode}</td>
-                    <td>{d.Judgement}</td>
+                    <td>{d.Serial}</td>
                     <td><center>{d.Time}</center></td> {/* No need to format again */}
-                    <td><center>{d.Serial}</center></td>
+                    <td><center>{d.Judgement}</center></td>
                     <td><center>{d.s1_HL}</center></td>
                     <td><center>{d.Step1}</center></td>
                     <td><center>{d.s1_Judge}</center></td>

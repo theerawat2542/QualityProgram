@@ -37,26 +37,31 @@ function HistoryFinal({ selectedOption }) {
       title: "Barcode",
       dataIndex: "barcode",
       key: "barcode",
-      ellipsis: true
+      ellipsis: true,
+      width: '20%'
     },
     {
       title: "Date/Time",
       dataIndex: "scantime",
       key: "scantime",
       render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss'),
-      ellipsis: true
+      ellipsis: true,
+      width: '20%'
     },
     {
       title: "Station Scan",
       dataIndex: "station_scan",
       key: "station_scan",
-      ellipsis: true
+      // Allow text wrapping
+      render: (text) => <span style={{ whiteSpace: 'normal' }}>{text}</span>,
+      width: '40%'
     },
     {
       title: "Scan By",
       dataIndex: "user_id",
       key: "user_id",
-      ellipsis: true
+      ellipsis: true,
+      width: '20%'
     }
   ];
 
@@ -70,6 +75,7 @@ function HistoryFinal({ selectedOption }) {
               dataSource={records}
               columns={columns}
               pagination={false}
+              loading={loading}
             />
           </div>
         </div>

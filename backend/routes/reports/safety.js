@@ -12,9 +12,9 @@ router.get("/", async (req, res) => {
   try {
     connection = await connect78Database();
     mes_connection = await connectMes9771Database();
-    const query1 = `SELECT * FROM safety_test WHERE Time >= '${startDate}' AND Time <= DATE_ADD('${endDate}', INTERVAL 1 DAY) and Judgement <> '' order by Time desc`;
+    const query1 = `SELECT * FROM safety_test WHERE Time >= '${startDate}' AND Time <= DATE_ADD('${endDate}', INTERVAL 1 DAY) and Serial <> '' order by Time desc`;
     const [results, fields] = await connection.query(query1);
-    const barcode_list = results.map(({ Judgement }) => `'${Judgement}'`);
+    const barcode_list = results.map(({ Serial }) => `'${Serial}'`);
     const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`;
     const [mes_results, mes_fields] = await mes_connection.query(query2)
     const joinedData = joinData_safety(results, mes_results);
@@ -33,7 +33,7 @@ function joinData_safety(data1, data2) {
     map.set(entry.WorkUser_BarCode, entry);
   });
   data1.forEach((entry) => {
-    const matchingEntry = map.get(entry.Judgement);
+    const matchingEntry = map.get(entry.Serial);
     if (matchingEntry) {
       const joinedEntry = {
         ...entry,

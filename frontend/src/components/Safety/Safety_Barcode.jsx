@@ -31,8 +31,8 @@ const SafetyBarcode = ({ barcode }) => {
   const columns = [
     {
         title: "Barcode",
-        dataIndex: "Judgement",
-        key: "Judgement",
+        dataIndex: "Serial",
+        key: "Serial",
         ellipsis: true
     },
     {

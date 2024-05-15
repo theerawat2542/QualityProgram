@@ -73,16 +73,16 @@ router.get("/", async (req, res) => {
         LIMIT 1
     ), '0') as comp_time,
     COALESCE((
-        SELECT s.Judgement
+        SELECT s.Serial
         FROM safety_test s
-        WHERE s.Judgement = '${barcode}' AND s.Judgement <> '' 
+        WHERE s.Serial = '${barcode}' AND s.Serial <> '' 
         ORDER BY s.Time DESC
         LIMIT 1
     ), '0') as safety_status,
     COALESCE((
         SELECT s.Time
         FROM safety_test s
-        WHERE s.Judgement = '${barcode}' AND s.Time <> ''
+        WHERE s.Serial = '${barcode}' AND s.Time <> ''
         ORDER BY s.Time DESC
         LIMIT 1
     ), '0') as safety_time,
