@@ -199,34 +199,34 @@ function Safety() {
     { label: "s4_Read1", key: "s4_Read1" },
     { label: "s4_Output", key: "s4_Output" },
     { label: "s4_Read2", key: "s4_Read2" },
-    { label: "s5_HL", key: "s5_HL" },
-    { label: "Step5", key: "Step5" },
-    { label: "s5_Judge", key: "s5_Judge" },
-    { label: "s5_LL", key: "s5_LL" },
-    { label: "s5_Read1", key: "s5_Read1" },
-    { label: "s5_Output", key: "s5_Output" },
-    { label: "s5_Read2", key: "s5_Read2" },
-    { label: "s6_HL", key: "s6_HL" },
-    { label: "Step6", key: "Step6" },
-    { label: "s6_Judge", key: "s6_Judge" },
-    { label: "s6_LL", key: "s6_LL" },
-    { label: "s6_Read1", key: "s6_Read1" },
-    { label: "s6_Output", key: "s6_Output" },
-    { label: "s6_Read2", key: "s6_Read2" },
-    { label: "s7_HL", key: "s7_HL" },
-    { label: "Step7", key: "Step7" },
-    { label: "s7_Judge", key: "s7_Judge" },
-    { label: "s7_LL", key: "s7_LL" },
-    { label: "s7_Read1", key: "s7_Read1" },
-    { label: "s7_Output", key: "s7_Output" },
-    { label: "s7_Read2", key: "s7_Read2" },
-    { label: "s8_HL", key: "s8_HL" },
-    { label: "Step8", key: "Step8" },
-    { label: "s8_Judge", key: "s8_Judge" },
-    { label: "s8_LL", key: "s8_LL" },
-    { label: "s8_Read1", key: "s8_Read1" },
-    { label: "s8_Output", key: "s8_Output" },
-    { label: "s8_Read2", key: "s8_Read2" },
+    // { label: "s5_HL", key: "s5_HL" },
+    // { label: "Step5", key: "Step5" },
+    // { label: "s5_Judge", key: "s5_Judge" },
+    // { label: "s5_LL", key: "s5_LL" },
+    // { label: "s5_Read1", key: "s5_Read1" },
+    // { label: "s5_Output", key: "s5_Output" },
+    // { label: "s5_Read2", key: "s5_Read2" },
+    // { label: "s6_HL", key: "s6_HL" },
+    // { label: "Step6", key: "Step6" },
+    // { label: "s6_Judge", key: "s6_Judge" },
+    // { label: "s6_LL", key: "s6_LL" },
+    // { label: "s6_Read1", key: "s6_Read1" },
+    // { label: "s6_Output", key: "s6_Output" },
+    // { label: "s6_Read2", key: "s6_Read2" },
+    // { label: "s7_HL", key: "s7_HL" },
+    // { label: "Step7", key: "Step7" },
+    // { label: "s7_Judge", key: "s7_Judge" },
+    // { label: "s7_LL", key: "s7_LL" },
+    // { label: "s7_Read1", key: "s7_Read1" },
+    // { label: "s7_Output", key: "s7_Output" },
+    // { label: "s7_Read2", key: "s7_Read2" },
+    // { label: "s8_HL", key: "s8_HL" },
+    // { label: "Step8", key: "Step8" },
+    // { label: "s8_Judge", key: "s8_Judge" },
+    // { label: "s8_LL", key: "s8_LL" },
+    // { label: "s8_Read1", key: "s8_Read1" },
+    // { label: "s8_Output", key: "s8_Output" },
+    // { label: "s8_Read2", key: "s8_Read2" },
     { label: "Operator", key: "Operator" }
   ];
 
@@ -409,7 +409,7 @@ function Safety() {
                   <th><center>s4_Read1</center></th>
                   <th><center>s4_Output</center></th>
                   <th><center>s4_Read2</center></th>
-                  <th><center>s5_HL</center></th>
+                  {/* <th><center>s5_HL</center></th>
                   <th><center>Step5</center></th>
                   <th><center>s5_Judge</center></th>
                   <th><center>s5_LL</center></th>
@@ -436,7 +436,7 @@ function Safety() {
                   <th><center>s8_LL</center></th>
                   <th><center>s8_Read1</center></th>
                   <th><center>s8_Output</center></th>
-                  <th><center>s8_Read2</center></th>
+                  <th><center>s8_Read2</center></th> */}
                   <th><center>Operator</center></th>
 
                 </tr>
@@ -479,7 +479,7 @@ function Safety() {
                     <td><center>{d.s4_Read1}</center></td>
                     <td><center>{d.s4_Output}</center></td>
                     <td><center>{d.s4_Read2}</center></td>
-                    <td><center>{d.s5_HL}</center></td>
+                    {/* <td><center>{d.s5_HL}</center></td>
                     <td><center>{d.Step5}</center></td>
                     <td><center>{d.s5_Judge}</center></td>
                     <td><center>{d.s5_LL}</center></td>
@@ -506,7 +506,7 @@ function Safety() {
                     <td><center>{d.s8_LL}</center></td>
                     <td><center>{d.s8_Read1}</center></td>
                     <td><center>{d.s8_Output}</center></td>
-                    <td><center>{d.s8_Read2}</center></td>
+                    <td><center>{d.s8_Read2}</center></td> */}
                     <td><center>{d.Operator}</center></td>
                   </tr>
                 ))}
