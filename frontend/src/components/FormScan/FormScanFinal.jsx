@@ -18,12 +18,14 @@ function FormScanFinal() {
   const [status_cool, setStatusCool] = useState("");
   const [status_safe, setStatusSafe] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forceUpdateKey, setForceUpdateKey] = useState(0); // New state to force updates
 
+  // Update the station scan when the statuses or forceUpdateKey changes
   useEffect(() => {
     if (barcode.length === 20) {
       updateStationScan();
     }
-  }, [status_oil, status_comp, status_cool, status_safe]);
+  }, [status_oil, status_comp, status_cool, status_safe, forceUpdateKey]);
 
   const fetchDataFromStation = async (barcode) => {
     try {
@@ -36,7 +38,9 @@ function FormScanFinal() {
       setStatusComp(stationData.comp_status !== "0" ? "Compressor" : "");
       setStatusCool(stationData.cooling_status === "OK" ? "CoolingTest" : "");
       setStatusSafe(stationData.safety_status !== "0" ? "SafetyTest" : "");
-      await updateStationScan();
+      
+      // Increment forceUpdateKey to trigger a re-render even with the same statuses
+      setForceUpdateKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.error("Error fetching data from station:", error);
     } finally {
@@ -56,8 +60,7 @@ function FormScanFinal() {
       if (status_cool) stationScanParts.push(status_cool);
       if (status_safe) stationScanParts.push(status_safe);
       const updatedStationScan = stationScanParts.join(", ");
-      // setStationScan(updatedStationScan); // Update station_scan state
-      // console.log(updatedStationScan);
+      
       const newScantime = formatScanTime(new Date());
       const data = {
         barcode: barcode,
@@ -75,22 +78,21 @@ function FormScanFinal() {
   const handleBarcodeChange = async (e) => {
     const newBarcode = e.target.value;
     setBarcode(newBarcode);
+
     if (newBarcode.length === 20) {
       await fetchDataFromStation(newBarcode);
-      // await updateStationScan();
     }
   };
 
   const handleSubmit = async () => {
     try {
-      // await updateStationScan();
       console.log("Data sent successfully!");
       setSuccessMessage("OK");
       setBarcode("");
       barcodeInputRef.current.focus();
       setTimeout(() => {
         setSuccessMessage(null);
-      }, 2000);
+      }, 1000);
     } catch (error) {
       console.error("Error sending data:", error);
       alert("Error sending data.");
@@ -107,20 +109,22 @@ function FormScanFinal() {
         setBarcode("");
         return;
       }
-
+  
       if (barcode.charAt(12) !== selectedOption) {
         alert("Barcode does not correspond to the selected Production Line.");
         setBarcode("");
         barcodeInputRef.current.focus();
         return;
       }
-      setTimeout(() => {
-        handleSubmit();
-      }, 1000);
-
+  
+      // Fetch station data and then submit the form
+      await fetchDataFromStation(barcode);
+      handleSubmit();  // This will submit the data to the database after fetching
+  
       barcodeInputRef.current.focus();
     }
   };
+  
 
   const handleUserIdKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -161,8 +165,8 @@ function FormScanFinal() {
           placeholder="User ID"
           className="user-id-input"
           value={userId}
-          onChange={(e) => setUserId(e.target.value)} 
-          onKeyPress={handleUserIdKeyPress} 
+          onChange={(e) => setUserId(e.target.value)}
+          onKeyDown={handleUserIdKeyPress}
         />
         <br />
         <br />
@@ -186,8 +190,9 @@ function FormScanFinal() {
             onChange={handleBarcodeChange}
             className="large-textbox"
             autoFocus
-            onKeyPress={handleBarcodeKeyPress}
+            onKeyDown={handleBarcodeKeyPress}
             disabled={!userId || !selectedOption}
+            maxLength={20}
           />
           {!userId && <div style={{ color: "red" }}>Please Input Work ID.</div>}
           {!selectedOption && (
@@ -197,8 +202,7 @@ function FormScanFinal() {
           <br />
         </div>
       </div>
-      <div>{/* <center><b>Station Scan: </b> {station_scan}</center> */}</div>
-      <HistoryFinal selectedOption={selectedOption} />
+      {selectedOption && userId && <HistoryFinal selectedOption={selectedOption} />}
     </div>
   );
 }

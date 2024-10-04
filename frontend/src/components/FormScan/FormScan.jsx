@@ -135,7 +135,7 @@ function FormScan() {
           className="user-id-input"
           value={userId}
           onChange={(e) => setUserId(e.target.value)} // Handle changes in the user ID input field
-          onKeyPress={handleUserIdKeyPress} // Listen for Enter key press
+          onKeyDown={handleUserIdKeyPress} // Listen for Enter key press
         /><br /><br />
         {successMessage && (
           <div className="success-message">
@@ -155,8 +155,9 @@ function FormScan() {
             onChange={(e) => setCompressorBarcode(e.target.value)}
             className="large-textbox" // Apply custom CSS class for large text box
             autoFocus
-            onKeyPress={handleCompressorBarcodeKeyPress} // Listen for Enter key press
+            onKeyDown={handleCompressorBarcodeKeyPress} // Listen for Enter key press
             disabled={!userId || !selectedOption}
+            maxLength={20}
           />
           <h3>
             <b>Material Barcode</b>
@@ -167,7 +168,7 @@ function FormScan() {
             value={materialBarcode}
             onChange={(e) => setMaterialBarcode(e.target.value)}
             className="large-textbox" // Apply custom CSS class for large text box
-            onKeyPress={handleMaterialBarcodeKeyPress} // Listen for Enter key press
+            onKeyDown={handleMaterialBarcodeKeyPress} // Listen for Enter key press
             disabled={!userId || !selectedOption}
           />
           {!userId && <div style={{ color: "red" }}>Please Input Work ID.</div>}
@@ -183,7 +184,7 @@ function FormScan() {
           <br />
         </div>
       </div>
-      <History selectedOption={selectedOption} />
+      {selectedOption && userId && <History selectedOption={selectedOption} />}
     </div>
   );
 }

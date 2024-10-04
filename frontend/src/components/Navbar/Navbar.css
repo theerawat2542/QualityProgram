@@ -1,9 +1,9 @@
 .navbar {
-  background-color: rgb(30, 13, 124);
+  background-color: rgb(32, 12, 146);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 80px;
+  padding: 0px 70px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 }
 
@@ -12,7 +12,7 @@
 }
 
 .logo-image {
-  height: 40px; /* Increase logo height */
+  height: 25px; /* Increase logo height */
   width: auto; /* Allow logo width to adjust according to height */
 }
 
