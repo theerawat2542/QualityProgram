@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../../lib/config";
 import "./Styles.css"; // Assuming you have a separate CSS file for styling
@@ -403,3 +405,257 @@ const ButtonRowWithArrows = ({ barcode }) => {
 };
 
 export default ButtonRowWithArrows;
+
+
+
+
+
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+// import React, { useState, useEffect, useRef } from "react";
+// import axios from "axios";
+// import { API_URL } from "../../lib/config";
+// import "./Styles.css";
+
+// import OilBarcode from "../ChargeR600/Oil_Barcode";
+// import CompBarcode from "../Compressor/Compressor_Barcode";
+// import CoolingBarcode from "../CoolingTest/Cooling_Barcode";
+// import SafetyBarcode from "../Safety/Safety_Barcode";
+// import FinalBarcode from "../Final/Final_Barcode";
+
+// /* ================= Arrow ================= */
+// const ArrowRight = () => (
+//   <div className="arrow-container">
+//     <svg className="arrow" viewBox="0 0 24 24">
+//       <path d="M0 0h24v24H0z" fill="none" />
+//       <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+//     </svg>
+//   </div>
+// );
+
+// /* ================= Utils ================= */
+// const formatDateTime = (value) => {
+//   if (!value) return "-";
+//   const d = new Date(value);
+//   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+//     2,
+//     "0"
+//   )}-${String(d.getDate()).padStart(2, "0")} ${String(
+//     d.getHours()
+//   ).padStart(2, "0")}:${String(d.getMinutes()).padStart(
+//     2,
+//     "0"
+//   )}:${String(d.getSeconds()).padStart(2, "0")}`;
+// };
+
+// /* ================= Current Station ================= */
+// const CurrentStation = ({
+//   oil_status,
+//   comp_status,
+//   cooling_status,
+//   safety_status,
+//   final_status,
+//   oil_barcode,
+//   cooling_barcode,
+// }) => {
+//   if (oil_status !== "OK" || oil_barcode === "0") {
+//     return <h4>Current Station: <b>Charging R600</b></h4>;
+//   }
+//   if (comp_status === "0") {
+//     return <h4>Current Station: <b>Compressor</b></h4>;
+//   }
+//   if (cooling_status !== "OK" || cooling_barcode === "0") {
+//     return <h4>Current Station: <b>Cooling Test</b></h4>;
+//   }
+//   if (safety_status === "0") {
+//     return <h4>Current Station: <b>Safety Test</b></h4>;
+//   }
+//   if (final_status === "0") {
+//     return <h4>Current Station: <b>Final</b></h4>;
+//   }
+//   return <h4>Current Station: <b>Complete</b></h4>;
+// };
+
+// /* ================= Main ================= */
+// const ButtonRowWithArrows = ({ barcode }) => {
+//   const [data, setData] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   // ⭐ state เดียวที่ใช้ควบคุมการค้าง
+//   const [activeStation, setActiveStation] = useState(null);
+
+//   // ⭐ เก็บ barcode ก่อนหน้า (ไม่ trigger re-render)
+//   const prevBarcodeRef = useRef(null);
+
+//   /* ===== Fetch API ===== */
+//   useEffect(() => {
+//     if (!barcode) return;
+
+//     const fetchData = async () => {
+//       try {
+//         const res = await axios.get(`${API_URL}/station`, {
+//           params: { barcode },
+//         });
+//         setData(res.data);
+//       } catch (err) {
+//         setError(err.message);
+//       }
+//     };
+
+//     fetchData();
+//   }, [barcode]);
+
+//   /* ===== reset เฉพาะตอน barcode เปลี่ยนจริง ===== */
+//   useEffect(() => {
+//     if (prevBarcodeRef.current !== barcode) {
+//       setActiveStation(null); // reset ครั้งเดียว
+//       prevBarcodeRef.current = barcode;
+//     }
+//   }, [barcode]);
+
+//   const row = data?.station78Data?.[0];
+//   if (!row) return null;
+
+//   const {
+//     oil_status,
+//     comp_status,
+//     cooling_status,
+//     safety_status,
+//     final_status,
+//     oil_barcode,
+//     cooling_barcode,
+//   } = row;
+
+//   const allZero =
+//     oil_barcode === "0" &&
+//     comp_status === "0" &&
+//     cooling_barcode === "0" &&
+//     safety_status === "0" &&
+//     final_status === "0";
+
+//   return (
+//     <div>
+//       <div className="centered-container">
+//         {!allZero && (
+//           <CurrentStation
+//             oil_status={oil_status}
+//             comp_status={comp_status}
+//             cooling_status={cooling_status}
+//             safety_status={safety_status}
+//             final_status={final_status}
+//             oil_barcode={oil_barcode}
+//             cooling_barcode={cooling_barcode}
+//           />
+//         )}
+//       </div>
+
+//       <br />
+
+//       <div className="centered-container">
+//         <div className="button-row">
+
+//           {/* ===== (1) OIL ===== */}
+//           {oil_barcode !== "0" ? (
+//             <button
+//               className={`${oil_status === "OK"
+//                 ? "large-green-button"
+//                 : "large-yellow-button"
+//                 } ${activeStation === "OIL" ? "active-button" : ""}`}
+//               title={`Oil Time: ${formatDateTime(row.oil_charge_time)}`}
+//               onClick={() => setActiveStation("OIL")}
+//             >
+//               (1) Charging R600
+//             </button>
+//           ) : (
+//             <button className="large-gray-button" disabled>
+//               (1) Charging R600
+//             </button>
+//           )}
+
+//           <ArrowRight />
+
+//           {/* ===== (2) COMP ===== */}
+//           {comp_status !== "0" ? (
+//             <button
+//               className={`large-green-button ${activeStation === "COMP" ? "active-button" : ""}`}
+//               title={`Comp Time: ${formatDateTime(row.comp_time)}`}
+//               onClick={() => setActiveStation("COMP")}
+//             >
+//               (2) Scan Compressor
+//             </button>
+//           ) : (
+//             <button className="large-gray-button" disabled>
+//               (2) Scan Compressor
+//             </button>
+//           )}
+
+//           <ArrowRight />
+
+//           {/* ===== (3) COOLING ===== */}
+//           {cooling_barcode !== "0" ? (
+//             <button
+//               className={`${cooling_status === "OK"
+//                 ? "large-green-button"
+//                 : "large-yellow-button"
+//                 } ${activeStation === "COOLING" ? "active-button" : ""}`}
+//               title={`Cooling Time: ${formatDateTime(row.cooling_time)}`}
+//               onClick={() => setActiveStation("COOLING")}
+//             >
+//               (3) Cooling Test
+//             </button>
+//           ) : (
+//             <button className="large-gray-button" disabled>
+//               (3) Cooling Test
+//             </button>
+//           )}
+
+//           <ArrowRight />
+
+//           {/* ===== (4) SAFETY ===== */}
+//           {safety_status !== "0" ? (
+//             <button
+//               className={`large-green-button ${activeStation === "SAFETY" ? "active-button" : ""}`}
+//               title={`Safety Time: ${formatDateTime(row.safety_time)}`}
+//               onClick={() => setActiveStation("SAFETY")}
+//             >
+//               (4) Safety Test
+//             </button>
+//           ) : (
+//             <button className="large-gray-button" disabled>
+//               (4) Safety Test
+//             </button>
+//           )}
+
+//           <ArrowRight />
+
+//           {/* ===== (5) FINAL ===== */}
+//           {final_status !== "0" ? (
+//             <button
+//               className={`large-green-button ${activeStation === "FINAL" ? "active-button" : ""}`}
+//               title={`Final Time: ${formatDateTime(row.final_time)}`}
+//               onClick={() => setActiveStation("FINAL")}
+//             >
+//               (5) Final
+//             </button>
+//           ) : (
+//             <button className="large-gray-button" disabled>
+//               (5) Final
+//             </button>
+//           )}
+
+//         </div>
+//       </div>
+
+//       {error && <p>Error: {error}</p>}
+
+//       {/* ===== Station Component (ค้างจนเปลี่ยน barcode) ===== */}
+//       {barcode?.length === 20 && activeStation === "OIL" && <OilBarcode barcode={barcode} />}
+//       {barcode?.length === 20 && activeStation === "COMP" && <CompBarcode barcode={barcode} />}
+//       {barcode?.length === 20 && activeStation === "COOLING" && <CoolingBarcode barcode={barcode} />}
+//       {barcode?.length === 20 && activeStation === "SAFETY" && <SafetyBarcode barcode={barcode} />}
+//       {barcode?.length === 20 && activeStation === "FINAL" && <FinalBarcode barcode={barcode} />}
+//     </div>
+//   );
+// };
+
+// export default ButtonRowWithArrows;

@@ -8,8 +8,10 @@ import FormScan from './components/FormScan/FormScan'
 import Final from './components/Final/Final'
 import Station from './components/Station/Station'
 import FormScanFinal from './components/FormScan/FormScanFinal'
+import FormScanDefect from './components/FormScan/FormScanDefect'
 import Safety from './components/Safety/Safety'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Defect from './components/Defect/Defect'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: '/charge-r600a-report',
     element: <Charge />
+  },
+  {
+    path: '/scan-defect',
+    element: <FormScanDefect />
   },
   {
     path: '/cooling-test-report',
@@ -39,6 +45,10 @@ const router = createBrowserRouter([
   {
     path: '/safety-test-report',
     element: <Safety />
+  },
+  {
+    path: '/scan-defect-report',
+    element: <Defect />
   },
   {
     path: '/station',

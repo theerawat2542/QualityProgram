@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table } from "antd";
-import { format } from 'date-fns';
-import { API_URL } from '../../lib/config';
+import { Table, Tag } from "antd";
+import { format } from "date-fns";
+import { API_URL } from "../../lib/config";
+import "./SafetyBarcode.css";
 
 const SafetyBarcode = ({ barcode }) => {
-  const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
-  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/barcode_safety?barcode=${barcode}`);
-        setData(response.data);
-        setRecords(response.data.slice(0));
-        // setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        // setLoading(false);
+        const response = await axios.get(
+          `${API_URL}/barcode_safety?barcode=${barcode}`
+        );
+        setRecords(response.data);
+      } catch (err) {
+        setError(err.message);
       }
     };
 
@@ -30,56 +30,55 @@ const SafetyBarcode = ({ barcode }) => {
 
   const columns = [
     {
-        title: "Barcode",
-        dataIndex: "Serial",
-        key: "Serial",
-        ellipsis: true
+      title: "Barcode",
+      dataIndex: "WorkUser_BarCode",
+      key: "WorkUser_BarCode",
+      fixed: "left",
+      ellipsis: true,
     },
     {
-        title: "Production Line",
-        dataIndex: "WorkUser_LineName",
-        key: "WorkUser_LineName",
-        ellipsis: true
+      title: "Line",
+      dataIndex: "WorkUser_LineName",
+      key: "WorkUser_LineName",
+      align: "center",
     },
     {
-      title: "Date/Time",
-      dataIndex: "Time",
-      key: "Time",
-      render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss'),
-      ellipsis: true
+      title: "Date / Time",
+      dataIndex: "Create_Date",
+      key: "Create_Date",
+      align: "center",
+      render: (text) =>
+        text ? format(new Date(text), "yyyy-MM-dd HH:mm:ss") : "-",
     },
     {
-        title: "Model",
-        dataIndex: "Program/Model",
-        key: "Program/Model",
-        ellipsis: true
+      title: "Order No.",
+      dataIndex: "WorkUser_MOrderCode",
+      key: "WorkUser_MOrderCode",
+      align: "center",
     },
-    {
-        title: "Order No.",
-        dataIndex: "WorkUser_MOrderCode",
-        key: "WorkUser_MOrderCode",
-        ellipsis: true
-    }
   ];
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <br />
-      <div className="App container">
-      <center><label><h3>Safety Test</h3></label><br /></center>
-        <div className="bg-white shadow border">
-          <div className="table-responsive" style={{ maxHeight: "500px", overflowY: "scroll" }}>
-            <Table
-              dataSource={records}
-              columns={columns}
-              pagination={false}
-              scroll={{ x: true }}
-            />
-          </div>
+    <div className="safety-container">
+      <div className="safety-card">
+        <div className="safety-header">
+          <span>🛡️ Safety Test</span>
+          <small>Barcode : {barcode}</small>
         </div>
+
+        <Table
+          dataSource={records}
+          columns={columns}
+          pagination={false}
+          size="middle"
+          rowKey={(record, index) => index}
+          scroll={{ y: 420, x: 900 }}
+        />
+
+        {error && <div className="error-text">Error : {error}</div>}
       </div>
     </div>
   );
-}
+};
 
 export default SafetyBarcode;

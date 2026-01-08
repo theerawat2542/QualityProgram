@@ -1,28 +1,35 @@
 .navbar {
-  background-color: rgb(32, 12, 146);
+  background-color: rgb(17, 0, 112);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0px 70px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-clip: padding-box;
 }
 
+/* LOGO */
 .navbar-logo {
   flex: 1;
 }
 
 .logo-image {
-  height: 25px; /* Increase logo height */
-  width: auto; /* Allow logo width to adjust according to height */
+  height: 30px;
 }
 
+/* LINKS */
 .navbar-links {
   list-style-type: none;
   display: flex;
+  align-items: center; /* ⭐ สำคัญ */
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-links li {
-  margin-right: 20px; /* Reduce spacing between navbar links */
+  margin-right: 16px;
+  display: flex;
+  align-items: center; /* ⭐ สำคัญ */
 }
 
 .navbar-links li:last-child {
@@ -32,15 +39,19 @@
 .navbar-links a {
   color: white;
   text-decoration: none;
-  position: relative;
-  font-size: 16px; /* Increase font size */
-  transition: color 0.3s ease; /* Add smooth color transition on hover */
+  font-size: 15px;
+  display: flex;              /* ⭐ */
+  align-items: center;        /* ⭐ */
+  line-height: 1;             /* ⭐ */
+  gap: 4px;
+  transition: color 0.3s ease;
 }
 
 .navbar-links a:hover {
-  color: #ffc107; /* Change color on hover */
+  color: #ffc107;
 }
 
+/* DROPDOWN */
 .reports-dropdown {
   position: relative;
 }
@@ -48,10 +59,12 @@
 .reports-dropdown-content {
   display: none;
   position: absolute;
-  background-color: rgb(30, 13, 124); /* Match navbar background color */
-  min-width: 150px; /* Increase dropdown width */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  z-index: 1;
+  top: 100%;
+  left: 0;
+  background-color: rgb(30, 13, 124);
+  min-width: 190px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 10;
 }
 
 .reports-dropdown:hover .reports-dropdown-content {
@@ -59,12 +72,18 @@
 }
 
 .reports-dropdown-content a {
-  color: white;
-  padding: 10px;
+  padding: 10px 14px;
   display: block;
-  transition: background-color 0.5s ease; /* Add smooth background color transition */
+  color: white;
+  transition: background-color 0.3s ease;
 }
 
 .reports-dropdown-content a:hover {
-  background-color: #3f51b5; /* Change background color on hover */
+  background-color: #3f51b5;
+}
+
+/* ARROW */
+.arrow {
+  font-size: 14px;
+  margin-left: 2px;
 }

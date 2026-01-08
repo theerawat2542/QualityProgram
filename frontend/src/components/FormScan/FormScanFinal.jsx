@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "./FormScan.css"; // Import CSS file for styling
@@ -92,7 +94,7 @@ function FormScanFinal() {
       barcodeInputRef.current.focus();
       setTimeout(() => {
         setSuccessMessage(null);
-      }, 1000);
+      }, 2000);
     } catch (error) {
       console.error("Error sending data:", error);
       alert("Error sending data.");
@@ -147,7 +149,7 @@ function FormScanFinal() {
     <div>
       <Navbar />
       <div className="select-box">
-        <b>Production Line: </b>
+        <b>Production Line : </b>
         <select
           value={selectedOption}
           onChange={(e) => setSelectedOption(e.target.value)}
@@ -155,10 +157,8 @@ function FormScanFinal() {
           <option value="">--</option>
           <option value="A">RA</option>
           <option value="B">RB</option>
-        </select>
-      </div>
-      <div className="user-id-box">
-        <b>Work ID: </b>
+        </select><br /><br />
+        <b>Work ID : </b>
         <input
           ref={userIdInputRef}
           type="text"
@@ -168,8 +168,8 @@ function FormScanFinal() {
           onChange={(e) => setUserId(e.target.value)}
           onKeyDown={handleUserIdKeyPress}
         />
-        <br />
-        <br />
+      </div>
+      <div className="user-id-box">
         {successMessage && (
           <div className="success-message">
             <h1>
@@ -180,9 +180,9 @@ function FormScanFinal() {
       </div>
       <div className="form-container">
         <div className="form-wrapper">
-          <h3>
-            <b>Final Scan</b>
-          </h3>
+          <h2>
+            <b>Final Barcode</b>
+          </h2>
           <input
             ref={barcodeInputRef}
             type="text"
@@ -199,10 +199,9 @@ function FormScanFinal() {
             <div style={{ color: "red" }}>Please Select Production Line.</div>
           )}
           <br />
-          <br />
         </div>
       </div>
-      {selectedOption && userId && <HistoryFinal selectedOption={selectedOption} />}
+      <HistoryFinal selectedOption={selectedOption} />
     </div>
   );
 }

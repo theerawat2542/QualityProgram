@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table } from "antd";
-import { format } from 'date-fns';
-import { API_URL } from '../../lib/config';
+import { format } from "date-fns";
+import { API_URL } from "../../lib/config";
+import "./FinalBarcode.css";
 
 const FinalBarcode = ({ barcode }) => {
-  const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
-  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/barcode_final?barcode=${barcode}`);
-        setData(response.data);
-        setRecords(response.data.slice(0));
-        // setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        // setLoading(false);
+        const response = await axios.get(
+          `${API_URL}/barcode_final?barcode=${barcode}`
+        );
+        setRecords(response.data);
+      } catch (err) {
+        setError(err.message);
       }
     };
 
@@ -30,56 +30,62 @@ const FinalBarcode = ({ barcode }) => {
 
   const columns = [
     {
-        title: "Barcode",
-        dataIndex: "barcode",
-        key: "barcode",
-        ellipsis: true
+      title: "Barcode",
+      dataIndex: "barcode",
+      key: "barcode",
+      fixed: "left",
+      ellipsis: true,
     },
     {
-        title: "Production Line",
-        dataIndex: "WorkUser_LineName",
-        key: "WorkUser_LineName",
-        ellipsis: true
+      title: "Line",
+      dataIndex: "WorkUser_LineName",
+      key: "WorkUser_LineName",
+      align: "center",
     },
     {
-      title: "Date/Time",
+      title: "Date / Time",
       dataIndex: "scantime",
       key: "scantime",
-      render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss'),
-      ellipsis: true
+      align: "center",
+      render: (text) =>
+        text ? format(new Date(text), "yyyy-MM-dd HH:mm:ss") : "-",
     },
     {
-        title: "Model",
-        dataIndex: "WorkUser_RightMostItemName",
-        key: "WorkUser_RightMostItemName",
-        ellipsis: true
+      title: "Model",
+      dataIndex: "WorkUser_RightMostItemName",
+      key: "WorkUser_RightMostItemName",
+      align: "center",
+      ellipsis: true,
     },
     {
-        title: "Order No.",
-        dataIndex: "WorkUser_MOrderCode",
-        key: "WorkUser_MOrderCode",
-        ellipsis: true
-    }
+      title: "Order No.",
+      dataIndex: "WorkUser_MOrderCode",
+      key: "WorkUser_MOrderCode",
+      align: "center",
+    },
   ];
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <br />
-      <div className="App container">
-      <center><label><h3>Final scan</h3></label><br /></center>
-        <div className="bg-white shadow border">
-          <div className="table-responsive" style={{ maxHeight: "500px", overflowY: "scroll" }}>
-            <Table
-              dataSource={records}
-              columns={columns}
-              pagination={false}
-              scroll={{ x: true }}
-            />
-          </div>
+    <div className="final-container">
+      <div className="final-card">
+        <div className="final-header">
+          <span>✅ Final Scan</span>
+          <small>Barcode : {barcode}</small>
         </div>
+
+        <Table
+          dataSource={records}
+          columns={columns}
+          pagination={false}
+          size="middle"
+          rowKey={(record, index) => index}
+          scroll={{ y: 420, x: 900 }}
+        />
+
+        {error && <div className="error-text">Error : {error}</div>}
       </div>
     </div>
   );
-}
+};
 
 export default FinalBarcode;

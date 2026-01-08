@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import "./FormScan.css"; // Import CSS file for styling
@@ -50,7 +52,7 @@ function FormScan() {
       // Remove success message after 3 seconds
       setTimeout(() => {
         setSuccessMessage(null);
-      }, 1000);
+      }, 2000);
     } catch (error) {
       console.error("Error sending data:", error);
       alert("Error sending data.");
@@ -116,7 +118,7 @@ function FormScan() {
     <div>
       <Navbar />
       <div className="select-box">
-        <b>Production Line: </b>
+        <b>Production Line : </b>
         <select
           value={selectedOption}
           onChange={(e) => setSelectedOption(e.target.value)}
@@ -124,10 +126,8 @@ function FormScan() {
           <option value="">--</option>
           <option value="A">RA</option>
           <option value="B">RB</option>
-        </select>
-      </div>
-      <div className="user-id-box">
-        <b>Work ID: </b>
+        </select><br /><br />
+        <b>Work ID : </b>
         <input
           ref={userIdInputRef}
           type="text"
@@ -136,7 +136,9 @@ function FormScan() {
           value={userId}
           onChange={(e) => setUserId(e.target.value)} // Handle changes in the user ID input field
           onKeyDown={handleUserIdKeyPress} // Listen for Enter key press
-        /><br /><br />
+        />
+      </div>
+      <div className="user-id-box">
         {successMessage && (
           <div className="success-message">
             <h1><b>{successMessage}</b></h1>
@@ -181,10 +183,9 @@ function FormScan() {
             disabled // Disable editing
           /> */}
           <br />
-          <br />
         </div>
       </div>
-      {selectedOption && userId && <History selectedOption={selectedOption} />}
+      <History selectedOption={selectedOption} />
     </div>
   );
 }

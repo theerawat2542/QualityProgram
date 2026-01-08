@@ -1,45 +1,90 @@
 const express = require("express");
-const { connect78Database, connectMes9771Database } = require("../../helper/db-util");
+const {
+  connect78Database,
+  connectMes9771Database,
+} = require("../../helper/db-util");
+
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  let connection;
-  let mes_connection
-  const { barcode } = req.query;
-  try {
-    connection = await connect78Database()
-    mes_connection = await connectMes9771Database()
-    const query1 = `SELECT * FROM safety_test WHERE Serial = '${barcode}' order by Time desc`;
-    const [results, fields] = await connection.query(query1);
-    const barcode_list = results.map(({Serial}) => `'${Serial}'`)
-    const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`
-    const [mes_results, mes_fields] = await mes_connection.query(query2)
-    const joinedData = joinData_safety(results, mes_results)
-    res.json(joinedData)
-  } catch (error) {
-    res.status(500).json({message: error})
-  } finally {
-    connection.destroy()
-  }
-})
+router.get("/", async (req, res) => {
+  let connection78;
+  let mes_connection;
 
-function joinData_safety(data1, data2) {
-  const joinedData = [];
+  const { barcode } = req.query;
+
+  if (!barcode) {
+    return res.status(400).json({ message: "Please input barcode" });
+  }
+
+  try {
+    connection78 = await connect78Database();
+    mes_connection = await connectMes9771Database();
+
+    /* ================= Query 1 (MES) ================= */
+    const query1 = `
+      SELECT *
+      FROM bns_qm_performancetesting
+      WHERE WorkUser_BarCode = '${barcode}'
+      ORDER BY Create_Date DESC
+    `;
+
+    const [results] = await mes_connection.query(query1);
+
+    if (results.length === 0) {
+      return res.json([]);
+    }
+
+    /* ================= Prepare barcode list ================= */
+    const barcodeList = results
+      .map(({ WorkUser_BarCode }) => `'${WorkUser_BarCode}'`)
+      .join(",");
+
+    /* ================= Query 2 (MES) ================= */
+    const query2 = `
+      SELECT
+        WorkUser_MOrderCode,
+        WorkUser_BarCode,
+        WorkUser_LineName
+      FROM bns_pm_operation
+      WHERE WorkUser_BarCode IN (${barcodeList})
+    `;
+
+    const [mesResults] = await mes_connection.query(query2);
+
+    /* ================= Join Data ================= */
+    const joinedData = joinDataSafety(results, mesResults);
+
+    res.json(joinedData);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  } finally {
+    if (connection78) connection78.destroy();
+    if (mes_connection) mes_connection.destroy();
+  }
+});
+
+/* ================= Join Function ================= */
+
+function joinDataSafety(data1, data2) {
   const map = new Map();
-  data2.forEach((entry) => {
-    map.set(entry.WorkUser_BarCode, entry);
+  const joined = [];
+
+  data2.forEach((item) => {
+    map.set(item.WorkUser_BarCode, item);
   });
-  data1.forEach((entry) => {
-    const matchingEntry = map.get(entry.Serial);
-    if (matchingEntry) {
-      const joinedEntry = {
-        ...entry,
-        ...matchingEntry,
-      };
-      joinedData.push(joinedEntry);
+
+  data1.forEach((item) => {
+    const match = map.get(item.WorkUser_BarCode);
+    if (match) {
+      joined.push({
+        ...item,
+        ...match,
+      });
     }
   });
-  return joinedData;
+
+  return joined;
 }
 
 module.exports = router;

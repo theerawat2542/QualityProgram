@@ -1,5 +1,6 @@
 const express = require("express");
 const mysql = require("mysql");
+const { connect78Database, connectMes9771Database } = require("../backend/helper/db-util");
 const app = express();
 const bodyParser = require("body-parser");
 const oilChargerRoute = require("./routes/reports/oilcharger");
@@ -13,6 +14,8 @@ const coolingtestBarcode = require("./routes/barcode/barcode_coolingtest");
 const finalBarcode = require("./routes/barcode/barcode_final");
 const safetyBarcode = require("./routes/barcode/barcode_safety");
 const stationBarcode = require("./routes/station/station");
+const defectRoute = require("./routes/reports/defect");
+const defectBarcode = require("./routes/barcode/barcode_defect");
 // require('dotenv').config()
 // ------------------------------------------------------------------------
 const db1Pool = mysql.createPool({
@@ -80,6 +83,40 @@ app.post("/Saved", (req, res) => {
   });
 });
 // ------------------------------------------------------------------------
+//Insert defect
+app.post("/SavedDefect", (req, res) => {
+  console.log('Received request at /SavedDefect');
+  console.log('Request body:', req.body);
+
+  const { materialBarcode, defectBarcode, scanTime, userId, productionLine } = req.body;
+
+  // Validate required fields
+  if (!materialBarcode || !defectBarcode || !scanTime || !userId || !productionLine) {
+    console.error('Missing required fields:', { materialBarcode, defectBarcode, scanTime, userId, productionLine });
+    res.status(400).send('Missing required fields');
+    return;
+  }
+
+  const sql = `
+    INSERT INTO defect
+    (material_barcode, defect_barcode, scan_time, user_id, production_line)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+  const values = [materialBarcode, defectBarcode, scanTime, userId, productionLine];
+
+  console.log('Executing SQL:', sql, values);  // Debug log
+
+  db1Pool.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      res.status(500).send(err.message);
+      return;
+    }
+    console.log("Data saved successfully:", result);
+    res.status(200).send("Data saved successfully");
+  });
+});
+// ------------------------------------------------------------------------
 app.post("/SavedFinal", (req, res) => {
   const { barcode, scantime, station_scan, userId } = req.body;
 
@@ -134,10 +171,75 @@ app.get("/HistoryFinal", (req, res) => {
   );
 });
 // ------------------------------------------------------------------------
+app.get("/HistoryDefect", async (req, res) => {
+    let connection78;
+    let connection9771;
+    try {
+      connection78 = await connect78Database();
+      connection9771 = await connectMes9771Database();
+
+      const query = `SELECT material_barcode, defect_barcode, scan_time, user_id, production_line FROM defect WHERE DATE(scan_time) = CURDATE() ORDER BY ID DESC LIMIT 20;`;
+
+      const [defectResults] = await connection78.query(query);
+
+      // Get reason details for each defect
+      const defectsWithReason = await Promise.all(
+        defectResults.map(async (defect) => {
+          // Check if defect barcode contains separator
+          const isFullCode = defect.defect_barcode.includes('|');
+          let reasonQuery;
+
+          if (isFullCode) {
+            reasonQuery = `SELECT
+              CONCAT(P.Phenomenon_Reason_Code, '|', L.Defect_Location_Code) AS Logic_Code,
+              P.Phenomenon_Reason_Name,
+              L.Defect_Location_Name
+            FROM
+              cosmo_im_9771.base_phenomenon_reason AS P
+            CROSS JOIN
+              cosmo_im_9771.base_defect_location AS L
+            WHERE
+              P.Phenomenon_Reason_Code = SUBSTRING_INDEX('${defect.defect_barcode}', '|', 1)
+              AND L.Defect_Location_Code = SUBSTRING_INDEX('${defect.defect_barcode}', '|', -1)`;
+          } else {
+            // For reason-only codes (7 digits)
+            reasonQuery = `SELECT
+              P.Phenomenon_Reason_Code AS Logic_Code,
+              P.Phenomenon_Reason_Name,
+              'No Location' AS Defect_Location_Name
+            FROM
+              cosmo_im_9771.base_phenomenon_reason AS P
+            WHERE
+              P.Phenomenon_Reason_Code = '${defect.defect_barcode}'`;
+          }
+
+          const [reasonResults] = await connection9771.query(reasonQuery);
+          return {
+            ...defect,
+            reason: reasonResults[0]
+              ? isFullCode
+                ? `${reasonResults[0].Phenomenon_Reason_Name} - ${reasonResults[0].Defect_Location_Name}`
+                : `${reasonResults[0].Phenomenon_Reason_Name} - (No Location)`
+              : 'Unknown'
+          };
+        })
+      );
+
+      res.json(defectsWithReason);
+    } catch (error) {
+      console.error("Error in HistoryDefect:", error);
+      res.status(500).json({message: error.message});
+    } finally {
+      if (connection78) connection78.destroy();
+      if (connection9771) connection9771.destroy();
+    }
+});
+// ------------------------------------------------------------------------
 //Report-API
 app.use('/oilcharger', oilChargerRoute);
 app.use('/coolingtest', coolingTestRoute);
 app.use('/compressor', compressorRoute);
+app.use('/defect', defectRoute);
 app.use('/final', finalRoute);
 app.use('/safety', safetyRoute);
 // ------------------------------------------------------------------------
@@ -145,6 +247,7 @@ app.use('/safety', safetyRoute);
 app.use('/barcode_oilcharger', oilchargerBarcode);
 app.use('/barcode_compressor', compressorBarcode);
 app.use('/barcode_coolingtest', coolingtestBarcode);
+app.use('/barcode_defect', defectBarcode);
 app.use('/barcode_final', finalBarcode);
 app.use('/barcode_safety', safetyBarcode);
 // ------------------------------------------------------------------------

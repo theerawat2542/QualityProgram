@@ -1,40 +1,79 @@
-.form-container1 {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px; /* Adjust the width as needed */
-    margin: 0 auto; /* Center the form horizontally */
-  }
-  
-  .form-container1 form {
-    text-align: center;
-  }
-  
-  .form-container1 label {
-    display: block;
-    margin-bottom: 10px;
-  }
-  
-  .form-input1 {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  .btn-primary1 {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .btn-primary1:hover {
-    background-color: #0056b3;
-  }
-  
+/* =============================
+   Layout
+============================= */
+.station-wrapper {
+  min-height: calc(100vh - 60px);
+  /* background: linear-gradient(135deg, #eef2ff, #f8fafc); */
+  padding: 30px 20px;
+}
+
+/* =============================
+   Card
+============================= */
+.station-card {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #e5e5e7;
+  border-radius: 22px;
+  padding: 28px 32px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* =============================
+   Title
+============================= */
+.station-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin-bottom: 6px;
+}
+
+.station-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 22px;
+}
+
+/* =============================
+   Form
+============================= */
+.station-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.station-label {
+  text-align: left;
+  font-weight: 600;
+  color: #334155;
+  font-size: 14px;
+}
+
+.station-input {
+  height: 48px;
+  border-radius: 14px;
+  border: 1.5px solid #c7d2fe;
+  padding: 0 16px;
+  font-size: 16px;
+  transition: all 0.25s ease;
+}
+
+.station-input::placeholder {
+  color: #94a3b8;
+}
+
+.station-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+}
+
+/* =============================
+   Content Area
+============================= */
+.station-content {
+  margin-top: 30px;
+}

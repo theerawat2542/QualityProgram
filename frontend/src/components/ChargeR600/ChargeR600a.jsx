@@ -1,464 +1,338 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+"use client";
+
+import React, { useState, useMemo } from "react";
+import {
+  Table,
+  DatePicker,
+  Button,
+  message,
+  Tag,
+  Input,
+  Space,
+  Card,
+  Typography,
+  Divider,
+  Statistic,
+  Row,
+  Col,
+} from "antd";
+import {
+  SearchOutlined,
+  DownloadOutlined,
+  ClearOutlined,
+  ThunderboltOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  AlertOutlined,
+  DatabaseOutlined,
+} from "@ant-design/icons";
+import dayjs from "dayjs";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { CSVLink } from "react-csv";
-import ReactLoading from "react-loading";
-import { FaFileExcel } from "react-icons/fa";
-import Navbar from "../Navbar/Navbar";
-import { format, parse, isValid } from "date-fns";
-import "../Report.css";
+import * as XLSX from "xlsx";
 import { API_URL } from "../../lib/config";
-import { Alert } from "antd";
+import Navbar from "../Navbar/Navbar";
+
+const { RangePicker } = DatePicker;
+const { Title } = Typography;
+
+/* ================= Column Search Helper ================= */
+
+const getColumnSearchProps = (dataIndex) => ({
+  filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+    <div style={{ padding: 8 }}>
+      <Input
+        placeholder={`Search ${dataIndex}`}
+        value={selectedKeys[0]}
+        onChange={(e) =>
+          setSelectedKeys(e.target.value ? [e.target.value] : [])
+        }
+        onPressEnter={() => confirm()}
+        style={{ marginBottom: 8 }}
+      />
+      <Space>
+        <Button
+          type="primary"
+          size="small"
+          icon={<SearchOutlined />}
+          onClick={() => confirm()}
+        >
+          Search
+        </Button>
+        <Button
+          size="small"
+          onClick={() => {
+            clearFilters();
+            confirm();
+          }}
+        >
+          Reset
+        </Button>
+      </Space>
+    </div>
+  ),
+  filterIcon: (filtered) => (
+    <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+  ),
+  onFilter: (value, record) =>
+    record[dataIndex]
+      ?.toString()
+      .toLowerCase()
+      .includes(value.toLowerCase()),
+});
+
+/* ================= Component ================= */
 
 function Charge() {
+  const [dateRange, setDateRange] = useState([]);
   const [data, setData] = useState([]);
-  const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [modelFilter, setModelFilter] = useState("");
-  const [barcodeFilter, setBarcodeFilter] = useState("");
-  const [orderNoFilter, setOrderNoFilter] = useState("");
-  const [lineFilter, setLineFilter] = useState("");
-  const [startdate, setStartDate] = useState("");
-  const [enddate, setEndDate] = useState("");
-  const [tempStartDate, setTempStartDate] = useState("");
-  const [tempEndDate, setTempEndDate] = useState("");
-  const [row, setRow] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [alertMessage, setAlertMessage] = useState(null);
 
-  const startDate = isValid(parse(tempStartDate, "yyyy-MM-dd", new Date()))
-    ? tempStartDate
-    : "";
-  const endDate = isValid(parse(tempEndDate, "yyyy-MM-dd", new Date()))
-    ? tempEndDate
-    : "";
+  /* ================= Fetch ================= */
 
-  const handleSearch = () => {
-    if (tempStartDate && tempEndDate) {
+  const fetchChargeData = async () => {
+    if (!dateRange || dateRange.length !== 2) {
+      message.warning("Please select date range");
+      return;
+    }
+
+    try {
       setLoading(true);
-      setStartDate(tempStartDate);
-      setEndDate(tempEndDate);
-      setCurrentPage(1); // Reset currentPage to 1 when searching/filtering
+      const [start, end] = dateRange;
 
-      axios
-        .get(
-          `${API_URL}/oilcharger?startDate=${tempStartDate}&endDate=${tempEndDate}`
-        )
-        .then((res) => {
-          setData(
-            res.data.map((record) => ({
-              ...record,
-              datetime: format(
-                new Date(record.datetime),
-                "yyyy-MM-dd HH:mm:ss"
-              ),
-            }))
-          );
-          setTotalPages(row === -1 ? 1 : Math.ceil(res.data.length / row));
-          setLoading(false); // Set loading to false after data is fetched
-          filterRecords(); // Call filterRecords after data is fetched
-        })
-        .catch((err) => {
-          setAlertMessage({
-            description: "No data. Select new date.",
-            type: "info",
-            message: "ประกาศ!",
-          });
-          setTimeout(() => {
-            setAlertMessage(null);
-          }, 4000);
-          setLoading(false); // Set loading to false in case of error
-        });
-    } else {
-      setAlertMessage({
-        description: "Please enter both start date and end date.",
-        type: "warning",
-        message: "คำเตือน!",
+      const res = await axios.get(`${API_URL}/oilcharger`, {
+        params: {
+          startDate: start.format("YYYY-MM-DD"),
+          endDate: end.format("YYYY-MM-DD"),
+        },
       });
-      setTimeout(() => {
-        setAlertMessage(null);
-      }, 4000);
+
+      const mapped = (res.data || []).map((r, idx) => ({
+        ...r,
+        key: idx,
+        datetime: r.datetime
+          ? dayjs(r.datetime).format("YYYY-MM-DD HH:mm:ss")
+          : "-",
+      }));
+
+      setData(mapped);
+    } catch (err) {
+      message.info("No data in selected date range");
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    filterRecords();
-  }, [
-    lineFilter,
-    modelFilter,
-    barcodeFilter,
-    orderNoFilter,
-    currentPage,
-    row,
-    data,
-  ]);
+  /* ================= Dashboard Summary ================= */
 
-  const filterRecords = () => {
-    let filteredRecords = data.filter((record) => {
-      let matchesLine = true;
-      let matchesModel = true;
-      let matchesBarcode = true;
-      let matchesOrderNo = true;
+  const summary = useMemo(() => {
+    const total = data.length;
+    const ok = data.filter((d) => d.status === "OK").length;
+    const ng = total - ok;
+    const alarm = data.filter((d) => d.alarm && d.alarm !== "").length;
 
-      if (lineFilter !== "") {
-        matchesLine = record.WorkUser_LineName.toLowerCase().includes(
-          lineFilter.toLowerCase()
-        );
-      }
-      if (modelFilter !== "") {
-        matchesModel = record.model
-          .toLowerCase()
-          .includes(modelFilter.toLowerCase());
-      }
-      if (barcodeFilter !== "") {
-        matchesBarcode = record.barcode
-          .toLowerCase()
-          .includes(barcodeFilter.toLowerCase());
-      }
-      if (orderNoFilter !== "") {
-        matchesOrderNo = record.WorkUser_MOrderCode.toLowerCase().includes(
-          orderNoFilter.toLowerCase()
-        );
-      }
+    return { total, ok, ng, alarm };
+  }, [data]);
 
-      return matchesLine && matchesModel && matchesBarcode && matchesOrderNo;
-    });
-
-    // Apply pagination or show all records if row is set to -1 (All)
-    let startIndex = 0;
-    let endIndex = filteredRecords.length;
-
-    if (row !== -1) {
-      startIndex = (currentPage - 1) * row;
-      endIndex = startIndex + row;
-    }
-
-    setRecords(filteredRecords.slice(startIndex, endIndex));
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  const handleRowChange = (e) => {
-    setRow(parseInt(e.target.value));
-  };
+  /* ================= Clear ================= */
 
   const handleClear = () => {
-    setTempStartDate("");
-    setTempEndDate("");
+    setDateRange([]);
     setData([]);
-    setModelFilter("");
-    setBarcodeFilter("");
-    setLineFilter("");
-    setOrderNoFilter("");
+    message.success("Cleared date and table data");
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner-container">
-          <ReactLoading type={"spin"} color={"blue"} height={64} width={64} />
-        </div>
-      </div>
-    );
-  }
-  if (error) {
-    return <div className="loading-container">Error: {error}</div>;
-  }
+  /* ================= Export ================= */
 
-  const headers = [
-    { label: "Production Line", key: "WorkUser_LineName" },
-    { label: "Model", key: "model" },
-    { label: "Order No.", key: "WorkUser_MOrderCode" },
-    { label: "Barcode", key: "barcode" },
-    { label: "Date/Time", key: "datetime" },
-    { label: "Program", key: "program" },
-    { label: "R600/Setpoint", key: "r600_setpoint" },
-    { label: "R600/Actum", key: "r600_actum" },
-    { label: "Status", key: "status" },
-    { label: "Alarm", key: "alarm" },
+  const handleExport = () => {
+    if (data.length === 0) {
+      message.warning("No data to export");
+      return;
+    }
+
+    const exportData = data.map((d) => ({
+      Line: d.WorkUser_LineName,
+      Model: d.model,
+      "Order No": d.WorkUser_MOrderCode,
+      Barcode: d.barcode,
+      "Date/Time": d.datetime,
+      Program: d.program,
+      "R600 Setpoint": d.r600_setpoint,
+      "R600 Actum": d.r600_actum,
+      Status: d.status,
+      Alarm: d.alarm,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "ChargeR600a");
+    XLSX.writeFile(wb, "ChargeR600a_report.xlsx");
+  };
+
+  /* ================= Columns ================= */
+
+  const columns = [
+    {
+      title: "Line",
+      dataIndex: "WorkUser_LineName",
+      width: 150,
+      ...getColumnSearchProps("WorkUser_LineName"),
+    },
+    {
+      title: "Model",
+      dataIndex: "model",
+      width: 120,
+      ...getColumnSearchProps("model"),
+    },
+    {
+      title: "Order No",
+      dataIndex: "WorkUser_MOrderCode",
+      width: 160,
+      ...getColumnSearchProps("WorkUser_MOrderCode"),
+    },
+    {
+      title: "Barcode",
+      dataIndex: "barcode",
+      width: 200,
+      ellipsis: true,
+      ...getColumnSearchProps("barcode"),
+    },
+    {
+      title: "Date / Time",
+      dataIndex: "datetime",
+      width: 180,
+    },
+    {
+      title: "Program",
+      dataIndex: "program",
+      width: 120,
+    },
+    {
+      title: "R600 Setpoint",
+      dataIndex: "r600_setpoint",
+      width: 130,
+    },
+    {
+      title: "R600 Actum",
+      dataIndex: "r600_actum",
+      width: 130,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      width: 120,
+      render: (v) =>
+        v === "OK" ? (
+          <Tag color="green">OK</Tag>
+        ) : (
+          <Tag color="red">{v}</Tag>
+        ),
+    },
+    {
+      title: "Alarm",
+      dataIndex: "alarm",
+      width: 200,
+      ellipsis: true,
+    },
   ];
 
-  return (
-    <div>
-      <Navbar />
-      <h2 className="text-center">
-        <b>Charge R600a</b>
-      </h2>
-      <br />
-      <div className="App container">
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ marginRight: "auto" }}>
-            <label style={{ marginRight: "10px" }}>Start Date:</label>
-            <input
-              type="date"
-              value={tempStartDate}
-              onChange={(e) => {
-                setTempStartDate(e.target.value);
-                setTempEndDate(e.target.value);
-              }}
-            />
-            <label style={{ marginLeft: "10px", marginRight: "10px" }}>
-              End Date:
-            </label>
-            <input
-              type="date"
-              value={tempEndDate}
-              onChange={(e) => setTempEndDate(e.target.value)}
-            />
-            <button
-              onClick={handleSearch}
-              className="btn btn-primary"
-              style={{ marginLeft: "10px" }}
-            >
-              Search
-            </button>
-            <button
-              onClick={handleClear}
-              className="btn btn-warning"
-              style={{ marginLeft: "10px" }}
-            >
-              Clear
-            </button>
-          </div>
-          <div style={{ marginLeft: "auto" }}>
-            <label>Select Rows:</label>
-            <select
-              value={row}
-              onChange={handleRowChange}
-              style={{ marginLeft: "10px" }}
-            >
-              <option value="10">10 rows</option>
-              <option value="50">50 rows</option>
-              <option value="100">100 rows</option>
-              <option value="1000">1000 rows</option>
-              <option value="-1">All</option>
-            </select>
-          </div>
-        </div>
-        <div className="bg-white shadow border">
-          <div style={{ textAlign: "right" }}>
-            <CSVLink
-              data={data}
-              headers={headers}
-              filename={`oilcharger_${startDate.replace(
-                /-/g,
-                ""
-              )}_${endDate.replace(/-/g, "")}.csv`}
-              style={{
-                color: "green",
-                display: "inline-block",
-                textDecoration: "none", // Remove underline from the link
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <FaFileExcel style={{ marginRight: "5px" }} />
-                Download
-              </div>
-            </CSVLink>
-          </div>
-          <div className="table-responsive">
-            <table className="table table-striped table-hover">
-              <thead className="thead-dark">
-                <tr>
-                <th><center>No.</center></th>
-                  <th>
-                    <center>
-                      <label>Production Line</label>
-                    </center>
-                    <input
-                      type="text"
-                      className="form-control input-sm"
-                      placeholder="Search Line"
-                      value={lineFilter}
-                      onChange={(e) => {
-                        setLineFilter(e.target.value);
-                        setCurrentPage(1); // Reset currentPage to 1
-                      }}
-                    />
-                  </th>
-                  <th>
-                    <center>
-                      <label>Model</label>
-                    </center>
-                    <input
-                      type="text"
-                      className="form-control input-sm"
-                      placeholder="Search Model"
-                      value={modelFilter}
-                      onChange={(e) => {
-                        setModelFilter(e.target.value);
-                        setCurrentPage(1); // Reset currentPage to 1
-                      }}
-                    />
-                  </th>
-                  <th>
-                    <center>
-                      <label>Order No.</label>
-                    </center>
-                    <input
-                      type="text"
-                      className="form-control input-sm"
-                      placeholder="Search Order No."
-                      value={orderNoFilter}
-                      onChange={(e) => {
-                        setOrderNoFilter(e.target.value);
-                        setCurrentPage(1); // Reset currentPage to 1
-                      }}
-                    />
-                  </th>
-                  <th>
-                    <center>
-                      <label>Barcode</label>
-                    </center>
-                    <input
-                      type="text"
-                      className="form-control input-sm"
-                      placeholder="Search Barcode"
-                      value={barcodeFilter}
-                      onChange={(e) => {
-                        setBarcodeFilter(e.target.value);
-                        setCurrentPage(1); // Reset currentPage to 1
-                      }}
-                    />
-                  </th>
+  /* ================= Render ================= */
 
-                  <th>Date/Time</th>
-                  <th>Program</th>
-                  <th>R600/Setpoint</th>
-                  <th>R600/Actum</th>
-                  <th>Status</th>
-                  <th>Alarm</th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.map((d, i) => (
-                  <tr key={i}>
-                    <td>{i+1}</td>
-                    <td>{d.WorkUser_LineName}</td>
-                    <td>{d.model}</td>
-                    <td>{d.WorkUser_MOrderCode}</td>
-                    <td>{d.barcode}</td>
-                    <td>
-                      <center>{d.datetime}</center>
-                    </td>{" "}
-                    {/* No need to format again */}
-                    <td>
-                      <center>{d.program}</center>
-                    </td>
-                    <td>
-                      <center>{d.r600_setpoint}</center>
-                    </td>
-                    <td>
-                      <center>{d.r600_actum}</center>
-                    </td>
-                    <td>
-                      <center>
-                        <label
-                          style={{
-                            backgroundColor:
-                              d.status === "OK" ? "#32FF42" : "#FC7D79",
-                            borderRadius: 5,
-                            padding: "2px 4px 2px 4px",
-                          }}
-                        >
-                          {d.status}
-                        </label>
-                      </center>
-                    </td>
-                    <td>
-                      <center>{d.alarm}</center>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <center>
-            {row !== -1 && (
-              <div className="pagination-container">
-                <nav aria-label="Pagination">
-                  <ul className="pagination">
-                    <li
-                      className={`page-item ${
-                        currentPage === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(currentPage - 1)}
-                      >
-                        <span aria-hidden="true">&lt;</span>
-                        <span className="sr-only">Previous</span>
-                      </button>
-                    </li>
-                    {[...Array(totalPages).keys()].map((pageNumber) => {
-                      if (
-                        pageNumber === 0 ||
-                        pageNumber === currentPage - 1 ||
-                        pageNumber === currentPage ||
-                        pageNumber === currentPage + 1 ||
-                        pageNumber === totalPages - 1
-                      ) {
-                        return (
-                          <li
-                            key={pageNumber}
-                            className={`page-item ${
-                              currentPage === pageNumber + 1 ? "active" : ""
-                            }`}
-                          >
-                            <button
-                              className="page-link"
-                              onClick={() => handlePageChange(pageNumber + 1)}
-                            >
-                              {pageNumber + 1}
-                            </button>
-                          </li>
-                        );
-                      } else if (
-                        pageNumber === 1 ||
-                        pageNumber === currentPage - 2 ||
-                        pageNumber === currentPage + 2 ||
-                        pageNumber === totalPages - 2
-                      ) {
-                        return (
-                          <li key={pageNumber} className="ellipsis">
-                            ...
-                          </li>
-                        );
-                      }
-                      return null;
-                    })}
-                    <li
-                      className={`page-item ${
-                        currentPage === totalPages ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                      >
-                        <span aria-hidden="true">&gt;</span>
-                        <span className="sr-only">Next</span>
-                      </button>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            )}
-          </center>
-        </div>
-        {alertMessage && (
-          <Alert
-            description={alertMessage.description}
-            message={alertMessage.message}
-            type={alertMessage.type}
-            closable
+  return (
+    <div style={{ background: "#f5f7fa", minHeight: "100vh" }}>
+      <Navbar />
+
+      <Card style={{ margin: 16 }} bordered={false} styles={{ body: { padding: 24 } }}>
+        {/* ===== Header ===== */}
+        <Space align="center">
+          <ThunderboltOutlined style={{ fontSize: 28, color: "#fa8c16" }} />
+          <Title level={3} style={{ margin: 0 }}>
+            Charge R600a
+          </Title>
+        </Space>
+
+        <Divider />
+
+        {/* ===== Toolbar ===== */}
+        <Space wrap style={{ marginBottom: 16 }}>
+          <RangePicker
+            value={dateRange}
+            onChange={(v) => setDateRange(v)}
+            format="YYYY-MM-DD"
           />
-        )}
-      </div>
+
+          <Button type="primary" icon={<SearchOutlined />} onClick={fetchChargeData}>
+            Search
+          </Button>
+
+          <Button icon={<ClearOutlined />} onClick={handleClear}>
+            Clear
+          </Button>
+
+          <Button icon={<DownloadOutlined />} onClick={handleExport}>
+            Export
+          </Button>
+        </Space>
+
+        {/* ===== Dashboard ===== */}
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={6}>
+            <Card>
+              <Statistic
+                title="Total Records"
+                value={summary.total}
+                prefix={<DatabaseOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card>
+              <Statistic
+                title="OK"
+                value={summary.ok}
+                valueStyle={{ color: "#3f8600" }}
+                prefix={<CheckCircleOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card>
+              <Statistic
+                title="NG"
+                value={summary.ng}
+                valueStyle={{ color: "#cf1322" }}
+                prefix={<CloseCircleOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card>
+              <Statistic
+                title="Alarm"
+                value={summary.alarm}
+                valueStyle={{ color: "#fa8c16" }}
+                prefix={<AlertOutlined />}
+              />
+            </Card>
+          </Col>
+        </Row>
+
+        {/* ===== Table ===== */}
+        <Table
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          bordered
+          size="middle"
+          scroll={{ x: 1500, y: 520 }}
+          pagination={{
+            showSizeChanger: true,
+            pageSizeOptions: ["20", "50", "100", "200"],
+            defaultPageSize: 20,
+          }}
+        />
+      </Card>
     </div>
   );
 }

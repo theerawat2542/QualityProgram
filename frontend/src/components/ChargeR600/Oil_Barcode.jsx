@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table } from "antd";
-import { format } from 'date-fns';
-import { API_URL } from '../../lib/config';
+import { Table, Tag } from "antd";
+import { format } from "date-fns";
+import { API_URL } from "../../lib/config";
+import "./OilBarcode.css";
 
 const OilBarcode = ({ barcode }) => {
-  const [data, setData] = useState([]);
   const [records, setRecords] = useState([]);
-  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/barcode_oilcharger?barcode=${barcode}`);
-        setData(response.data);
-        setRecords(response.data.slice(0));
-        // setLoading(false);
+        const response = await axios.get(
+          `${API_URL}/barcode_oilcharger?barcode=${barcode}`
+        );
+        setRecords(response.data);
       } catch (error) {
         setError(error.message);
-        // setLoading(false);
       }
     };
 
@@ -30,104 +30,113 @@ const OilBarcode = ({ barcode }) => {
 
   const columns = [
     {
-        title: "Barcode",
-        dataIndex: "barcode",
-        key: "barcode",
-        ellipsis: true
+      title: "Barcode",
+      dataIndex: "barcode",
+      key: "barcode",
+      ellipsis: true,
+      fixed: "left",
     },
     {
-      title: "Production Line",
+      title: "Line",
       dataIndex: "WorkUser_LineName",
       key: "WorkUser_LineName",
-      ellipsis: true
+      align: "center",
     },
     {
-        title: "Date/time",
-        dataIndex: "datetime",
-        key: "datetime",
-        render: (text) => format(new Date(text), 'yyyy-MM-dd HH:mm:ss'),
-        ellipsis: true
+      title: "Date / Time",
+      dataIndex: "datetime",
+      key: "datetime",
+      render: (text) => format(new Date(text), "yyyy-MM-dd HH:mm:ss"),
+      align: "center",
     },
     {
       title: "Model",
       dataIndex: "model",
       key: "model",
-      ellipsis: true
     },
     {
       title: "Order No.",
       dataIndex: "WorkUser_MOrderCode",
       key: "WorkUser_MOrderCode",
-      ellipsis: true
+      align: "center",
     },
     {
       title: "Program",
       dataIndex: "program",
       key: "program",
-      ellipsis: true
+      align: "center",
     },
     {
-      title: "Oil Setpoint",
+      title: "Oil SP",
       dataIndex: "oil_setpoint",
       key: "oil_setpoint",
-      ellipsis: true
+      align: "right",
     },
     {
-      title: "Oil Actum",
+      title: "Oil Act",
       dataIndex: "oil_actum",
       key: "oil_actum",
-      ellipsis: true
+      align: "right",
     },
     {
-      title: "R600 Setpoint",
+      title: "R600 SP",
       dataIndex: "r600_setpoint",
       key: "r600_setpoint",
-      ellipsis: true
+      align: "right",
     },
     {
-      title: "R600 Actum",
+      title: "R600 Act",
       dataIndex: "r600_actum",
       key: "r600_actum",
-      ellipsis: true
+      align: "right",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      ellipsis: true
+      align: "center",
+      render: (status) =>
+        status === "OK" ? (
+          <Tag color="green">OK</Tag>
+        ) : (
+          <Tag color="red">NG</Tag>
+        ),
     },
     {
       title: "Alarm",
       dataIndex: "alarm",
       key: "alarm",
-      ellipsis: true
+      ellipsis: true,
     },
     {
-      title: "Iaccurate",
+      title: "Inaccurate",
       dataIndex: "inaccurate",
       key: "inaccurate",
-      ellipsis: true
-    }
+      align: "center",
+    },
   ];
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <br />
-      <div className="App container">
-        <center><label><h3>Charging R600</h3></label><br /></center>
-        <div className="bg-white shadow border">
-          <div className="table-responsive" style={{ maxHeight: "500px", overflowY: "scroll" }}>
-            <Table
-              dataSource={records}
-              columns={columns}
-              pagination={false}
-              scroll={{ x: true }}
-            />
-          </div>
+    <div className="oil-container">
+      <div className="oil-card">
+        <div className="oil-header">
+          <span>🔥 Charging R600</span>
+          <small>Barcode : {barcode}</small>
         </div>
+
+        <Table
+          dataSource={records}
+          columns={columns}
+          pagination={false}
+          size="middle"
+          rowKey={(record, index) => index}
+          scroll={{ y: 420, x: 1600 }}
+        />
+
+        {error && <div className="error-text">Error : {error}</div>}
       </div>
     </div>
   );
-}
+};
 
 export default OilBarcode;

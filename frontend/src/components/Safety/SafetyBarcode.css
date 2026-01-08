@@ -1,0 +1,72 @@
+/* =========================
+   Layout
+========================= */
+.safety-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.safety-card {
+  width: 95%;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  padding: 18px 22px;
+}
+
+/* =========================
+   Header
+========================= */
+.safety-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.safety-header span {
+  font-size: 22px;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.safety-header small {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* =========================
+   Ant Table
+========================= */
+.ant-table {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background: #dcfce7 !important;
+  font-weight: 600;
+  font-size: 14px;
+  color: #166534;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: 14px;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f0fdf4 !important;
+}
+
+/* =========================
+   Error
+========================= */
+.error-text {
+  margin-top: 12px;
+  text-align: center;
+  color: red;
+  font-weight: 600;
+}

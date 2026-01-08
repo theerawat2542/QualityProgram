@@ -1,50 +1,131 @@
+/* =========================
+   Global
+========================= */
+body {
+  background: #f8fafc;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* =========================
+   Center Layout
+========================= */
 .centered-container {
   display: flex;
   justify-content: center;
-}
-
-.button-row {
-  display: flex;
   align-items: center;
 }
 
-.large-gray-button {
-  background-color: #ccc;
-  color: #333;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
+/* =========================
+   Current Station Header
+========================= */
+.centered-container h4 {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+  font-size: 20px;
+  margin: 0;
 }
 
+/* =========================
+   Button Row
+========================= */
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  padding: 18px 22px;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   Common Button Style
+========================= */
+.button-row button {
+  min-width: 180px;
+  height: 58px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+}
+
+/* =========================
+   Green (OK)
+========================= */
 .large-green-button {
-  background-color: #23f840;
-  color: #333;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.45);
 }
 
+.large-green-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(34, 197, 94, 0.6);
+}
+
+/* =========================
+   Yellow (NG / Warning)
+========================= */
 .large-yellow-button {
-  background-color: #faf061;
-  color: #333;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  background: linear-gradient(135deg, #facc15, #eab308);
+  color: #1f2933;
+  box-shadow: 0 6px 16px rgba(234, 179, 8, 0.45);
 }
 
+.large-yellow-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(234, 179, 8, 0.6);
+}
+
+/* =========================
+   Gray (Disabled)
+========================= */
+.large-gray-button {
+  background: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* =========================
+   Arrow
+========================= */
 .arrow-container {
-  margin: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .arrow {
-  width: 24px;
-  height: 24px;
-  fill: #333;
+  width: 26px;
+  height: 26px;
+  fill: #94a3b8;
 }
 
-.arrow:hover {
-  fill: #666;
+/* =========================
+   Error Text
+========================= */
+p {
+  text-align: center;
+  color: red;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+/* =========================
+   Barcode Detail Sections
+========================= */
+.barcode-detail {
+  margin-top: 25px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
 }

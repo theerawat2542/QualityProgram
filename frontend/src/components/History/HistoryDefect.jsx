@@ -2,13 +2,11 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Tag, Spin, Alert } from "antd";
+import { Table, Tag, Spin, Alert } from "antd";
 import { format } from "date-fns";
 import { API_URL } from "../../lib/config";
 
-const { Title } = Typography;
-
-function History({ selectedOption }) {
+function HistoryDefect({ selectedOption }) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,10 +20,10 @@ function History({ selectedOption }) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/History`);
+      const res = await axios.get(`${API_URL}/HistoryDefect`);
 
       const filtered = res.data.filter(
-        (item) => item.material_barcode?.charAt(12) === selectedOption
+        (item) => item.production_line === selectedOption
       );
 
       setRecords(filtered);
@@ -46,10 +44,9 @@ function History({ selectedOption }) {
       ellipsis: true,
     },
     {
-      title: "Compressor Barcode",
-      dataIndex: "compressor_barcode",
-      key: "compressor_barcode",
-      width: 220,
+      title: "Reason - Location",
+      dataIndex: "reason",
+      key: "reason",
       ellipsis: true,
     },
     {
@@ -58,7 +55,7 @@ function History({ selectedOption }) {
       key: "scan_time",
       width: 180,
       render: (text) =>
-        format(new Date(text), "yyyy-MM-dd HH:mm:ss"),
+        text ? format(new Date(text), "yyyy-MM-dd HH:mm:ss") : "-",
     },
     {
       title: "Scan By",
@@ -88,10 +85,7 @@ function History({ selectedOption }) {
             marginBottom: 12,
           }}
         >
-
-          <Tag color={selectedOption === "A" ? "blue" : "green"}>
-            Line {selectedOption}
-          </Tag>
+          <Tag color="red">Defect - Line {selectedOption}</Tag>
         </div>
 
         {/* Error */}
@@ -125,4 +119,4 @@ function History({ selectedOption }) {
   );
 }
 
-export default History;
+export default HistoryDefect;
