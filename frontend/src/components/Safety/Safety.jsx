@@ -237,7 +237,11 @@ function Safety() {
           <Button type="primary" icon={<SearchOutlined />} onClick={fetchSafetyData}>
             Search
           </Button>
-          <Button icon={<ClearOutlined />} onClick={() => setData([])}>
+          <Button icon={<ClearOutlined />} onClick={() => {
+            setData([]);
+            setDateRange([]);
+            message.success("Cleared date and table data");
+          }}>
             Clear
           </Button>
           <Button icon={<DownloadOutlined />} onClick={handleExport}>
