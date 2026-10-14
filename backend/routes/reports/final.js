@@ -1,53 +1,137 @@
 const express = require("express");
-const { connect78Database, connectMes9771Database } = require("../../helper/db-util");
+const {
+  connect78Database,
+  connectMes9771Database,
+} = require("../../helper/db-util");
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    let connection;
-    let mes_connection
-    const { startDate, endDate } = req.query;
-    try {
-      connection = await connect78Database()
-      mes_connection = await connectMes9771Database()
-      const query1 = `SELECT barcode, scantime, station_scan FROM custom_final_scan WHERE scantime >= '${startDate}' AND scantime <= DATE_ADD('${endDate}', INTERVAL 1 DAY) order by scantime desc`;
-      const [results, fields] = await connection.query(query1);
-      // console.log(results)
-      const barcode_list = results.map(({barcode}) => `'${barcode}'`)
-      const query2 = `SELECT WorkUser_MOrderCode, WorkUser_BarCode, WorkUser_LineName,WorkUser_RightMostItemName FROM bns_pm_operation where WorkUser_BarCode in (${barcode_list})`
-      const [mes_results, mes_fields] = await mes_connection.query(query2)
-      // const query3 = "SELECT model, barcode FROM oilcharger";
-      // const [results2, fields2] = await connection.query(query3)
-      // console.log(results2)
-      const joinedData = joinData_final(results, mes_results)
-      res.json(joinedData)
-    } catch (error) {
-      res.status(500).json({message: error})
-    } finally {
-      connection.destroy()
-    }
-  })
+  let connection;
+  let mes_connection;
 
-  function joinData_final(data1, data2) {
-    const joinedData = [];
-    const map1 = new Map(data1.map((entry) => [entry.barcode, entry]));
-    // const map3 = new Map(data3.map((entry) => [entry.barcode, entry]));
-    data2.forEach((entry2) => {
-      const matchingEntry1 = map1.get(entry2.WorkUser_BarCode);
-      // const matchingEntry3 = map3.get(entry2.WorkUser_BarCode);
-      if (matchingEntry1) {
-        const joinedEntry = {
-          ...entry2,
-          ...matchingEntry1
-        };
-        joinedData.push(joinedEntry);
+  const { startDate, endDate } = req.query;
+
+  try {
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        message: "startDate and endDate are required",
+      });
+    }
+
+    connection = await connect78Database();
+    mes_connection = await connectMes9771Database();
+
+    // 1. ดึงข้อมูลโดยเรียงจากเวลาล่าสุดก่อน
+    const query1 = `
+      SELECT barcode, scantime, station_scan
+      FROM custom_final_scan
+      WHERE scantime >= ?
+        AND scantime < DATE_ADD(?, INTERVAL 1 DAY)
+      ORDER BY scantime DESC
+    `;
+
+    const [results] = await connection.query(query1, [
+      startDate,
+      endDate,
+    ]);
+
+    // 2. เลือกเฉพาะรายการล่าสุดของแต่ละ barcode
+    // เพราะเรียง scantime DESC แล้ว จึงเก็บรายการแรกที่พบ
+    const latestByBarcode = new Map();
+
+    for (const row of results) {
+      if (row.barcode == null) continue;
+
+      const barcode = String(row.barcode);
+
+      if (!latestByBarcode.has(barcode)) {
+        latestByBarcode.set(barcode, row);
       }
+    }
+
+    const latestResults = Array.from(latestByBarcode.values());
+
+    // ถ้าไม่มีข้อมูล ไม่ต้องไป query ฐานข้อมูล MES
+    if (latestResults.length === 0) {
+      return res.json([]);
+    }
+
+    // 3. ค้นหาข้อมูล MES เฉพาะ barcode ที่ไม่ซ้ำกัน
+    const barcodeList = latestResults.map((row) =>
+      String(row.barcode)
+    );
+
+    const query2 = `
+      SELECT
+        WorkUser_MOrderCode,
+        WorkUser_BarCode,
+        WorkUser_LineName,
+        WorkUser_RightMostItemName
+      FROM bns_pm_operation
+      WHERE WorkUser_BarCode IN (?)
+    `;
+
+    const [mesResults] = await mes_connection.query(query2, [
+      barcodeList,
+    ]);
+
+    // 4. รวมข้อมูลจากสองฐานข้อมูล
+    const joinedData = joinData_final(latestResults, mesResults);
+
+    res.json(joinedData);
+  } catch (error) {
+    // แสดงรายละเอียดจริงใน Terminal ของ Backend
+    console.error("Final inspection API error:", error);
+
+    res.status(500).json({
+      message: error.message || "Internal Server Error",
     });
-    
-    // Sort joined data by scantime
-    joinedData.sort((a, b) => new Date(b.scantime) - new Date(a.scantime));
-    
-    return joinedData;
+  } finally {
+    if (connection) {
+      try {
+        connection.destroy();
+      } catch (error) {
+        console.error("Error closing connection 78:", error.message);
+      }
+    }
+
+    if (mes_connection) {
+      try {
+        mes_connection.destroy();
+      } catch (error) {
+        console.error("Error closing MES connection:", error.message);
+      }
+    }
+  }
+});
+
+function joinData_final(data1, data2) {
+  const scanMap = new Map(
+    data1.map((entry) => [String(entry.barcode), entry])
+  );
+
+  const joinedData = [];
+
+  for (const entry of data2) {
+    if (entry.WorkUser_BarCode == null) continue;
+
+    const barcode = String(entry.WorkUser_BarCode);
+    const matchingEntry = scanMap.get(barcode);
+
+    if (matchingEntry) {
+      joinedData.push({
+        ...entry,
+        ...matchingEntry,
+      });
+    }
   }
 
+  joinedData.sort(
+    (a, b) => new Date(b.scantime) - new Date(a.scantime)
+  );
+
+  return joinedData;
+}
 
 module.exports = router;
