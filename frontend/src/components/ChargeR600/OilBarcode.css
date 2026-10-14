@@ -1,72 +1,688 @@
-/* =========================
-   Layout
-========================= */
-.oil-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+/* ========================================
+   Charge R600a - Modern Minimal Dashboard
+======================================== */
+
+.charge-page {
+  min-height: 100vh;
+  background: #f4f6fa;
+  color: #202b3c;
+  font-family: inherit;
 }
 
-.oil-card {
-  width: 95%;
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  padding: 18px 22px;
+.charge-page * {
+  box-sizing: border-box;
 }
 
-/* =========================
-   Header
-========================= */
-.oil-header {
+.charge-main {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 22px 24px 16px;
+}
+
+/* ========================================
+   Page Header
+======================================== */
+
+.charge-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e5e7eb;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.oil-header span {
+.charge-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.charge-title-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #fff3d6;
+  color: #e99a00;
+  font-size: 22px;
+}
+
+.charge-title.ant-typography {
+  margin: 0 0 3px;
+  color: #17243a;
   font-size: 22px;
   font-weight: 700;
-  color: #b45309;
+  line-height: 1.3;
 }
 
-.oil-header small {
+.charge-description {
+  color: #8490a3;
+  font-size: 12px;
+}
+
+.charge-module-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid #e7ebf2;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b778c;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+/* ========================================
+   Toolbar / Date Filter
+======================================== */
+
+.charge-toolbar-card.ant-card {
+  margin-bottom: 20px;
+  border: 1px solid #e9edf4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+}
+
+.charge-toolbar-card .ant-card-body {
+  padding: 16px 18px;
+}
+
+.charge-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.charge-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 260px;
+}
+
+.charge-field-label {
+  color: #526078;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.charge-date-picker {
+  width: 320px;
+  max-width: 100%;
+  height: 36px;
+  border-radius: 7px;
+}
+
+.charge-date-picker .ant-picker-input > input {
+  font-size: 12px;
+}
+
+.charge-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.charge-actions .ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.charge-search-button.ant-btn-primary {
+  background: #155eef;
+  border-color: #155eef;
+}
+
+.charge-search-button.ant-btn-primary:hover {
+  background: #0e4fce;
+  border-color: #0e4fce;
+}
+
+.charge-clear-button {
+  color: #59677d;
+  border-color: #e1e6ef;
+  background: #fff;
+}
+
+.charge-clear-button:hover {
+  color: #155eef !important;
+  border-color: #b8cdfd !important;
+}
+
+.charge-export-button {
+  color: #16794b;
+  border-color: #cdebd9;
+  background: #f1fbf5;
+}
+
+.charge-export-button:hover {
+  color: #11683e !important;
+  border-color: #91d7ad !important;
+  background: #e7f8ed !important;
+}
+
+/* ========================================
+   Summary Cards
+======================================== */
+
+.charge-summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+}
+
+.charge-section-title {
+  color: #26354b;
   font-size: 14px;
-  color: #64748b;
+  font-weight: 700;
 }
 
-/* =========================
-   Ant Table
-========================= */
-.ant-table {
-  border-radius: 14px;
+.charge-summary-note {
+  color: #8a95a7;
+  font-size: 11px;
+  text-align: right;
+}
+
+.charge-summary {
+  margin-bottom: 20px;
+}
+
+.charge-summary-card.ant-card {
+  height: 100%;
+  min-height: 125px;
   overflow: hidden;
+  border: 1px solid #e9edf4;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
-.ant-table-thead > tr > th {
-  background: #fef3c7 !important;
+.charge-summary-card.ant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgb(24 39 75 / 7%);
+}
+
+.charge-summary-card .ant-card-body {
+  padding: 14px 16px 12px;
+}
+
+.charge-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.charge-stat-label {
+  color: #7b8799;
+  font-size: 11px;
   font-weight: 600;
+}
+
+.charge-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
   font-size: 14px;
-  color: #92400e;
 }
 
-.ant-table-tbody > tr > td {
-  font-size: 14px;
+.total-icon {
+  color: #2864dc;
+  background: #edf3ff;
 }
 
-.ant-table-tbody > tr:hover > td {
-  background: #fff7ed !important;
+.ok-icon {
+  color: #15945b;
+  background: #e8f8ef;
 }
 
-/* =========================
-   Error
-========================= */
-.error-text {
-  margin-top: 12px;
+.ng-icon {
+  color: #dc4c4c;
+  background: #fff0f0;
+}
+
+.alarm-icon {
+  color: #d88a00;
+  background: #fff5df;
+}
+
+.charge-summary-card .ant-statistic {
+  line-height: 1;
+}
+
+.charge-summary-card .ant-statistic-content {
+  color: #202d43;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ok-card .ant-statistic-content {
+  color: #15945b;
+}
+
+.ng-card .ant-statistic-content {
+  color: #dc4c4c;
+}
+
+.alarm-card .ant-statistic-content {
+  color: #d88a00;
+}
+
+.charge-stat-caption {
+  margin-top: 5px;
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+/* ========================================
+   Table Card
+======================================== */
+
+.charge-table-card.ant-card {
+  overflow: hidden;
+  border: 1px solid #e9edf4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+}
+
+.charge-table-card .ant-card-body {
+  padding: 17px 18px 10px;
+}
+
+.charge-table-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.charge-table-title.ant-typography {
+  margin: 0 0 4px;
+  color: #26354b;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.charge-table-caption {
+  color: #8a95a7;
+  font-size: 11px;
+}
+
+.charge-table-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #e7edf7;
+  border-radius: 7px;
+  background: #f7f9fd;
+  color: #5d6b82;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.charge-table-divider.ant-divider {
+  margin: 14px 0;
+  border-color: #edf0f5;
+}
+
+/* ========================================
+   Ant Design Table
+======================================== */
+
+.charge-table .ant-table {
+  color: #344054;
+  font-size: 12px;
+}
+
+.charge-table .ant-table-container {
+  border-radius: 8px;
+}
+
+.charge-table .ant-table-thead > tr > th {
+  padding: 11px 12px;
+  border-bottom: 1px solid #e6ebf3;
+  background: #f6f8fc;
+  color: #526078;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.charge-table .ant-table-thead > tr > th::before {
+  display: none !important;
+}
+
+.charge-table .ant-table-tbody > tr > td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f2f7;
+  color: #435066;
+  font-size: 12px;
+}
+
+.charge-table .ant-table-tbody > tr:hover > td {
+  background: #f7faff !important;
+}
+
+.charge-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+.charge-table .ant-table-cell {
+  overflow-wrap: anywhere;
+}
+
+.charge-table .ant-table-filter-trigger {
+  margin-inline-start: 5px;
+}
+
+.charge-table .ant-pagination {
+  margin: 16px 0 8px;
+}
+
+.charge-table .ant-pagination-total-text {
+  color: #7b8799;
+  font-size: 11px;
+}
+
+.charge-table .ant-pagination-item,
+.charge-table .ant-pagination-prev,
+.charge-table .ant-pagination-next,
+.charge-table .ant-select-selector {
+  border-radius: 6px !important;
+}
+
+.charge-table .ant-pagination-item {
+  border-color: #e5eaf2;
+}
+
+.charge-table .ant-pagination-item-active {
+  border-color: #155eef;
+}
+
+.charge-table .ant-pagination-item-active a {
+  color: #155eef;
+}
+
+/* ========================================
+   Status
+======================================== */
+
+.charge-status.ant-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 62px;
+  margin-inline-end: 0;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.charge-status.status-ok {
+  border-color: #c8eed8;
+  background: #eaf9f0;
+  color: #16834f;
+}
+
+.charge-status.status-ng {
+  border-color: #ffd6d6;
+  background: #fff0f0;
+  color: #d43838;
+}
+
+.charge-alarm {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #c47b00;
+}
+
+.charge-alarm > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   Search Filter Dropdown
+======================================== */
+
+.charge-filter-dropdown {
+  width: 220px;
+  padding: 12px;
+}
+
+.charge-filter-dropdown .ant-input {
+  height: 32px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.charge-filter-actions {
+  display: flex;
+  margin-top: 9px;
+}
+
+.charge-filter-actions .ant-btn {
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+/* ========================================
+   Empty State
+======================================== */
+
+.charge-empty {
+  padding: 36px 12px;
   text-align: center;
-  color: red;
+}
+
+.charge-empty > .anticon {
+  margin-bottom: 10px;
+  color: #b7c1d1;
+  font-size: 28px;
+}
+
+.charge-empty-title {
+  margin-bottom: 5px;
+  color: #536178;
+  font-size: 13px;
   font-weight: 600;
+}
+
+.charge-empty-description {
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+/* ========================================
+   Footer
+======================================== */
+
+.charge-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 2px 2px;
+  color: #9aa4b4;
+  font-size: 10px;
+}
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 992px) {
+  .charge-main {
+    padding: 18px 16px 14px;
+  }
+
+  .charge-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .charge-date-group {
+    width: 100%;
+  }
+
+  .charge-date-picker {
+    width: 100%;
+  }
+
+  .charge-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .charge-main {
+    padding: 14px 10px 12px;
+  }
+
+  .charge-header {
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .charge-title-group {
+    gap: 9px;
+  }
+
+  .charge-title-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .charge-title.ant-typography {
+    font-size: 19px;
+  }
+
+  .charge-description {
+    font-size: 10px;
+  }
+
+  .charge-module-label {
+    display: none;
+  }
+
+  .charge-toolbar-card .ant-card-body {
+    padding: 13px;
+  }
+
+  .charge-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .charge-actions .ant-btn {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .charge-actions .charge-export-button {
+    grid-column: 1 / -1;
+  }
+
+  .charge-summary-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .charge-summary-note {
+    text-align: left;
+  }
+
+  .charge-summary-card .ant-card-body {
+    padding: 11px;
+  }
+
+  .charge-summary-card.ant-card {
+    min-height: 116px;
+  }
+
+  .charge-stat-label {
+    font-size: 10px;
+  }
+
+  .charge-stat-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 7px;
+    font-size: 12px;
+  }
+
+  .charge-summary-card .ant-statistic-content {
+    font-size: 22px;
+  }
+
+  .charge-table-card .ant-card-body {
+    padding: 13px 10px 8px;
+  }
+
+  .charge-table-heading {
+    align-items: flex-start;
+  }
+
+  .charge-table-title.ant-typography {
+    font-size: 14px;
+  }
+
+  .charge-table-caption {
+    font-size: 10px;
+  }
+
+  .charge-table-count {
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+
+  .charge-table .ant-table-thead > tr > th,
+  .charge-table .ant-table-tbody > tr > td {
+    padding: 9px 10px;
+    font-size: 11px;
+  }
+
+  .charge-footer {
+    font-size: 9px;
+  }
 }

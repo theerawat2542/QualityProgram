@@ -1,230 +1,31 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useRef } from "react";
+
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import "./FormScan.css"; // Import CSS file for styling
+import "./FormScanDefect.css";
 import Navbar from "../Navbar/Navbar";
-import { API_URL } from '../../lib/config';
+import { API_URL } from "../../lib/config";
 import HistoryDefect from "../History/HistoryDefect";
 
 function FormScan() {
   const [defectBarcode, setDefectBarcode] = useState("");
   const [materialBarcode, setMaterialBarcode] = useState("");
-  const [userId, setUserId] = useState(""); // State for user ID
-  const [scanTime] = useState(formatScanTime(new Date())); // Scan time cannot be edited
-  const defectInputRef = useRef(null); // Reference for defect barcode input field
-  const materialInputRef = useRef(null);
-  const userIdInputRef = useRef(null); // Reference for user ID input field
+  const [userId, setUserId] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [successMessage, setSuccessMessage] = useState(null);
-  const [usedDefectBarcodes, setUsedDefectBarcodes] = useState(new Set()); // Track used defect barcodes
-  const [errorMessage, setErrorMessage] = useState("");  // Add new state for error message
-  const [usedCombinations, setUsedCombinations] = useState(new Set()); // เก็บแค่ combination
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleMaterialBarcodeKeyPress = (e) => {
-    if (e.key === "Enter") {
-      // Check if current defect barcode is actually a material barcode
-      if (defectBarcode.length > 15 && defectBarcode.length === 28) {
-        // Swap the values
-        setMaterialBarcode(defectBarcode);
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
+  const defectInputRef = useRef(null);
+  const materialInputRef = useRef(null);
+  const userIdInputRef = useRef(null);
 
-      if (materialBarcode.length === 0) {
-        alert("Please input Material Barcode!");
-        return;
-      }
+  const [usedDefectBarcodes, setUsedDefectBarcodes] = useState(new Set());
+  const [usedCombinations, setUsedCombinations] = useState(new Set());
 
-      if (materialBarcode.length !== 28) {
-        alert("Material Barcode must be 28 characters!");
-        setMaterialBarcode("");
-        materialInputRef.current.focus();
-        return;
-      }
+  const isReady = Boolean(userId.trim() && selectedOption);
 
-      // Reset both used sets when material barcode changes
-      setUsedDefectBarcodes(new Set());
-      // Reset only combinations when material barcode changes
-      setUsedCombinations(new Set());
-
-      // Log scan data
-      console.log('----------------------------------------');
-      console.log('Production Line:', selectedOption === 'A' ? 'RA' : 'RB');
-      console.log('Material Barcode:', materialBarcode);
-      console.log('Date/Time:', formatScanTime(new Date()));
-      console.log('Scan By:', userId);
-      console.log('----------------------------------------');
-
-      defectInputRef.current.focus();
-    }
-  };
-
-  const handleDefectBarcodeKeyPress = async (e) => {
-    if (e.key === "Enter") {
-      setErrorMessage(""); // Reset error message on new scan
-
-      if (defectBarcode.length === 28) {
-        setMaterialBarcode(defectBarcode);
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      if (defectBarcode.length === 0) {
-        setErrorMessage("Please input Defect Barcode!");
-        return;
-      }
-
-      // Check if it's a full defect barcode (reason|location format)
-      if (defectBarcode.length !== 15) {
-        setErrorMessage("Invalid barcode length! Must be 15 digits (reason|location)");
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      if (defectBarcode[7] !== '|') {
-        setErrorMessage("Invalid Defect Barcode format! Must use '|' as separator!");
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      const [reasonCode, locationCode] = defectBarcode.split('|');
-
-      if (reasonCode.length !== 7 || locationCode.length !== 7) {
-        setErrorMessage("Both Reason and Location codes must be 7 digits!");
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      if (reasonCode[2] !== 'F') {
-        setErrorMessage("Invalid Reason code format! Second character must be 'F'");
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      const alphanumericRegex = /^[0-9A-Za-z]+$/;
-      if (!alphanumericRegex.test(reasonCode) || !alphanumericRegex.test(locationCode)) {
-        setErrorMessage("Both codes must contain only alphanumeric characters!");
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      // สร้าง combination key สำหรับตรวจสอบ
-      const combinationKey = `${reasonCode}|${locationCode}`;
-
-      // ตรวจสอบแค่ combination ซ้ำเท่านั้น
-      if (usedCombinations.has(combinationKey)) {
-        setErrorMessage("This exact Reason-Location combination has already been used!");
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      // Check for duplicate defect barcode
-      if (usedDefectBarcodes.has(defectBarcode)) {
-        setErrorMessage("This Defect Barcode has already been used for current Material Barcode!");
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-        return;
-      }
-
-      // Log scan data right after validation passes
-      console.log('----------------------------------------');
-      console.log('Production Line:', selectedOption === 'A' ? 'RA' : 'RB');
-      console.log('Material Barcode:', materialBarcode);
-      console.log('Defect Barcode:', defectBarcode);
-      console.log('Date/Time:', formatScanTime(new Date()));
-      console.log('Scan By:', userId);
-      console.log('----------------------------------------');
-
-      try {
-        const newScantime = formatScanTime(new Date());
-        const data = {
-          materialBarcode: materialBarcode,
-          defectBarcode: defectBarcode,
-          scanTime: newScantime,
-          userId: userId,
-          productionLine: selectedOption // เพิ่ม production line
-        };
-
-        // Debug: log data and URL
-        console.log('API URL:', API_URL);
-        console.log('Sending data to server:', data);
-
-        const response = await axios.post(`${API_URL}/SavedDefect`, data, {
-          timeout: 5000, // 5 second timeout
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        console.log("Server response:", response.data);
-
-        // Log scan data
-        console.log('----------------------------------------');
-        console.log('Production Line:', selectedOption === 'A' ? 'RA' : 'RB');
-        console.log('Material Barcode:', materialBarcode);
-        console.log('Defect Barcode:', defectBarcode);
-        console.log('Date/Time:', newScantime);
-        console.log('Scan By:', userId);
-        console.log('----------------------------------------');
-
-        setSuccessMessage('OK');
-        // เก็บแค่ combination
-        setUsedCombinations(prev => new Set([...prev, combinationKey]));
-        setUsedDefectBarcodes(prev => new Set([...prev, defectBarcode]));
-        defectInputRef.current.select();
-
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 2000);
-      } catch (error) {
-        if (error.code === 'ECONNABORTED') {
-          setErrorMessage("Connection timeout - Please try again");
-        } else if (!error.response) {
-          setErrorMessage("Network error - Please check server connection");
-        } else {
-          setErrorMessage(`Error: ${error.response?.data || error.message}`);
-        }
-        setDefectBarcode("");
-        defectInputRef.current.focus();
-      }
-      setMaterialBarcode("");
-      setDefectBarcode("");
-      materialInputRef.current.focus();
-    }
-  };
-
-  const handleUserIdKeyPress = (e) => {
-    if (e.key === "Enter") {
-      // Move focus to the Material Barcode field
-      materialInputRef.current.focus();
-    }
-  };
-
-  // เปลี่ยนจากแสดง alert เป็นแค่ log
-  const testConnection = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/test-connection`);
-      console.log('Backend connected:', response.data);
-    } catch (error) {
-      console.log('Backend not ready:', error.message);
-    }
-  };
-
-  // Call test connection when component mounts
-  React.useEffect(() => {
-    testConnection();
-  }, []);
-
-  // Function to format scan time as 'YYYY-MM-DD HH:mm:ss'
+  // Format วันที่และเวลา
   function formatScanTime(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -232,85 +33,426 @@ function FormScan() {
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
+
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
+  // ตรวจสอบการเชื่อมต่อ Backend
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/test-connection`);
+        console.log("Backend connected:", response.data);
+      } catch (error) {
+        console.error("Backend not ready:", error.message);
+      }
+    };
+
+    testConnection();
+  }, []);
+
+  // เปลี่ยน Production Line
+  const handleProductionLineChange = (e) => {
+    setSelectedOption(e.target.value);
+    setMaterialBarcode("");
+    setDefectBarcode("");
+    setErrorMessage("");
+    setSuccessMessage(null);
+    setUsedDefectBarcodes(new Set());
+    setUsedCombinations(new Set());
+  };
+
+  // กด Enter ในช่อง Work ID
+  const handleUserIdKeyPress = (e) => {
+    if (e.key !== "Enter") return;
+
+    if (!userId.trim()) {
+      alert("Please input Work ID.");
+      userIdInputRef.current?.focus();
+      return;
+    }
+
+    if (!selectedOption) {
+      alert("Please select Production Line.");
+      return;
+    }
+
+    materialInputRef.current?.focus();
+  };
+
+  // กด Enter ในช่อง Material Barcode
+  const handleMaterialBarcodeKeyPress = (e) => {
+    if (e.key !== "Enter") return;
+
+    // รองรับกรณีสแกน Material Barcode ลงช่อง Defect
+    if (defectBarcode.length === 28) {
+      setMaterialBarcode(defectBarcode);
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    if (!userId.trim()) {
+      alert("Please input Work ID.");
+      userIdInputRef.current?.focus();
+      return;
+    }
+
+    if (!selectedOption) {
+      alert("Please select Production Line.");
+      return;
+    }
+
+    if (!materialBarcode) {
+      alert("Please input Material Barcode!");
+      materialInputRef.current?.focus();
+      return;
+    }
+
+    if (materialBarcode.length !== 28) {
+      alert("Material Barcode must be 28 characters!");
+      setMaterialBarcode("");
+      materialInputRef.current?.focus();
+      return;
+    }
+
+    // เริ่มชุดการสแกนใหม่
+    setUsedDefectBarcodes(new Set());
+    setUsedCombinations(new Set());
+    setErrorMessage("");
+
+    console.log("----------------------------------------");
+    console.log("Production Line:", selectedOption);
+    console.log("Material Barcode:", materialBarcode);
+    console.log("Date/Time:", formatScanTime(new Date()));
+    console.log("Scan By:", userId);
+    console.log("----------------------------------------");
+
+    defectInputRef.current?.focus();
+  };
+
+  // กด Enter ในช่อง Defect Barcode
+  const handleDefectBarcodeKeyPress = async (e) => {
+    if (e.key !== "Enter") return;
+
+    setErrorMessage("");
+
+    if (!userId.trim()) {
+      setErrorMessage("Please input Work ID.");
+      userIdInputRef.current?.focus();
+      return;
+    }
+
+    if (!selectedOption) {
+      setErrorMessage("Please select Production Line.");
+      return;
+    }
+
+    if (!materialBarcode) {
+      setErrorMessage("Please scan Material Barcode first.");
+      materialInputRef.current?.focus();
+      return;
+    }
+
+    // รองรับกรณีสแกน Material Barcode ลงช่อง Defect
+    if (defectBarcode.length === 28) {
+      setMaterialBarcode(defectBarcode);
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    if (!defectBarcode) {
+      setErrorMessage("Please input Defect Barcode.");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    // ตรวจสอบความยาว Barcode
+    if (defectBarcode.length !== 15) {
+      setErrorMessage(
+        "Invalid barcode length! Must be 15 characters (reason|location)."
+      );
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    // ตรวจสอบเครื่องหมาย | ที่ตำแหน่งที่ 8
+    if (defectBarcode[7] !== "|") {
+      setErrorMessage(
+        'Invalid Defect Barcode format! Character 8 must be "|".'
+      );
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    const [reasonCode, locationCode] = defectBarcode.split("|");
+
+    // ตรวจสอบความยาว Reason และ Location
+    if (
+      !reasonCode ||
+      !locationCode ||
+      reasonCode.length !== 7 ||
+      locationCode.length !== 7
+    ) {
+      setErrorMessage(
+        "Both Reason and Location codes must be 7 characters."
+      );
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    // ตรวจสอบตัวอักษรตำแหน่งที่ 3 ของ Reason Code
+    if (reasonCode[2] !== "F") {
+      setErrorMessage(
+        "Invalid Reason Code! The third character must be 'F'."
+      );
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    // ตรวจสอบว่าเป็นตัวอักษรและตัวเลขเท่านั้น
+    const alphanumericRegex = /^[0-9A-Za-z]+$/;
+
+    if (
+      !alphanumericRegex.test(reasonCode) ||
+      !alphanumericRegex.test(locationCode)
+    ) {
+      setErrorMessage(
+        "Both codes must contain only letters and numbers."
+      );
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    const combinationKey = `${reasonCode}|${locationCode}`;
+
+    // ป้องกัน Reason + Location ซ้ำ
+    if (usedCombinations.has(combinationKey)) {
+      setErrorMessage(
+        "This exact Reason-Location combination has already been used!"
+      );
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    // ป้องกัน Defect Barcode ซ้ำ
+    if (usedDefectBarcodes.has(defectBarcode)) {
+      setErrorMessage(
+        "This Defect Barcode has already been used for the current Material Barcode!"
+      );
+      setDefectBarcode("");
+      defectInputRef.current?.focus();
+      return;
+    }
+
+    const currentDefectBarcode = defectBarcode;
+    const newScantime = formatScanTime(new Date());
+
+    const data = {
+      materialBarcode,
+      defectBarcode: currentDefectBarcode,
+      scanTime: newScantime,
+      userId,
+      productionLine: selectedOption,
+    };
+
+    try {
+      console.log("API URL:", API_URL);
+      console.log("Sending data to server:", data);
+
+      const response = await axios.post(
+        `${API_URL}/SavedDefect`,
+        data,
+        {
+          timeout: 5000,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Server response:", response.data);
+
+      // แสดง Toast เมื่อสแกนสำเร็จ
+      setSuccessMessage("OK");
+
+      setUsedCombinations(
+        (prev) => new Set([...prev, combinationKey])
+      );
+
+      setUsedDefectBarcodes(
+        (prev) => new Set([...prev, currentDefectBarcode])
+      );
+
+      // ซ่อน Toast หลัง 2 วินาที
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 2000);
+    } catch (error) {
+      console.error("Error sending defect data:", error);
+
+      if (error.code === "ECONNABORTED") {
+        setErrorMessage("Connection timeout - Please try again.");
+      } else if (!error.response) {
+        setErrorMessage(
+          "Network error - Please check server connection."
+        );
+      } else {
+        const serverMessage =
+          typeof error.response.data === "string"
+            ? error.response.data
+            : error.response.data?.message || error.message;
+
+        setErrorMessage(`Error: ${serverMessage}`);
+      }
+    }
+
+    // ล้างช่องหลังประมวลผลตามพฤติกรรมเดิม
+    setMaterialBarcode("");
+    setDefectBarcode("");
+    materialInputRef.current?.focus();
+  };
+
   return (
-    <div>
+    <div className="defect-scan-app">
       <Navbar />
-      <div className="select-box">
-        <b>Production Line : </b>
-        <select
-          value={selectedOption}
-          onChange={(e) => setSelectedOption(e.target.value)}
+
+      {/* Toast แจ้งเตือนเมื่อสแกนสำเร็จ */}
+      {successMessage && (
+        <div
+          className="defect-scan-toast"
+          role="status"
+          aria-live="polite"
         >
-          <option value="">--</option>
-          <option value="RA">RA</option>
-          <option value="RB">RB</option>
-        </select><br /><br />
-        <b>Work ID : </b>
-        <input
-          ref={userIdInputRef}
-          type="text"
-          placeholder="User ID"
-          className="user-id-input"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)} // Handle changes in the user ID input field
-          onKeyDown={handleUserIdKeyPress} // Listen for Enter key press
-        />
-      </div>
-      <div className="user-id-box">
-        {successMessage && (
-          <div className="success-message">
-            <h1><b>{successMessage}</b></h1>
+          <span className="defect-scan-toast-icon">✓</span>
+
+          <div>
+            <div className="defect-scan-toast-title">
+              Scan Successful
+            </div>
+
+            <div className="defect-scan-toast-message">
+              {successMessage}
+            </div>
           </div>
-        )}
-      </div>
-      <div className="form-container">
-        <div className="form-wrapper">
-          <h3>
-            <b>Material Barcode</b>
-          </h3>
-          <input
-            ref={materialInputRef}
-            type="text"
-            value={materialBarcode}
-            onChange={(e) => setMaterialBarcode(e.target.value)}
-            className="large-textbox" // Added material-input class
-            autoFocus
-            onKeyDown={handleMaterialBarcodeKeyPress} // Listen for Enter key press
-            disabled={!userId || !selectedOption}
-            maxLength={28}
-          />
-          <h3>
-            <b>Defect Barcode</b>
-          </h3>
-          <input
-            ref={defectInputRef} // Assign reference to the defect barcode input field
-            type="text"
-            value={defectBarcode}
-            onChange={(e) => setDefectBarcode(e.target.value)}
-            className="large-textbox" // Added defect-input class
-            onKeyDown={handleDefectBarcodeKeyPress} // Listen for Enter key press
-            disabled={!userId || !selectedOption}
-            maxLength={28} // Set maximum length to 15 characters
-            // placeholder="Excample: 01F0288|01L0060"
-          />
-          {errorMessage && <div style={{ color: "red", marginTop: "5px" }}>{errorMessage}</div>}
-          {!userId && <div style={{ color: "red" }}>Please Input Work ID.</div>}
-          {!selectedOption && (
-            <div style={{ color: "red" }}>Please Select Production Line.</div>
-          )}
-          {/* <input
-            type="hidden"
-            value={scanTime}
-            disabled // Disable editing
-          /> */}
-          <br />
-          <br />
         </div>
-      </div>
-      <HistoryDefect selectedOption={selectedOption} />
+      )}
+
+      <main className="defect-scan-page">
+        <div className="defect-scan-content">
+          <section className="defect-scan-card">
+            {/* Header */}
+            <div className="defect-scan-card-header">
+              <h2>Defect Barcode Scan</h2>
+
+              <span
+                className={`defect-scan-header-status ${
+                  isReady ? "is-ready" : "is-warning"
+                }`}
+              >
+                <span className="defect-scan-status-dot" />
+                {isReady ? "Ready to Scan" : "Setup Required"}
+              </span>
+            </div>
+
+            {/* Production Line และ Work ID */}
+            <div className="defect-scan-settings">
+              <div className="defect-scan-field">
+                <label htmlFor="defect-production-line">
+                  Production Line
+                </label>
+
+                <select
+                  id="defect-production-line"
+                  value={selectedOption}
+                  onChange={handleProductionLineChange}
+                >
+                  <option value="">Select Line</option>
+                  <option value="RA">RA</option>
+                  <option value="RB">RB</option>
+                </select>
+              </div>
+
+              <div className="defect-scan-field">
+                <label htmlFor="defect-work-id">Work ID</label>
+
+                <input
+                  id="defect-work-id"
+                  ref={userIdInputRef}
+                  type="text"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                  onKeyDown={handleUserIdKeyPress}
+                  placeholder="Enter Work ID"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
+
+            {/* Barcode Inputs */}
+            <div className="defect-scan-barcode-grid">
+              <div className="defect-scan-field">
+                <label htmlFor="defect-material-barcode">
+                  Material Barcode
+                  <span>STEP 1</span>
+                </label>
+
+                <input
+                  id="defect-material-barcode"
+                  ref={materialInputRef}
+                  type="text"
+                  value={materialBarcode}
+                  onChange={(e) => setMaterialBarcode(e.target.value)}
+                  onKeyDown={handleMaterialBarcodeKeyPress}
+                  disabled={!isReady}
+                  maxLength={28}
+                  autoComplete="off"
+                  placeholder="Scan Material Barcode"
+                />
+              </div>
+
+              <div className="defect-scan-field">
+                <label htmlFor="defect-barcode">
+                  Defect Barcode
+                  <span>STEP 2</span>
+                </label>
+
+                <input
+                  id="defect-barcode"
+                  ref={defectInputRef}
+                  type="text"
+                  value={defectBarcode}
+                  onChange={(e) => setDefectBarcode(e.target.value)}
+                  onKeyDown={handleDefectBarcodeKeyPress}
+                  disabled={!isReady || !materialBarcode}
+                  maxLength={28}
+                  autoComplete="off"
+                  placeholder="Scan Defect Barcode"
+                />
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="defect-scan-error" role="alert">
+                {errorMessage}
+              </div>
+            )}
+          </section>
+
+          {/* History */}
+          <section className="defect-scan-history">
+            <HistoryDefect selectedOption={selectedOption} />
+          </section>
+        </div>
+      </main>
     </div>
   );
 }

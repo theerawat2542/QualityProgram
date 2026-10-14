@@ -1,125 +1,382 @@
-/* =========================
-   Layout เดิม (คงไว้)
-========================= */
-.form-container {
+
+/* ===== Page ===== */
+.final-scan-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f7fa;
+  color: #1f2937;
+}
+
+.final-scan-content {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px 18px 20px;
+  box-sizing: border-box;
+}
+
+/* ===== Scan Card ===== */
+.scan-card {
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.scan-card-header {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
+  margin-bottom: 10px;
 }
 
-.form-wrapper {
-  text-align: center;
+.scan-page-title {
+  margin: 0;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
-/* =========================
-   Barcode Input (หัวใจหลัก)
-========================= */
-.large-textbox {
-  width: 550px;
-  height: 60px;
-  font-size: 40px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  border: 2px solid #d1d5db;
-  background: #ffffff;
-  transition: all 0.2s ease;
-  letter-spacing: 2px;
+/* ===== Header Status ===== */
+.scan-header-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  font-size: 11px;
 }
 
-.large-textbox:focus {
+.scan-warning {
+  padding: 4px 8px;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.scan-ready {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.scan-status-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  background: #22c55e;
+  border-radius: 50%;
+}
+
+.scan-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2563eb;
+  white-space: nowrap;
+}
+
+.scan-spinner {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #bfdbfe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: scan-spin 0.7s linear infinite;
+}
+
+@keyframes scan-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Form Fields ===== */
+.scan-settings {
+  display: grid;
+  grid-template-columns: 145px 170px minmax(200px, 1fr);
+  align-items: end;
+  gap: 12px;
+  margin: 0;
+}
+
+.scan-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.scan-field label,
+.barcode-label-row label {
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.scan-field input,
+.scan-field select {
+  width: 100%;
+  height: 35px;
+  padding: 0 10px;
+  color: #1f2937;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+  font-family: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
 }
 
-.large-textbox:disabled {
-  background: #f1f5f9;
+.scan-field input::placeholder {
+  color: #9ca3af;
+}
+
+.scan-field input:focus,
+.scan-field select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* ===== Barcode ===== */
+.barcode-section {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.barcode-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.barcode-counter {
+  color: #9ca3af;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.final-barcode-input {
+  display: block;
+  width: 100%;
+  height: 35px;
+  padding: 0 10px;
+  color: #1d4ed8;
+  background: #fff;
+  border: 1px solid #93b5e8;
+  border-radius: 5px;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.final-barcode-input::placeholder {
+  color: #a0aec0;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.final-barcode-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.final-barcode-input:disabled {
+  color: #9ca3af;
+  background: #f3f4f6;
   border-color: #e5e7eb;
   cursor: not-allowed;
 }
 
-/* =========================
-   Success Message
-========================= */
-.success-message {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #ffffff;
-  font-weight: bold;
-  text-align: center;
-  padding: 12px 30px;
-  border-radius: 999px;
-  margin-top: 15px;
-  display: inline-block;
-  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.5);
-  font-size: 32px;
+/* ===== Floating Success Notification ===== */
+.scan-success-toast {
+  position: fixed;
+  top: 76px;
+  right: 24px;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 220px;
+  padding: 12px 16px;
+
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #22c55e;
+  border-radius: 7px;
+
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+
+  animation: toast-slide-in 0.2s ease-out;
+  box-sizing: border-box;
 }
 
-/* =========================
-   User ID (มุมขวาบน)
-========================= */
-.user-id-box {
-  position: absolute;
-  top: 80px;   /* อยู่ใต้ select-box */
-  right: 100px;   /* ฝั่งเดียวกับ select-box */
-  background: #ffffff;
-  padding: 10px 14px;
-  border-radius: 10px;
-  /* box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); */
+.scan-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  background: #16a34a;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 700;
 }
 
-
-.user-id-input {
-  width: 110px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
-  font-size: 15px;
+.scan-success-toast strong {
+  display: block;
+  color: #166534;
+  font-size: 13px;
 }
 
-.user-id-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+.scan-success-toast p {
+  margin: 3px 0 0;
+  color: #15803d;
+  font-size: 11px;
 }
 
-/* =========================
-   Production Line (มุมซ้ายบน)
-========================= */
-.select-box {
-  position: absolute;
-  top: 70px;
-  left: 25px;
-  background: #ffffff;
-  padding: 10px 14px;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.select-box select {
-  padding: 6px 10px;
-  font-size: 15px;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
+/* ===== History ===== */
+.scan-history-section {
+  width: 100%;
+  min-width: 0;
+  margin-top: 10px;
 }
 
-.select-box select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+/* ===== Tablet ===== */
+@media (max-width: 900px) {
+  .final-scan-content {
+    padding: 10px 12px 16px;
+  }
+
+  .scan-card {
+    padding: 11px 12px;
+  }
+
+  .scan-settings {
+    grid-template-columns: 125px 145px minmax(150px, 1fr);
+    gap: 9px;
+  }
 }
 
-/* =========================
-   Error / Hint Text
-========================= */
-.form-wrapper div[style*="color: red"] {
-  font-size: 14px;
-  margin-top: 8px;
+/* ===== Mobile ===== */
+@media (max-width: 600px) {
+  .final-scan-content {
+    padding: 8px;
+  }
+
+  .scan-card {
+    padding: 10px;
+  }
+
+  .scan-card-header {
+    gap: 8px;
+    margin-bottom: 9px;
+  }
+
+  .scan-page-title {
+    font-size: 14px;
+  }
+
+  .scan-header-status {
+    font-size: 10px;
+  }
+
+  .scan-warning,
+  .scan-ready {
+    padding: 3px 6px;
+  }
+
+  .scan-settings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .barcode-section {
+    grid-column: 1 / -1;
+  }
+
+  .scan-field input,
+  .scan-field select,
+  .final-barcode-input {
+    height: 35px;
+  }
+
+  .final-barcode-input {
+    font-size: 14px;
+  }
+
+  .final-barcode-input::placeholder {
+    font-size: 11px;
+  }
+
+  .scan-history-section {
+    margin-top: 8px;
+  }
+
+  .scan-success-toast {
+    top: 65px;
+    right: 10px;
+    min-width: 0;
+    max-width: calc(100vw - 20px);
+    padding: 9px 12px;
+    gap: 8px;
+  }
+
+  .scan-success-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+
+  .scan-success-toast strong {
+    font-size: 12px;
+  }
+
+  .scan-success-toast p {
+    font-size: 10px;
+  }
 }
 
-/* =========================
-   Optional: Page Background
-========================= */
-body {
-  background: #f8fafc;
-  font-family: "Segoe UI", Tahoma, sans-serif;
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .scan-spinner,
+  .scan-success-toast {
+    animation: none;
+  }
 }

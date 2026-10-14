@@ -5,7 +5,7 @@ import axios from "axios";
 import { Table } from "antd";
 import { format } from "date-fns";
 import { API_URL } from "../../lib/config";
-import "./FinalBarcode.css";
+import "./FinalTracking.css";
 
 const FinalBarcode = ({ barcode }) => {
   const [records, setRecords] = useState([]);

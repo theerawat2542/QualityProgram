@@ -1,0 +1,372 @@
+
+/* ===== Page ===== */
+.material-scan-app {
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+.material-scan-page {
+  width: 100%;
+  padding: 10px 16px;
+  box-sizing: border-box;
+}
+
+.material-scan-content {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ===== Main Card ===== */
+.material-scan-card {
+  width: 100%;
+  padding: 14px 18px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
+}
+
+/* ===== Header ===== */
+.material-scan-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.material-scan-page-title {
+  margin: 0;
+  color: #17365d;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.material-scan-subtitle {
+  margin: 3px 0 0;
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.material-scan-header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.material-scan-header-status.is-ready {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.material-scan-header-status.is-warning {
+  color: #a16207;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.material-scan-status-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ===== Setup Fields ===== */
+.material-scan-settings {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(180px, 1.2fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.material-scan-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.material-scan-field label {
+  margin-bottom: 5px;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.material-scan-settings .material-scan-field input,
+.material-scan-settings .material-scan-field select {
+  width: 100%;
+  height: 34px;
+  padding: 0 9px;
+  color: #1e293b;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.material-scan-settings .material-scan-field input:focus,
+.material-scan-settings .material-scan-field select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* ===== Warnings ===== */
+.material-scan-warning {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  padding: 6px 9px;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 5px;
+  font-size: 11px;
+}
+
+/* ===== Barcode Fields ===== */
+.material-scan-barcode-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.material-scan-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.material-scan-label-row label {
+  margin: 0;
+  color: #1e293b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.material-scan-step {
+  flex-shrink: 0;
+  padding: 3px 6px;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.material-scan-barcode-input {
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 0 10px;
+  color: #0f172a;
+  background: #fff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 18px;
+  font-weight: 600;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.material-scan-barcode-input::placeholder {
+  color: #94a3b8;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.material-scan-barcode-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
+}
+
+.material-scan-barcode-input:disabled {
+  color: #94a3b8;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.material-scan-input-hint {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+/* ===== Success Toast ===== */
+.material-scan-success-toast {
+  position: fixed;
+  top: 70px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 180px;
+  padding: 10px 14px;
+  color: #166534;
+  background: #fff;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #22c55e;
+  border-radius: 7px;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.12);
+  animation: material-scan-toast-in 0.2s ease-out;
+}
+
+.material-scan-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: #fff;
+  background: #22c55e;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.material-scan-success-toast strong {
+  display: block;
+  font-size: 12px;
+}
+
+.material-scan-success-toast p {
+  margin: 2px 0 0;
+  color: #64748b;
+  font-size: 11px;
+}
+
+@keyframes material-scan-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== History ===== */
+.material-scan-history {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ===== Smaller Screens ===== */
+@media (max-width: 768px) {
+  .material-scan-page {
+    padding: 8px;
+  }
+
+  .material-scan-content {
+    gap: 8px;
+  }
+
+  .material-scan-card {
+    padding: 11px;
+  }
+
+  .material-scan-page-title {
+    font-size: 16px;
+  }
+
+  .material-scan-subtitle {
+    font-size: 10px;
+  }
+
+  .material-scan-settings {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .material-scan-barcode-grid {
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .material-scan-barcode-input {
+    height: 42px;
+    padding: 0 7px;
+    font-size: 15px;
+  }
+
+  .material-scan-barcode-input::placeholder {
+    font-size: 10px;
+  }
+
+  .material-scan-input-hint {
+    font-size: 9px;
+  }
+
+  .material-scan-success-toast {
+    top: 60px;
+    right: 8px;
+    min-width: 0;
+  }
+}
+
+/* ===== Very Narrow Screens ===== */
+@media (max-width: 480px) {
+  .material-scan-card-header {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .material-scan-page-title {
+    font-size: 14px;
+  }
+
+  .material-scan-header-status {
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .material-scan-settings {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .material-scan-field label {
+    font-size: 11px;
+  }
+
+  .material-scan-barcode-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .material-scan-barcode-input {
+    height: 40px;
+  }
+}

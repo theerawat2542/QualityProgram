@@ -1,140 +1,144 @@
+
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
+
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import "./FormScan.css"; // Import CSS file for styling
+import "./FormScan.css";
 import HistoryFinal from "../History/HistoryFinal";
 import Navbar from "../Navbar/Navbar";
 import { API_URL } from "../../lib/config";
 
 function FormScanFinal() {
   const [barcode, setBarcode] = useState("");
-  const [userId, setUserId] = useState(""); // State for user ID
-  const [scanTime] = useState(formatScanTime(new Date())); // Scan time cannot be edited
-  const barcodeInputRef = useRef(null);
-  const userIdInputRef = useRef(null); // Reference for user ID input field
+  const [userId, setUserId] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [status_oil, setStatusOil] = useState("");
-  const [status_comp, setStatusComp] = useState("");
-  const [status_cool, setStatusCool] = useState("");
-  const [status_safe, setStatusSafe] = useState("");
+  const [successMessage, setSuccessMessage] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [forceUpdateKey, setForceUpdateKey] = useState(0); // New state to force updates
 
-  // Update the station scan when the statuses or forceUpdateKey changes
+  const barcodeInputRef = useRef(null);
+  const userIdInputRef = useRef(null);
+  const historyFinalRef = useRef(null);
+  const successTimeoutRef = useRef(null);
+
   useEffect(() => {
-    if (barcode.length === 20) {
-      updateStationScan();
-    }
-  }, [status_oil, status_comp, status_cool, status_safe, forceUpdateKey]);
+    return () => {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, []);
 
-  const fetchDataFromStation = async (barcode) => {
-    try {
-      setLoading(true); // Set loading to true when fetching data
-      const response = await axios.get(`${API_URL}/station`, {
-        params: { barcode },
-      });
-      const stationData = response.data.station78Data[0];
-      setStatusOil(stationData.oil_status === "OK" ? "ChargeR600" : "");
-      setStatusComp(stationData.comp_status !== "0" ? "Compressor" : "");
-      setStatusCool(stationData.cooling_status === "OK" ? "CoolingTest" : "");
-      setStatusSafe(stationData.safety_status !== "0" ? "SafetyTest" : "");
-      
-      // Increment forceUpdateKey to trigger a re-render even with the same statuses
-      setForceUpdateKey((prevKey) => prevKey + 1);
-    } catch (error) {
-      console.error("Error fetching data from station:", error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchDataFromStation = async (barcodeValue) => {
+    const response = await axios.get(`${API_URL}/station`, {
+      params: { barcode: barcodeValue },
+    });
+
+    return response.data.station78Data[0];
   };
 
-  const updateStationScan = async () => {
-    try {
-      // Check if barcode is empty, if so, exit early
-      if (!barcode) return;
-
-      // Construct station_scan based on the status variables
-      const stationScanParts = [];
-      if (status_oil) stationScanParts.push(status_oil);
-      if (status_comp) stationScanParts.push(status_comp);
-      if (status_cool) stationScanParts.push(status_cool);
-      if (status_safe) stationScanParts.push(status_safe);
-      const updatedStationScan = stationScanParts.join(", ");
-      
-      const newScantime = formatScanTime(new Date());
-      const data = {
-        barcode: barcode,
-        scantime: newScantime,
-        station_scan: updatedStationScan,
-        userId: userId,
-      };
-      await axios.post(`${API_URL}/SavedFinal`, data);
-      console.log(data);
-    } catch (error) {
-      console.error("Error updating station_scan:", error);
-    }
-  };
-
-  const handleBarcodeChange = async (e) => {
-    const newBarcode = e.target.value;
-    setBarcode(newBarcode);
-
-    if (newBarcode.length === 20) {
-      await fetchDataFromStation(newBarcode);
-    }
-  };
-
-  const handleSubmit = async () => {
-    try {
-      console.log("Data sent successfully!");
-      setSuccessMessage("OK");
-      setBarcode("");
-      barcodeInputRef.current.focus();
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 2000);
-    } catch (error) {
-      console.error("Error sending data:", error);
-      alert("Error sending data.");
-    }
+  const handleBarcodeChange = (e) => {
+    setBarcode(e.target.value);
+    setSuccessMessage(false);
   };
 
   const handleBarcodeKeyPress = async (e) => {
-    if (e.key === "Enter") {
-      if (barcode.length === 0) {
-        alert("Please input Barcode!");
-        return;
-      } else if (barcode.length !== 20) {
-        alert("Invalid Barcode!");
-        setBarcode("");
-        return;
+    if (e.key !== "Enter" || loading) return;
+
+    if (!barcode) {
+      alert("Please input Barcode!");
+      barcodeInputRef.current?.focus();
+      return;
+    }
+
+    if (barcode.length !== 20) {
+      alert("Invalid Barcode!");
+      setBarcode("");
+      barcodeInputRef.current?.focus();
+      return;
+    }
+
+    if (!selectedOption) {
+      alert("Please select Production Line.");
+      return;
+    }
+
+    if (!userId) {
+      alert("Please enter Work ID.");
+      userIdInputRef.current?.focus();
+      return;
+    }
+
+    if (barcode.charAt(12) !== selectedOption) {
+      alert(
+        "Barcode does not correspond to the selected Production Line."
+      );
+      setBarcode("");
+      barcodeInputRef.current?.focus();
+      return;
+    }
+
+    setLoading(true);
+    setSuccessMessage(false);
+
+    try {
+      const stationData = await fetchDataFromStation(barcode);
+
+      const stationScanParts = [];
+
+      if (stationData.oil_status === "OK") {
+        stationScanParts.push("ChargeR600");
       }
-  
-      if (barcode.charAt(12) !== selectedOption) {
-        alert("Barcode does not correspond to the selected Production Line.");
-        setBarcode("");
-        barcodeInputRef.current.focus();
-        return;
+
+      if (stationData.comp_status !== "0") {
+        stationScanParts.push("Compressor");
       }
-  
-      // Fetch station data and then submit the form
-      await fetchDataFromStation(barcode);
-      handleSubmit();  // This will submit the data to the database after fetching
-  
-      barcodeInputRef.current.focus();
+
+      if (stationData.cooling_status === "Qualified") {
+        stationScanParts.push("CoolingTest");
+      }
+
+      if (stationData.safety_status !== "0") {
+        stationScanParts.push("SafetyTest");
+      }
+
+      const data = {
+        barcode,
+        scantime: formatScanTime(new Date()),
+        station_scan: stationScanParts.join(", "),
+        userId,
+      };
+
+      await axios.post(`${API_URL}/SavedFinal`, data);
+
+      // Refresh History after successful save
+      historyFinalRef.current?.fetchData();
+
+      setBarcode("");
+      setSuccessMessage(true);
+
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+
+      successTimeoutRef.current = setTimeout(() => {
+        setSuccessMessage(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Error processing barcode:", error);
+      alert("Error saving data.");
+    } finally {
+      setLoading(false);
+      barcodeInputRef.current?.focus();
     }
   };
-  
 
   const handleUserIdKeyPress = (e) => {
     if (e.key === "Enter") {
-      barcodeInputRef.current.focus();
+      barcodeInputRef.current?.focus();
     }
   };
 
-  // Function to format scan time as 'YYYY-MM-DD HH:mm:ss'
   function formatScanTime(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -142,66 +146,127 @@ function FormScanFinal() {
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
+
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
   return (
-    <div>
+    <div className="final-scan-page">
       <Navbar />
-      <div className="select-box">
-        <b>Production Line : </b>
-        <select
-          value={selectedOption}
-          onChange={(e) => setSelectedOption(e.target.value)}
+
+      {/* Floating success notification */}
+      {successMessage && (
+        <div
+          className="scan-success-toast"
+          role="status"
+          aria-live="polite"
         >
-          <option value="">--</option>
-          <option value="A">RA</option>
-          <option value="B">RB</option>
-        </select><br /><br />
-        <b>Work ID : </b>
-        <input
-          ref={userIdInputRef}
-          type="text"
-          placeholder="User ID"
-          className="user-id-input"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          onKeyDown={handleUserIdKeyPress}
-        />
-      </div>
-      <div className="user-id-box">
-        {successMessage && (
-          <div className="success-message">
-            <h1>
-              <b>{successMessage}</b>
-            </h1>
+          <span className="scan-success-icon">✓</span>
+          <div>
+            <strong>Scan Successful</strong>
+            <p>Barcode saved successfully.</p>
           </div>
-        )}
-      </div>
-      <div className="form-container">
-        <div className="form-wrapper">
-          <h2>
-            <b>Final Barcode</b>
-          </h2>
-          <input
-            ref={barcodeInputRef}
-            type="text"
-            value={barcode}
-            onChange={handleBarcodeChange}
-            className="large-textbox"
-            autoFocus
-            onKeyDown={handleBarcodeKeyPress}
-            disabled={!userId || !selectedOption}
-            maxLength={20}
-          />
-          {!userId && <div style={{ color: "red" }}>Please Input Work ID.</div>}
-          {!selectedOption && (
-            <div style={{ color: "red" }}>Please Select Production Line.</div>
-          )}
-          <br />
         </div>
-      </div>
-      <HistoryFinal selectedOption={selectedOption} />
+      )}
+
+      <main className="final-scan-content">
+        <section className="scan-card">
+          <div className="scan-card-header">
+            <h1 className="scan-page-title">Final Barcode Scan</h1>
+
+            <div className="scan-header-status" role="status" aria-live="polite">
+              {loading ? (
+                <span className="scan-loading">
+                  <span className="scan-spinner" />
+                  Processing...
+                </span>
+              ) : !selectedOption ? (
+                <span className="scan-warning">
+                  Select Production Line
+                </span>
+              ) : !userId ? (
+                <span className="scan-warning">
+                  Enter Work ID
+                </span>
+              ) : (
+                <span className="scan-ready">
+                  <span className="scan-status-dot" />
+                  Ready to scan
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="scan-settings">
+            <div className="scan-field">
+              <label htmlFor="production-line">
+                Production Line
+              </label>
+
+              <select
+                id="production-line"
+                value={selectedOption}
+                onChange={(e) => {
+                  setSelectedOption(e.target.value);
+                  setBarcode("");
+                  setSuccessMessage(false);
+                }}
+              >
+                <option value="">Select line</option>
+                <option value="A">RA</option>
+                <option value="B">RB</option>
+              </select>
+            </div>
+
+            <div className="scan-field">
+              <label htmlFor="work-id">Work ID</label>
+
+              <input
+                id="work-id"
+                ref={userIdInputRef}
+                type="text"
+                placeholder="Enter Work ID"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                onKeyDown={handleUserIdKeyPress}
+                autoComplete="off"
+              />
+            </div>
+
+            <div className="barcode-section">
+              <div className="barcode-label-row">
+                <label htmlFor="final-barcode">Final Barcode</label>
+
+                <span className="barcode-counter">
+                  {barcode.length}/20
+                </span>
+              </div>
+
+              <input
+                id="final-barcode"
+                ref={barcodeInputRef}
+                type="text"
+                value={barcode}
+                onChange={handleBarcodeChange}
+                onKeyDown={handleBarcodeKeyPress}
+                className="final-barcode-input"
+                placeholder="Scan barcode and press Enter"
+                autoFocus
+                autoComplete="off"
+                disabled={!userId || !selectedOption || loading}
+                maxLength={20}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="scan-history-section">
+          <HistoryFinal
+            ref={historyFinalRef}
+            selectedOption={selectedOption}
+          />
+        </section>
+      </main>
     </div>
   );
 }

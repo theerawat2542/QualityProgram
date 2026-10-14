@@ -1,14 +1,10 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-"use client";
-
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useMemo } from "react";
 import {
   Table,
   DatePicker,
   Button,
   message,
-  Tag,
   Input,
   Space,
   Card,
@@ -17,6 +13,7 @@ import {
   Statistic,
   Row,
   Col,
+  Tag,
 } from "antd";
 import {
   SearchOutlined,
@@ -33,308 +30,525 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import { API_URL } from "../../lib/config";
 import Navbar from "../Navbar/Navbar";
+import "./OilBarcode.css";
 
 const { RangePicker } = DatePicker;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
-/* ================= Column Search Helper ================= */
-
-const getColumnSearchProps = (dataIndex) => ({
-  filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-    <div style={{ padding: 8 }}>
-      <Input
-        placeholder={`Search ${dataIndex}`}
-        value={selectedKeys[0]}
-        onChange={(e) =>
-          setSelectedKeys(e.target.value ? [e.target.value] : [])
-        }
-        onPressEnter={() => confirm()}
-        style={{ marginBottom: 8 }}
-      />
-      <Space>
-        <Button
-          type="primary"
-          size="small"
-          icon={<SearchOutlined />}
-          onClick={() => confirm()}
-        >
-          Search
-        </Button>
-        <Button
-          size="small"
-          onClick={() => {
-            clearFilters();
-            confirm();
-          }}
-        >
-          Reset
-        </Button>
-      </Space>
-    </div>
-  ),
-  filterIcon: (filtered) => (
-    <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-  ),
-  onFilter: (value, record) =>
-    record[dataIndex]
-      ?.toString()
-      .toLowerCase()
-      .includes(value.toLowerCase()),
-});
-
-/* ================= Component ================= */
-
-function Charge() {
+const Charge = () => {
   const [dateRange, setDateRange] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /* ================= Fetch ================= */
+  // Column search
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div className="charge-filter-dropdown">
+        <Input
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(event) =>
+            setSelectedKeys(event.target.value ? [event.target.value] : [])
+          }
+          onPressEnter={() => confirm()}
+          allowClear
+          autoFocus
+        />
 
+        <Space className="charge-filter-actions">
+          <Button
+            type="primary"
+            size="small"
+            icon={<SearchOutlined />}
+            onClick={() => confirm()}
+          >
+            Search
+          </Button>
+
+          <Button
+            size="small"
+            onClick={() => {
+              clearFilters?.();
+              setSelectedKeys([]);
+              confirm();
+            }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{ color: filtered ? "#1677ff" : undefined }}
+      />
+    ),
+    onFilter: (value, record) =>
+      String(record[dataIndex] ?? "")
+        .toLowerCase()
+        .includes(String(value ?? "").toLowerCase()),
+  });
+
+  // Fetch data by date range
   const fetchChargeData = async () => {
-    if (!dateRange || dateRange.length !== 2) {
-      message.warning("Please select date range");
+    if (
+      !dateRange ||
+      dateRange.length !== 2 ||
+      !dateRange[0] ||
+      !dateRange[1]
+    ) {
+      message.warning("Please select a date range before searching.");
       return;
     }
 
-    try {
-      setLoading(true);
-      const [start, end] = dateRange;
+    setLoading(true);
 
-      const res = await axios.get(`${API_URL}/oilcharger`, {
+    try {
+      const startDate = dateRange[0].format("YYYY-MM-DD");
+      const endDate = dateRange[1].format("YYYY-MM-DD");
+
+      const response = await axios.get(`${API_URL}/oilcharger`, {
         params: {
-          startDate: start.format("YYYY-MM-DD"),
-          endDate: end.format("YYYY-MM-DD"),
+          startDate,
+          endDate,
         },
       });
 
-      const mapped = (res.data || []).map((r, idx) => ({
-        ...r,
-        key: idx,
-        datetime: r.datetime
-          ? dayjs(r.datetime).format("YYYY-MM-DD HH:mm:ss")
-          : "-",
-      }));
+      const result = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.data)
+          ? response.data.data
+          : [];
 
-      setData(mapped);
-    } catch (err) {
-      message.info("No data in selected date range");
+      const formattedData = result.map((item, index) => {
+        const rawDate =
+          item.datetime ?? item.DateTime ?? item.time_create ?? "";
+
+        return {
+          ...item,
+          key: item.id ?? item.ID ?? `${item.barcode ?? "record"}-${index}`,
+          datetime:
+            rawDate && dayjs(rawDate).isValid()
+              ? dayjs(rawDate).format("YYYY-MM-DD HH:mm:ss")
+              : rawDate,
+        };
+      });
+
+      setData(formattedData);
+
+      if (formattedData.length === 0) {
+        message.info("No records found for the selected date range.");
+      } else {
+        message.success(`Found ${formattedData.length} records.`);
+      }
+    } catch (error) {
+      console.error("Error fetching Charge R600a data:", error);
+      setData([]);
+      message.error(
+        "Failed to retrieve data. Please check your connection and try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= Dashboard Summary ================= */
-
+  // Summary statistics
   const summary = useMemo(() => {
     const total = data.length;
-    const ok = data.filter((d) => d.status === "OK").length;
+
+    const ok = data.filter(
+      (item) => String(item.status ?? "").trim().toUpperCase() === "OK"
+    ).length;
+
     const ng = total - ok;
-    const alarm = data.filter((d) => d.alarm && d.alarm !== "").length;
+
+    const alarm = data.filter((item) => {
+      const value = item.alarm ?? item.Alarm;
+      return (
+        value !== null &&
+        value !== undefined &&
+        String(value).trim() !== ""
+      );
+    }).length;
 
     return { total, ok, ng, alarm };
   }, [data]);
 
-  /* ================= Clear ================= */
-
+  // Clear filters and table data
   const handleClear = () => {
     setDateRange([]);
     setData([]);
-    message.success("Cleared date and table data");
+    message.success("Date range and table data cleared.");
   };
 
-  /* ================= Export ================= */
-
+  // Export to Excel
   const handleExport = () => {
     if (data.length === 0) {
-      message.warning("No data to export");
+      message.warning("No data available to export.");
       return;
     }
 
-    const exportData = data.map((d) => ({
-      Line: d.WorkUser_LineName,
-      Model: d.model,
-      "Order No": d.WorkUser_MOrderCode,
-      Barcode: d.barcode,
-      "Date/Time": d.datetime,
-      Program: d.program,
-      "R600 Setpoint": d.r600_setpoint,
-      "R600 Actum": d.r600_actum,
-      Status: d.status,
-      Alarm: d.alarm,
+    const exportData = data.map((item) => ({
+      Line: item.WorkUser_LineName ?? "",
+      Model: item.Model ?? item.model ?? "",
+      "Order No": item.WorkUser_MOrderCode ?? "",
+      Barcode: item.barcode ?? item.Barcode ?? "",
+      "Date / Time": item.datetime ?? "",
+      Program: item.program ?? item.Program ?? "",
+      "R600 Setpoint": item.R600_Setpoint ?? item.r600_setpoint ?? "",
+      "R600 Actum": item.R600_Actum ?? item.r600_actum ?? "",
+      Status: item.status ?? "",
+      Alarm: item.alarm ?? item.Alarm ?? "",
     }));
 
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "ChargeR600a");
-    XLSX.writeFile(wb, "ChargeR600a_report.xlsx");
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    worksheet["!cols"] = [
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 22 },
+      { wch: 24 },
+      { wch: 22 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 14 },
+      { wch: 30 },
+    ];
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Charge R600a");
+
+    const fileName = `ChargeR600a_report_${
+      dateRange?.[0] ? dateRange[0].format("YYYYMMDD") : "all"
+    }_${
+      dateRange?.[1] ? dateRange[1].format("YYYYMMDD") : "data"
+    }.xlsx`;
+
+    XLSX.writeFile(workbook, fileName);
+    message.success("Excel export completed successfully.");
   };
 
-  /* ================= Columns ================= */
-
+  // Table columns
   const columns = [
     {
       title: "Line",
       dataIndex: "WorkUser_LineName",
-      width: 150,
+      key: "WorkUser_LineName",
+      width: 140,
       ...getColumnSearchProps("WorkUser_LineName"),
+      render: (value) => value || "-",
     },
     {
       title: "Model",
-      dataIndex: "model",
-      width: 120,
-      ...getColumnSearchProps("model"),
+      dataIndex: "Model",
+      key: "Model",
+      width: 130,
+      ...getColumnSearchProps("Model"),
+      render: (value, record) => value ?? record.model ?? "-",
     },
     {
       title: "Order No",
       dataIndex: "WorkUser_MOrderCode",
-      width: 160,
+      key: "WorkUser_MOrderCode",
+      width: 170,
       ...getColumnSearchProps("WorkUser_MOrderCode"),
+      render: (value) => value || "-",
     },
     {
       title: "Barcode",
       dataIndex: "barcode",
-      width: 200,
+      key: "barcode",
+      width: 190,
       ellipsis: true,
       ...getColumnSearchProps("barcode"),
+      render: (value, record) => value ?? record.Barcode ?? "-",
     },
     {
       title: "Date / Time",
       dataIndex: "datetime",
+      key: "datetime",
       width: 180,
+      sorter: (a, b) =>
+        String(a.datetime ?? "").localeCompare(String(b.datetime ?? "")),
+      render: (value) => value || "-",
     },
     {
       title: "Program",
       dataIndex: "program",
+      key: "program",
       width: 120,
+      ...getColumnSearchProps("program"),
+      render: (value, record) => value ?? record.Program ?? "-",
     },
     {
       title: "R600 Setpoint",
-      dataIndex: "r600_setpoint",
-      width: 130,
+      dataIndex: "R600_Setpoint",
+      key: "R600_Setpoint",
+      width: 135,
+      align: "right",
+      render: (value, record) => value ?? record.r600_setpoint ?? "-",
     },
     {
       title: "R600 Actum",
-      dataIndex: "r600_actum",
-      width: 130,
+      dataIndex: "R600_Actum",
+      key: "R600_Actum",
+      width: 135,
+      align: "right",
+      render: (value, record) => value ?? record.r600_actum ?? "-",
     },
     {
       title: "Status",
       dataIndex: "status",
-      width: 120,
-      render: (v) =>
-        v === "OK" ? (
-          <Tag color="green">OK</Tag>
-        ) : (
-          <Tag color="red">{v}</Tag>
-        ),
+      key: "status",
+      width: 110,
+      align: "center",
+      filters: [
+        { text: "OK", value: "OK" },
+        { text: "NG", value: "NG" },
+      ],
+      onFilter: (value, record) => {
+        const status = String(record.status ?? "").trim().toUpperCase();
+        return value === "OK" ? status === "OK" : status !== "OK";
+      },
+      render: (value) => {
+        const isOk = String(value ?? "").trim().toUpperCase() === "OK";
+
+        return (
+          <Tag className={`charge-status ${isOk ? "status-ok" : "status-ng"}`}>
+            {isOk ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
+            <span>{value || "NG"}</span>
+          </Tag>
+        );
+      },
     },
     {
       title: "Alarm",
       dataIndex: "alarm",
+      key: "alarm",
       width: 200,
       ellipsis: true,
+      ...getColumnSearchProps("alarm"),
+      render: (value, record) => {
+        const alarmValue = value ?? record.Alarm;
+
+        return alarmValue ? (
+          <span className="charge-alarm">
+            <AlertOutlined />
+            <span>{alarmValue}</span>
+          </span>
+        ) : (
+          <Text type="secondary">-</Text>
+        );
+      },
     },
   ];
 
-  /* ================= Render ================= */
-
   return (
-    <div style={{ background: "#f5f7fa", minHeight: "100vh" }}>
+    <div className="charge-page">
       <Navbar />
 
-      <Card style={{ margin: 16 }} bordered={false} styles={{ body: { padding: 24 } }}>
-        {/* ===== Header ===== */}
-        <Space align="center">
-          <ThunderboltOutlined style={{ fontSize: 28, color: "#fa8c16" }} />
-          <Title level={3} style={{ margin: 0 }}>
-            Charge R600a
-          </Title>
-        </Space>
+      <main className="charge-main">
+        {/* Page Header */}
+        <div className="charge-header">
+          <div className="charge-title-group">
+            <div className="charge-title-icon">
+              <ThunderboltOutlined />
+            </div>
 
-        <Divider />
+            <div>
+              <Title level={3} className="charge-title">
+                Charge R600a
+              </Title>
+              {/* <Text className="charge-description">
+                R600a charging inspection report
+              </Text> */}
+            </div>
+          </div>
 
-        {/* ===== Toolbar ===== */}
-        <Space wrap style={{ marginBottom: 16 }}>
-          <RangePicker
-            value={dateRange}
-            onChange={(v) => setDateRange(v)}
-            format="YYYY-MM-DD"
-          />
+          {/* <div className="charge-module-label">
+            <DatabaseOutlined />
+            <span>PRODUCTION REPORT</span>
+          </div> */}
+        </div>
 
-          <Button type="primary" icon={<SearchOutlined />} onClick={fetchChargeData}>
-            Search
-          </Button>
+        {/* Date Filter and Actions */}
+        <Card className="charge-toolbar-card" bordered={false}>
+          <div className="charge-toolbar">
+            <div className="charge-date-group">
+              <div className="charge-field-label">Date Range</div>
 
-          <Button icon={<ClearOutlined />} onClick={handleClear}>
-            Clear
-          </Button>
-
-          <Button icon={<DownloadOutlined />} onClick={handleExport}>
-            Export
-          </Button>
-        </Space>
-
-        {/* ===== Dashboard ===== */}
-        <Row gutter={16} style={{ marginBottom: 16 }}>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="Total Records"
-                value={summary.total}
-                prefix={<DatabaseOutlined />}
+              <RangePicker
+                className="charge-date-picker"
+                value={dateRange}
+                onChange={(dates) => setDateRange(dates || [])}
+                format="DD/MM/YYYY"
+                placeholder={["Start date", "End date"]}
+                allowClear
               />
+            </div>
+
+            <div className="charge-actions">
+              <Button
+                type="primary"
+                icon={<SearchOutlined />}
+                onClick={fetchChargeData}
+                loading={loading}
+                className="charge-search-button"
+              >
+                Search
+              </Button>
+
+              <Button
+                icon={<ClearOutlined />}
+                onClick={handleClear}
+                className="charge-clear-button"
+              >
+                Clear
+              </Button>
+
+              <Button
+                icon={<DownloadOutlined />}
+                onClick={handleExport}
+                disabled={data.length === 0}
+                className="charge-export-button"
+              >
+                Export Excel
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Summary */}
+        <div className="charge-summary-heading">
+          <Text className="charge-section-title">Overview</Text>
+
+          <Text className="charge-summary-note">
+            {dateRange?.[0] && dateRange?.[1]
+              ? `${dateRange[0].format("DD/MM/YYYY")} – ${dateRange[1].format(
+                  "DD/MM/YYYY"
+                )}`
+              : "Summary of the currently loaded records"}
+          </Text>
+        </div>
+
+        <Row gutter={[12, 12]} className="charge-summary">
+          <Col xs={12} sm={12} md={6}>
+            <Card className="charge-summary-card total-card" bordered={false}>
+              <div className="charge-stat-top">
+                <span className="charge-stat-label">Total Records</span>
+                <span className="charge-stat-icon total-icon">
+                  <DatabaseOutlined />
+                </span>
+              </div>
+              <Statistic value={summary.total} />
+              <div className="charge-stat-caption">All records</div>
             </Card>
           </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="OK"
-                value={summary.ok}
-                valueStyle={{ color: "#3f8600" }}
-                prefix={<CheckCircleOutlined />}
-              />
+
+          <Col xs={12} sm={12} md={6}>
+            <Card className="charge-summary-card ok-card" bordered={false}>
+              <div className="charge-stat-top">
+                <span className="charge-stat-label">Pass</span>
+                <span className="charge-stat-icon ok-icon">
+                  <CheckCircleOutlined />
+                </span>
+              </div>
+              <Statistic value={summary.ok} />
+              <div className="charge-stat-caption">OK status</div>
             </Card>
           </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="NG"
-                value={summary.ng}
-                valueStyle={{ color: "#cf1322" }}
-                prefix={<CloseCircleOutlined />}
-              />
+
+          <Col xs={12} sm={12} md={6}>
+            <Card className="charge-summary-card ng-card" bordered={false}>
+              <div className="charge-stat-top">
+                <span className="charge-stat-label">Fail</span>
+                <span className="charge-stat-icon ng-icon">
+                  <CloseCircleOutlined />
+                </span>
+              </div>
+              <Statistic value={summary.ng} />
+              <div className="charge-stat-caption">Non-OK status</div>
             </Card>
           </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="Alarm"
-                value={summary.alarm}
-                valueStyle={{ color: "#fa8c16" }}
-                prefix={<AlertOutlined />}
-              />
+
+          <Col xs={12} sm={12} md={6}>
+            <Card className="charge-summary-card alarm-card" bordered={false}>
+              <div className="charge-stat-top">
+                <span className="charge-stat-label">Alarms</span>
+                <span className="charge-stat-icon alarm-icon">
+                  <AlertOutlined />
+                </span>
+              </div>
+              <Statistic value={summary.alarm} />
+              <div className="charge-stat-caption">Records with alarms</div>
             </Card>
           </Col>
         </Row>
 
-        {/* ===== Table ===== */}
-        <Table
-          columns={columns}
-          dataSource={data}
-          loading={loading}
-          bordered
-          size="middle"
-          scroll={{ x: 1500, y: 520 }}
-          pagination={{
-            showSizeChanger: true,
-            pageSizeOptions: ["20", "50", "100", "200"],
-            defaultPageSize: 20,
-          }}
-        />
-      </Card>
+        {/* Data Table */}
+        <Card className="charge-table-card" bordered={false}>
+          <div className="charge-table-heading">
+            <div>
+              <Title level={5} className="charge-table-title">
+                Record Details
+              </Title>
+              <Text className="charge-table-caption">
+                Review and search Charge R600a records
+              </Text>
+            </div>
+
+            <div className="charge-table-count">
+              <DatabaseOutlined />
+              <span>{data.length.toLocaleString()} records</span>
+            </div>
+          </div>
+
+          <Divider className="charge-table-divider" />
+
+          <Table
+            className="charge-table"
+            columns={columns}
+            dataSource={data}
+            loading={loading}
+            bordered={false}
+            size="middle"
+            rowKey="key"
+            scroll={{ x: 1450, y: 480 }}
+            pagination={{
+              defaultPageSize: 20,
+              pageSizeOptions: ["20", "50", "100", "200"],
+              showSizeChanger: true,
+              showTotal: (total, range) =>
+                `${range[0]}–${range[1]} of ${total} records`,
+            }}
+            locale={{
+              emptyText: (
+                <div className="charge-empty">
+                  <DatabaseOutlined />
+                  <div className="charge-empty-title">No Data Available</div>
+                  <div className="charge-empty-description">
+                    Select a date range and click Search to load records.
+                  </div>
+                </div>
+              ),
+            }}
+          />
+        </Card>
+
+        <div className="charge-footer">
+          <span>Charge R600a Report</span>
+          <span>Production Monitoring System</span>
+        </div>
+      </main>
     </div>
   );
-}
+};
 
 export default Charge;

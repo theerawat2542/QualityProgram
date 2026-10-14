@@ -1,89 +1,372 @@
+/* ========================================
+   NAVBAR
+======================================== */
+
 .navbar {
-  background-color: rgb(17, 0, 112);
+  position: relative;
+  z-index: 1000;
+
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+
+  margin: 0;
+  padding: 0 12px 0 0;
+  box-sizing: border-box;
+
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0px 70px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-clip: padding-box;
+  justify-content: space-between;
+
+  background-color: #110070;
+
+  border: none;
+  border-radius: 0 !important;
+  box-shadow: none;
 }
 
-/* LOGO */
+/* ========================================
+   LOGO - KEEP ON THE LEFT
+======================================== */
+
 .navbar-logo {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  flex: 0 0 auto;
+
+  margin: 0 0 0 20px; /* เพิ่มระยะห่างจากขอบซ้าย */
+  padding: 0;
+
+  border: none;
+  border-radius: 0 !important;
+
+  text-decoration: none;
 }
 
 .logo-image {
-  height: 30px;
-}
+  display: block;
 
-/* LINKS */
-.navbar-links {
-  list-style-type: none;
-  display: flex;
-  align-items: center; /* ⭐ สำคัญ */
+  width: auto;
+  height: 23px;
+  max-width: 110px;
+
   margin: 0;
   padding: 0;
+
+  object-fit: contain;
+
+  border: none;
+  border-radius: 0 !important;
 }
 
-.navbar-links li {
-  margin-right: 16px;
+/* ========================================
+   MENU - MOVE TO THE RIGHT
+======================================== */
+
+.navbar-links {
   display: flex;
-  align-items: center; /* ⭐ สำคัญ */
+  align-items: center;
+  justify-content: flex-end;
+
+  flex: 0 0 auto;
+  margin: 0 0 0 auto;
+  padding: 0;
+
+  gap: 1px;
+  list-style: none;
+
+  border: none;
+  border-radius: 0 !important;
 }
 
-.navbar-links li:last-child {
-  margin-right: 0;
+.navbar-links > li {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  border-radius: 0 !important;
 }
 
-.navbar-links a {
-  color: white;
-  text-decoration: none;
-  font-size: 15px;
-  display: flex;              /* ⭐ */
-  align-items: center;        /* ⭐ */
-  line-height: 1;             /* ⭐ */
+/* ========================================
+   MENU LINKS
+======================================== */
+
+.navbar-link {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
-  transition: color 0.3s ease;
+
+  height: 44px;
+  min-height: 44px;
+
+  padding: 0 9px;
+  box-sizing: border-box;
+
+  background: transparent;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 0 !important;
+  box-shadow: none;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  white-space: nowrap;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
 }
 
-.navbar-links a:hover {
-  color: #ffc107;
+.navbar-link:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 
-/* DROPDOWN */
+/* ========================================
+   ACTIVE MENU
+======================================== */
+
+.navbar-link.active,
+.report-active > .navbar-link {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.navbar-link.active::after,
+.report-active > .navbar-link::after {
+  content: "";
+
+  position: absolute;
+  bottom: 0;
+  left: 9px;
+  right: 9px;
+
+  height: 2px;
+
+  background-color: #ffc107;
+  border: none;
+  border-radius: 0 !important;
+}
+
+/* ========================================
+   REPORTS DROPDOWN
+======================================== */
+
 .reports-dropdown {
   position: relative;
 }
 
-.reports-dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: rgb(30, 13, 124);
-  min-width: 190px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  z-index: 10;
+.reports-trigger {
+  appearance: none;
+  font-family: inherit;
 }
 
-.reports-dropdown:hover .reports-dropdown-content {
-  display: block;
+.arrow {
+  display: inline-block;
+  font-size: 9px;
+
+  transition: transform 0.15s ease;
+}
+
+.reports-dropdown:hover .arrow,
+.reports-dropdown:focus-within .arrow {
+  transform: rotate(180deg);
+}
+
+.reports-dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+
+  display: none;
+  flex-direction: column;
+
+  width: 220px;
+  padding: 3px;
+  box-sizing: border-box;
+
+  background-color: #ffffff;
+
+  border: 1px solid #dddddd;
+  border-radius: 0 !important;
+
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+.reports-dropdown:hover .reports-dropdown-content,
+.reports-dropdown:focus-within .reports-dropdown-content {
+  display: flex;
 }
 
 .reports-dropdown-content a {
-  padding: 10px 14px;
   display: block;
-  color: white;
-  transition: background-color 0.3s ease;
+
+  padding: 8px 10px;
+
+  background-color: #ffffff;
+  color: #333333;
+
+  border: none;
+  border-radius: 0 !important;
+
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+
+  text-decoration: none;
+
+  transition: background-color 0.15s ease;
 }
 
 .reports-dropdown-content a:hover {
-  background-color: #3f51b5;
+  background-color: #eeeeff;
+  color: #110070;
 }
 
-/* ARROW */
-.arrow {
-  font-size: 14px;
-  margin-left: 2px;
+.reports-dropdown-content a.active {
+  background-color: #e8e8ff;
+  color: #110070;
+  font-weight: 700;
+}
+
+/* ========================================
+   KEYBOARD FOCUS
+======================================== */
+
+.navbar a:focus-visible,
+.navbar button:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: -2px;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1050px) {
+  .navbar {
+    padding-right: 6px;
+  }
+
+  .navbar-links {
+    gap: 0;
+  }
+
+  .navbar-link {
+    padding: 0 7px;
+    font-size: 10px;
+  }
+
+  .logo-image {
+    height: 22px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 760px) {
+  .navbar {
+    width: 100%;
+    height: auto;
+    min-height: 44px;
+
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+
+    margin: 0;
+    padding: 5px 4px 0 0;
+
+    border-radius: 0 !important;
+  }
+
+  .navbar-logo {
+    align-self: flex-start;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  .logo-image {
+    height: 22px;
+  }
+
+  .navbar-links {
+    display: flex;
+    flex-wrap: wrap;
+
+    width: 100%;
+    flex: 0 0 auto;
+
+    justify-content: flex-start;
+    gap: 0;
+
+    margin: 0;
+  }
+
+  .navbar-links > li {
+    min-height: 34px;
+  }
+
+  .navbar-link {
+    height: 34px;
+    min-height: 34px;
+
+    padding: 0 7px;
+    font-size: 10px;
+  }
+
+  .navbar-link.active::after,
+  .report-active > .navbar-link::after {
+    left: 7px;
+    right: 7px;
+  }
+
+  .reports-dropdown-content {
+    left: 0;
+    right: auto;
+
+    width: min(220px, calc(100vw - 12px));
+  }
+}
+
+/* ========================================
+   FORCE SQUARE CORNERS
+======================================== */
+
+.navbar,
+.navbar *,
+.navbar *::before,
+.navbar *::after {
+  border-radius: 0 !important;
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-link,
+  .arrow,
+  .reports-dropdown-content a {
+    transition: none;
+  }
 }

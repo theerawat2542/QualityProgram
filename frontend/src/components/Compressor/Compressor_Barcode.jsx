@@ -5,7 +5,7 @@ import axios from "axios";
 import { Table } from "antd";
 import { format } from "date-fns";
 import { API_URL } from "../../lib/config";
-import "./CompBarcode.css";
+import "./CompTracking.css";
 
 const CompBarcode = ({ barcode }) => {
   const [records, setRecords] = useState([]);

@@ -1,0 +1,287 @@
+/* ===== Page ===== */
+
+.defect-scan-app {
+  min-height: 100vh;
+  background: #f5f7fa;
+  color: #1f2937;
+}
+
+.defect-scan-page {
+  padding: 12px 18px;
+  box-sizing: border-box;
+}
+
+.defect-scan-content {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* ===== Main Card ===== */
+
+.defect-scan-card {
+  padding: 16px 18px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+/* ===== Header ===== */
+
+.defect-scan-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.defect-scan-card-header h2 {
+  margin: 0;
+  color: #123b63;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.defect-scan-header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border: 1px solid;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.defect-scan-header-status.is-ready {
+  color: #16783e;
+  background: #eafaf0;
+  border-color: #b7e4c7;
+}
+
+.defect-scan-header-status.is-warning {
+  color: #a16207;
+  background: #fff8e7;
+  border-color: #f5d78e;
+}
+
+.defect-scan-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ===== Settings ===== */
+
+.defect-scan-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.defect-scan-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.defect-scan-field label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.defect-scan-field label span {
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: #eaf3ff;
+  color: #0759a6;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.defect-scan-settings select,
+.defect-scan-settings input,
+.defect-scan-barcode-grid input {
+  width: 100%;
+  height: 40px;
+  padding: 8px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  background: #fff;
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.defect-scan-settings select:focus,
+.defect-scan-settings input:focus,
+.defect-scan-barcode-grid input:focus {
+  border-color: #1677c8;
+  box-shadow: 0 0 0 2px rgba(22, 119, 200, 0.1);
+}
+
+/* ===== Barcode Inputs ===== */
+
+.defect-scan-barcode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding-top: 15px;
+  border-top: 1px solid #edf0f4;
+}
+
+.defect-scan-barcode-grid input {
+  height: 44px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.defect-scan-barcode-grid input::placeholder {
+  color: #94a3b8;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.defect-scan-barcode-grid input:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ===== Error Message ===== */
+
+.defect-scan-error {
+  margin-top: 12px;
+  padding: 9px 11px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* ===== Floating Success Toast ===== */
+
+.defect-scan-toast {
+  position: fixed;
+  top: 78px;
+  right: 24px;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 240px;
+  padding: 14px 18px;
+
+  background: #ffffff;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #16a34a;
+  border-radius: 8px;
+
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+
+  animation: defect-toast-in 0.25s ease-out;
+}
+
+.defect-scan-toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+
+  background: #dcfce7;
+  color: #15803d;
+  border-radius: 50%;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.defect-scan-toast-title {
+  color: #166534;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.defect-scan-toast-message {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+@keyframes defect-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== History ===== */
+
+.defect-scan-history {
+  min-width: 0;
+  margin-top: 14px;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 650px) {
+  .defect-scan-page {
+    padding: 10px;
+  }
+
+  .defect-scan-card {
+    padding: 13px;
+  }
+
+  .defect-scan-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .defect-scan-settings,
+  .defect-scan-barcode-grid {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .defect-scan-barcode-grid {
+    padding-top: 12px;
+  }
+
+  .defect-scan-toast {
+    top: 70px;
+    right: 12px;
+    left: 12px;
+    min-width: 0;
+  }
+}

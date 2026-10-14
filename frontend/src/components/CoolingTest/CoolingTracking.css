@@ -1,0 +1,72 @@
+/* =========================
+   Layout
+========================= */
+.cooling-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cooling-card {
+  width: 95%;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  padding: 18px 22px;
+}
+
+/* =========================
+   Header
+========================= */
+.cooling-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cooling-header span {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0369a1;
+}
+
+.cooling-header small {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* =========================
+   Ant Table
+========================= */
+.ant-table {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background: #e0f2fe !important;
+  font-weight: 600;
+  font-size: 14px;
+  color: #075985;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: 14px;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f0f9ff !important;
+}
+
+/* =========================
+   Error
+========================= */
+.error-text {
+  margin-top: 12px;
+  text-align: center;
+  color: red;
+  font-weight: 600;
+}

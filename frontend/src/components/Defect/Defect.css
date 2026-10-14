@@ -1,0 +1,692 @@
+/* ========================================
+   Defect Report - Modern Minimal Dashboard
+======================================== */
+
+.defect-page {
+  min-height: 100vh;
+  background: #f4f6fa;
+  color: #202b3c;
+  font-family: inherit;
+}
+
+.defect-page * {
+  box-sizing: border-box;
+}
+
+.defect-main {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 22px 24px 16px;
+}
+
+/* ========================================
+   Page Header
+======================================== */
+
+.defect-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.defect-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.defect-title-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #fff0ed;
+  color: #d4380d;
+  font-size: 22px;
+}
+
+.defect-title.ant-typography {
+  margin: 0 0 3px;
+  color: #17243a;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.defect-description {
+  color: #8490a3;
+  font-size: 12px;
+}
+
+.defect-module-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid #e7ebf2;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b778c;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+/* ========================================
+   Toolbar
+======================================== */
+
+.defect-toolbar-card.ant-card {
+  margin-bottom: 20px;
+  border: 1px solid #e9edf4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+}
+
+.defect-toolbar-card .ant-card-body {
+  padding: 16px 18px;
+}
+
+.defect-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.defect-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 260px;
+}
+
+.defect-field-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #526078;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.defect-field-label .anticon {
+  color: #8290a5;
+}
+
+.defect-date-picker {
+  width: 320px;
+  max-width: 100%;
+  height: 36px;
+  border-radius: 7px;
+}
+
+.defect-date-picker .ant-picker-input > input {
+  font-size: 12px;
+}
+
+.defect-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.defect-actions .ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.defect-search-button.ant-btn-primary {
+  background: #155eef;
+  border-color: #155eef;
+}
+
+.defect-search-button.ant-btn-primary:hover {
+  background: #0e4fce;
+  border-color: #0e4fce;
+}
+
+.defect-clear-button {
+  color: #59677d;
+  border-color: #e1e6ef;
+  background: #fff;
+}
+
+.defect-clear-button:hover {
+  color: #155eef !important;
+  border-color: #b8cdfd !important;
+}
+
+.defect-export-button {
+  color: #16794b;
+  border-color: #cdebd9;
+  background: #f1fbf5;
+}
+
+.defect-export-button:hover {
+  color: #11683e !important;
+  border-color: #91d7ad !important;
+  background: #e7f8ed !important;
+}
+
+/* ========================================
+   Summary
+======================================== */
+
+.defect-summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+}
+
+.defect-section-title {
+  color: #26354b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.defect-summary-note {
+  color: #8a95a7;
+  font-size: 11px;
+  text-align: right;
+}
+
+.defect-summary {
+  margin-bottom: 20px;
+}
+
+.defect-summary-card.ant-card {
+  height: 100%;
+  min-height: 125px;
+  overflow: hidden;
+  border: 1px solid #e9edf4;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.defect-summary-card.ant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgb(24 39 75 / 7%);
+}
+
+.defect-summary-card .ant-card-body {
+  padding: 14px 16px 12px;
+}
+
+.defect-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.defect-stat-label {
+  color: #7b8799;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.defect-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.total-icon {
+  color: #2864dc;
+  background: #edf3ff;
+}
+
+.line-a-icon {
+  color: #15945b;
+  background: #e8f8ef;
+}
+
+.line-b-icon {
+  color: #1677c8;
+  background: #eaf4ff;
+}
+
+.reason-icon {
+  color: #d4380d;
+  background: #fff0ed;
+}
+
+.defect-summary-card .ant-statistic-content {
+  color: #202d43;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.line-a-card .ant-statistic-content {
+  color: #15945b;
+}
+
+.line-b-card .ant-statistic-content {
+  color: #1677c8;
+}
+
+.reason-card .ant-statistic-content {
+  color: #d4380d;
+}
+
+.defect-stat-caption {
+  margin-top: 5px;
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+/* ========================================
+   Table Card
+======================================== */
+
+.defect-table-card.ant-card {
+  overflow: hidden;
+  border: 1px solid #e9edf4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+}
+
+.defect-table-card .ant-card-body {
+  padding: 17px 18px 10px;
+}
+
+.defect-table-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.defect-table-title.ant-typography {
+  margin: 0 0 4px;
+  color: #26354b;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.defect-table-caption {
+  color: #8a95a7;
+  font-size: 11px;
+}
+
+.defect-table-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #e7edf7;
+  border-radius: 7px;
+  background: #f7f9fd;
+  color: #5d6b82;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.defect-table-divider.ant-divider {
+  margin: 14px 0;
+  border-color: #edf0f5;
+}
+
+/* ========================================
+   Ant Design Table
+======================================== */
+
+.defect-table .ant-table {
+  color: #344054;
+  font-size: 12px;
+}
+
+.defect-table .ant-table-container {
+  border-radius: 8px;
+}
+
+.defect-table .ant-table-thead > tr > th {
+  padding: 11px 12px;
+  border-bottom: 1px solid #e6ebf3;
+  background: #f6f8fc;
+  color: #526078;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.defect-table .ant-table-thead > tr > th::before {
+  display: none !important;
+}
+
+.defect-table .ant-table-tbody > tr > td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f2f7;
+  color: #435066;
+  font-size: 12px;
+}
+
+.defect-table .ant-table-tbody > tr:hover > td {
+  background: #fff9f7 !important;
+}
+
+.defect-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+.defect-table .ant-table-cell {
+  overflow-wrap: anywhere;
+}
+
+.defect-table .ant-table-filter-trigger {
+  margin-inline-start: 5px;
+}
+
+.defect-table .ant-pagination {
+  margin: 16px 0 8px;
+}
+
+.defect-table .ant-pagination-total-text {
+  color: #7b8799;
+  font-size: 11px;
+}
+
+.defect-table .ant-pagination-item,
+.defect-table .ant-pagination-prev,
+.defect-table .ant-pagination-next,
+.defect-table .ant-select-selector {
+  border-radius: 6px !important;
+}
+
+.defect-table .ant-pagination-item {
+  border-color: #e5eaf2;
+}
+
+.defect-table .ant-pagination-item-active {
+  border-color: #155eef;
+}
+
+.defect-table .ant-pagination-item-active a {
+  color: #155eef;
+}
+
+/* ========================================
+   Production Line Labels
+======================================== */
+
+.defect-line {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.defect-line-a {
+  border: 1px solid #c8eed8;
+  background: #eaf9f0;
+  color: #16834f;
+}
+
+.defect-line-b {
+  border: 1px solid #cce2ff;
+  background: #edf5ff;
+  color: #1763b6;
+}
+
+/* ========================================
+   Barcode and Date/Time
+======================================== */
+
+.defect-barcode-value {
+  color: #344054;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1px;
+}
+
+.defect-datetime {
+  color: #69778c;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   Column Filter
+======================================== */
+
+.defect-filter-dropdown {
+  width: 230px;
+  padding: 12px;
+}
+
+.defect-filter-dropdown .ant-input {
+  height: 32px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.defect-filter-actions {
+  display: flex;
+  margin-top: 9px;
+}
+
+.defect-filter-actions .ant-btn {
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+/* ========================================
+   Empty State
+======================================== */
+
+.defect-empty {
+  padding: 36px 12px;
+  text-align: center;
+}
+
+.defect-empty > .anticon {
+  margin-bottom: 10px;
+  color: #b7c1d1;
+  font-size: 28px;
+}
+
+.defect-empty-title {
+  margin-bottom: 5px;
+  color: #536178;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.defect-empty-description {
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+/* ========================================
+   Footer
+======================================== */
+
+.defect-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 2px 2px;
+  color: #9aa4b4;
+  font-size: 10px;
+}
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 992px) {
+  .defect-main {
+    padding: 18px 16px 14px;
+  }
+
+  .defect-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .defect-date-group {
+    width: 100%;
+  }
+
+  .defect-date-picker {
+    width: 100%;
+  }
+
+  .defect-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .defect-main {
+    padding: 14px 10px 12px;
+  }
+
+  .defect-header {
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .defect-title-group {
+    gap: 9px;
+  }
+
+  .defect-title-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .defect-title.ant-typography {
+    font-size: 19px;
+  }
+
+  .defect-description {
+    font-size: 10px;
+  }
+
+  .defect-module-label {
+    display: none;
+  }
+
+  .defect-toolbar-card .ant-card-body {
+    padding: 13px;
+  }
+
+  .defect-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .defect-actions .ant-btn {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .defect-actions .defect-export-button {
+    grid-column: 1 / -1;
+  }
+
+  .defect-summary-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .defect-summary-note {
+    text-align: left;
+  }
+
+  .defect-summary-card.ant-card {
+    min-height: 116px;
+  }
+
+  .defect-summary-card .ant-card-body {
+    padding: 11px;
+  }
+
+  .defect-stat-label {
+    font-size: 10px;
+  }
+
+  .defect-stat-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 7px;
+    font-size: 12px;
+  }
+
+  .defect-summary-card .ant-statistic-content {
+    font-size: 22px;
+  }
+
+  .defect-table-card .ant-card-body {
+    padding: 13px 10px 8px;
+  }
+
+  .defect-table-heading {
+    align-items: flex-start;
+  }
+
+  .defect-table-title.ant-typography {
+    font-size: 14px;
+  }
+
+  .defect-table-caption {
+    font-size: 10px;
+  }
+
+  .defect-table-count {
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+
+  .defect-table .ant-table-thead > tr > th,
+  .defect-table .ant-table-tbody > tr > td {
+    padding: 9px 10px;
+    font-size: 11px;
+  }
+
+  .defect-footer {
+    font-size: 9px;
+  }
+}

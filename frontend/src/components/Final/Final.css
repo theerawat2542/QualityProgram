@@ -1,0 +1,515 @@
+
+/* ========================================
+   Final Appearance Inspection Report
+   Matching Compressor Barcode Report
+======================================== */
+
+.final-page {
+  min-height: 100vh;
+  background: #f4f6fa;
+  color: #202b3c;
+  font-family: inherit;
+}
+
+.final-page * {
+  box-sizing: border-box;
+}
+
+.final-main {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 22px 24px 16px;
+}
+
+/* ========================================
+   Header
+======================================== */
+
+.final-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.final-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.final-title-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #eaf1ff;
+  color: #2864dc;
+  font-size: 22px;
+}
+
+.final-title.ant-typography {
+  margin: 0 0 3px;
+  color: #17243a;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.final-description {
+  color: #8490a3;
+  font-size: 12px;
+}
+
+.final-module-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid #e7ebf2;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b778c;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+/* ========================================
+   Toolbar
+======================================== */
+
+.final-toolbar-card.ant-card {
+  margin-bottom: 20px;
+  border: 1px solid #e9edf4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+}
+
+.final-toolbar-card .ant-card-body {
+  padding: 16px 18px;
+}
+
+.final-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.final-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 260px;
+}
+
+.final-field-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #526078;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.final-field-label .anticon {
+  color: #8290a5;
+}
+
+.final-date-picker {
+  width: 320px;
+  max-width: 100%;
+  height: 36px;
+  border-radius: 7px;
+}
+
+.final-date-picker .ant-picker-input > input {
+  font-size: 12px;
+}
+
+.final-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.final-actions .ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.final-search-button.ant-btn-primary {
+  background: #155eef;
+  border-color: #155eef;
+}
+
+.final-search-button.ant-btn-primary:hover {
+  background: #0e4fce;
+  border-color: #0e4fce;
+}
+
+.final-clear-button {
+  color: #59677d;
+  border-color: #e1e6ef;
+  background: #fff;
+}
+
+.final-clear-button:hover {
+  color: #155eef !important;
+  border-color: #b8cdfd !important;
+}
+
+.final-export-button {
+  color: #16794b;
+  border-color: #cdebd9;
+  background: #f1fbf5;
+}
+
+.final-export-button:hover {
+  color: #11683e !important;
+  border-color: #91d7ad !important;
+  background: #e7f8ed !important;
+}
+
+/* ========================================
+   Table Card
+======================================== */
+
+.final-table-card.ant-card {
+  overflow: hidden;
+  border: 1px solid #e9edf4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(24 39 75 / 3%);
+}
+
+.final-table-card .ant-card-body {
+  padding: 17px 18px 10px;
+}
+
+.final-table-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.final-table-title.ant-typography {
+  margin: 0 0 4px;
+  color: #26354b;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.final-table-caption {
+  color: #8a95a7;
+  font-size: 11px;
+}
+
+.final-table-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #e7edf7;
+  border-radius: 7px;
+  background: #f7f9fd;
+  color: #5d6b82;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.final-table-divider.ant-divider {
+  margin: 14px 0;
+  border-color: #edf0f5;
+}
+
+/* ========================================
+   Ant Design Table
+======================================== */
+
+.final-table .ant-table {
+  color: #344054;
+  font-size: 12px;
+}
+
+.final-table .ant-table-container {
+  border-radius: 8px;
+}
+
+.final-table .ant-table-thead > tr > th {
+  padding: 11px 12px;
+  border-bottom: 1px solid #e6ebf3;
+  background: #f6f8fc;
+  color: #526078;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.final-table .ant-table-thead > tr > th::before {
+  display: none !important;
+}
+
+.final-table .ant-table-tbody > tr > td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f2f7;
+  color: #435066;
+  font-size: 12px;
+}
+
+.final-table .ant-table-tbody > tr:hover > td {
+  background: #f7faff !important;
+}
+
+.final-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+.final-table .ant-table-cell {
+  overflow-wrap: anywhere;
+}
+
+.final-table .ant-table-filter-trigger {
+  margin-inline-start: 5px;
+}
+
+.final-table .ant-pagination {
+  margin: 16px 0 8px;
+}
+
+.final-table .ant-pagination-total-text {
+  color: #7b8799;
+  font-size: 11px;
+}
+
+.final-table .ant-pagination-item,
+.final-table .ant-pagination-prev,
+.final-table .ant-pagination-next,
+.final-table .ant-select-selector {
+  border-radius: 6px !important;
+}
+
+.final-table .ant-pagination-item {
+  border-color: #e5eaf2;
+}
+
+.final-table .ant-pagination-item-active {
+  border-color: #155eef;
+}
+
+.final-table .ant-pagination-item-active a {
+  color: #155eef;
+}
+
+/* ========================================
+   Barcode and Date/Time
+======================================== */
+
+.final-barcode-value {
+  color: #344054;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1px;
+}
+
+.final-datetime {
+  color: #69778c;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   Column Filter
+======================================== */
+
+.final-filter-dropdown {
+  width: 230px;
+  padding: 12px;
+}
+
+.final-filter-dropdown .ant-input {
+  height: 32px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.final-filter-actions {
+  display: flex;
+  margin-top: 9px;
+}
+
+.final-filter-actions .ant-btn {
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+/* ========================================
+   Empty State
+======================================== */
+
+.final-empty {
+  padding: 36px 12px;
+  text-align: center;
+}
+
+.final-empty > .anticon {
+  margin-bottom: 10px;
+  color: #b7c1d1;
+  font-size: 28px;
+}
+
+.final-empty-title {
+  margin-bottom: 5px;
+  color: #536178;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.final-empty-description {
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+/* ========================================
+   Footer
+======================================== */
+
+.final-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 2px 2px;
+  color: #9aa4b4;
+  font-size: 10px;
+}
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 992px) {
+  .final-main {
+    padding: 18px 16px 14px;
+  }
+
+  .final-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .final-date-group {
+    width: 100%;
+  }
+
+  .final-date-picker {
+    width: 100%;
+  }
+
+  .final-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .final-main {
+    padding: 14px 10px 12px;
+  }
+
+  .final-header {
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .final-title-group {
+    gap: 9px;
+  }
+
+  .final-title-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .final-title.ant-typography {
+    font-size: 19px;
+  }
+
+  .final-description {
+    font-size: 10px;
+  }
+
+  .final-module-label {
+    display: none;
+  }
+
+  .final-toolbar-card .ant-card-body {
+    padding: 13px;
+  }
+
+  .final-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .final-actions .ant-btn {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .final-actions .final-export-button {
+    grid-column: 1 / -1;
+  }
+
+  .final-table-card .ant-card-body {
+    padding: 13px 10px 8px;
+  }
+
+  .final-table-heading {
+    align-items: flex-start;
+  }
+
+  .final-table-title.ant-typography {
+    font-size: 14px;
+  }
+
+  .final-table-caption {
+    font-size: 10px;
+  }
+
+  .final-table-count {
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+
+  .final-table .ant-table-thead > tr > th,
+  .final-table .ant-table-tbody > tr > td {
+    padding: 9px 10px;
+    font-size: 11px;
+  }
+
+  .final-footer {
+    font-size: 9px;
+  }
+}

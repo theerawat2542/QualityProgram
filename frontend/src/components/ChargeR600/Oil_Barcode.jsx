@@ -5,7 +5,7 @@ import axios from "axios";
 import { Table, Tag } from "antd";
 import { format } from "date-fns";
 import { API_URL } from "../../lib/config";
-import "./OilBarcode.css";
+import "./OilTracking.css";
 
 const OilBarcode = ({ barcode }) => {
   const [records, setRecords] = useState([]);

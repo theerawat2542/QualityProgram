@@ -1,0 +1,72 @@
+/* =========================
+   Layout
+========================= */
+.comp-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.comp-card {
+  width: 95%;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  padding: 18px 22px;
+}
+
+/* =========================
+   Header
+========================= */
+.comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.comp-header span {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.comp-header small {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* =========================
+   Ant Table Custom
+========================= */
+.ant-table {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background: #f1f5f9 !important;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: 14px;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #e0f2fe !important;
+}
+
+/* =========================
+   Error
+========================= */
+.error-text {
+  margin-top: 12px;
+  text-align: center;
+  color: red;
+  font-weight: 600;
+}
